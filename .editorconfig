@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+
+# CA2227: Collection properties should be read only
+dotnet_diagnostic.CA2227.severity = none
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+
+# CA1812: Internal class that is apparently never instantiated
+dotnet_diagnostic.CA1812.severity = none
