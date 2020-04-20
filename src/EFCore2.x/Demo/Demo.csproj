@@ -13,7 +13,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\EFCore.GenericRepository\EFCore.GenericRepository.csproj" />
+    <ProjectReference Include="..\TanvirArjel.EFCore.GenericRepository\TanvirArjel.EFCore.GenericRepository.csproj" />
   </ItemGroup>
 
 </Project>

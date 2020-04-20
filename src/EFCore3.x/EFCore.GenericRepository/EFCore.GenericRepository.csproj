@@ -4,10 +4,49 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>EFCore.GenericRepository</AssemblyName>
     <RootNamespace>EFCore.GenericRepository</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>This library is a perfect Generic Repository implementation for EF Core ORM which will remove your pain to write repository layer for your .NET Core or .NET project.
+
+This library includes following notable features:
+
+1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
+
+2. It’s providing the Generic Repository through Unit of Work pattern.
+
+3. It has all the required methods to query your data in whatever you want without getting IQueryable&lt;T&gt; from the repository.
+
+4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
+
+5. It has also database level projection support for your query.
+
+6. It also has support to run raw SQL command against your relational database.
+
+7. It also has support to choose whether you would like track your query entities or not.
+
+8. It has also support to reset your EF Core DbContext state whenever you really needed.
+
+9.  Most importantly, it has full Unit Testing support.</Description>
+    <Copyright>©2020 TanvirArjel. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>EF Core, Repository Layer, Generic Repository, Unit Of Work, .NET, .NET Core, ASP.NET Core</PackageTags>
+    <PackageReleaseNotes>This is the initial release of this library while targetting EF Core version &gt;= 3.1</PackageReleaseNotes>
+    <Version>3.1.0</Version>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="stylecop.json" />
+    <None Include="..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="images\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

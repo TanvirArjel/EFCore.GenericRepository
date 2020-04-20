@@ -3,11 +3,11 @@
 // </copyright>
 
 using System;
-using EFCore.GenericRepository.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using TanvirArjel.EFCore.GenericRepository.UnitOfWork;
 
-namespace EFCore.GenericRepository
+namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
     /// Contain all the service collection extension methods.

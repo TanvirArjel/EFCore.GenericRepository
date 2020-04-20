@@ -3,9 +3,9 @@
 // </copyright>
 
 using System.Threading.Tasks;
-using EFCore.GenericRepository.Repository;
+using TanvirArjel.EFCore.GenericRepository.Repository;
 
-namespace EFCore.GenericRepository.UnitOfWork
+namespace TanvirArjel.EFCore.GenericRepository.UnitOfWork
 {
     public interface IUnitOfWork
     {

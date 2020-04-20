@@ -1,5 +1,4 @@
 ﻿using Demo.Data;
-using EFCore.GenericRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TanvirArjel.EFCore.GenericRepository;
 
 namespace Demo
 {
@@ -31,10 +31,7 @@ namespace Demo
 
             string connectionString = Configuration.GetConnectionString("RepositoryDbConnection");
             services.AddDbContext<DemoDbContext>(option => option.UseSqlServer(connectionString));
-
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
-            DemoDbContext demoDbContext = serviceProvider.GetService<DemoDbContext>();
-            services.AddGenericRepository(demoDbContext);
+            services.AddGenericRepository<DemoDbContext>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

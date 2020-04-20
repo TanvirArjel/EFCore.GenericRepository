@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace EFCore.GenericRepository.Repository
+namespace TanvirArjel.EFCore.GenericRepository.Repository
 {
     internal class Repository<TEntity> : IRepository<TEntity>
         where TEntity : class

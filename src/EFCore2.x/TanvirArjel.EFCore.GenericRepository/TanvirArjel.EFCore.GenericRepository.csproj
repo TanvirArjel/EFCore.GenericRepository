@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>EFCore.GenericRepository</AssemblyName>
-    <RootNamespace>EFCore.GenericRepository</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
+    <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
+    <Version>2.0.0</Version>
     <Description>This library is a perfect Generic Repository implementation for EF Core ORM which will remove your pain to write repository layer for your .NET Core or .NET project.
 
 This library includes following notable features:
 
-1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
+1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 support.
 
 2. It’s providing the Generic Repository through Unit of Work pattern.
 
@@ -27,19 +28,26 @@ This library includes following notable features:
 9.  Most importantly, it has full Unit Testing support.</Description>
     <Copyright>©2020 TanvirArjel. All rights reserved.</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
-    <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EF Core, Repository Layer, Generic Repository, Unit Of Work, .NET, .NET Core, ASP.NET Core</PackageTags>
-    <PackageReleaseNotes>This is the initial release of this library while targetting EF Core version 3.0</PackageReleaseNotes>
+    <PackageReleaseNotes>This is the initial release of this library while targetting EF Core version 2.0, 2.1, 2.2</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="stylecop.json" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.0.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.19" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -48,23 +56,6 @@ This library includes following notable features:
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.0.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.19" />
   </ItemGroup>
 
 </Project>

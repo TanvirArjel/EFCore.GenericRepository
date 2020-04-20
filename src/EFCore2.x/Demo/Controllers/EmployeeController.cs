@@ -1,8 +1,8 @@
 ﻿using Demo.Data.Models;
-using EFCore.GenericRepository.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TanvirArjel.EFCore.GenericRepository.UnitOfWork;
 
 namespace Demo.Controllers
 {
@@ -18,7 +18,7 @@ namespace Demo.Controllers
         public async Task<IActionResult> Index()
         {
             long countLongAsync = await _unitOfWork.Repository<Employee>().GetLongCountAsync(e => e.EmployeeId == 1);
-            List<Employee> entityListAsync = await _unitOfWork.Repository<Employee>().GetEntityListAsync(null);
+            List<Employee> entityListAsync = await _unitOfWork.Repository<Employee>().GetEntityListAsync();
             return View(entityListAsync);
         }
 
@@ -29,7 +29,7 @@ namespace Demo.Controllers
             {
                 return NotFound();
             }
-            var employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
+            Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -68,7 +68,7 @@ namespace Demo.Controllers
                 return NotFound();
             }
 
-            var employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
+            Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -108,7 +108,7 @@ namespace Demo.Controllers
                 return NotFound();
             }
 
-            var employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
+            Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -122,7 +122,7 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
+            Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
             _unitOfWork.Repository<Employee>().DeleteEntity(employee);
             await _unitOfWork.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

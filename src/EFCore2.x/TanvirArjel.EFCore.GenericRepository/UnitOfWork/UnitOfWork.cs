@@ -6,10 +6,10 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
-using EFCore.GenericRepository.Repository;
 using Microsoft.EntityFrameworkCore;
+using TanvirArjel.EFCore.GenericRepository.Repository;
 
-namespace EFCore.GenericRepository.UnitOfWork
+namespace TanvirArjel.EFCore.GenericRepository.UnitOfWork
 {
     internal class UnitOfWork : IUnitOfWork
     {
@@ -47,12 +47,12 @@ namespace EFCore.GenericRepository.UnitOfWork
 
         public int ExecuteSqlCommand(string sql, params object[] parameters)
         {
-            return _dbContext.Database.ExecuteSqlRaw(sql, parameters);
+            return _dbContext.Database.ExecuteSqlCommand(sql, parameters);
         }
 
         public async Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
         {
-            return await _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
+            return await _dbContext.Database.ExecuteSqlCommandAsync(sql, parameters);
         }
 
         public void ResetContextState()
