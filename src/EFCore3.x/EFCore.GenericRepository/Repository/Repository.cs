@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +26,21 @@ namespace EFCore.GenericRepository.Repository
             Entities = dbContext.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> Entities { get; set; }
+        public IQueryable<TEntity> Entities { get; }
+
+        public async Task<List<TEntity>> GetEntityListAsync(bool asNoTracking = false)
+        {
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            List<TEntity> entities = await query.ToListAsync();
+
+            return entities;
+        }
 
         public async Task<List<TEntity>> GetEntityListAsync(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false)
         {
@@ -45,7 +61,37 @@ namespace EFCore.GenericRepository.Repository
             return entities;
         }
 
-        public async Task<List<TProjectedType>> GetEntityListAsync<TProjectedType>(
+        public async Task<List<TEntity>> GetEntityListAsync(Specification<TEntity> specification, bool asNoTracking = false)
+        {
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            if (specification != null)
+            {
+                query = query.GetSpecifiedQuery(specification);
+            }
+
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(Expression<Func<TEntity, TProjectedType>> selectExpression)
+            where TProjectedType : class
+        {
+            if (selectExpression == null)
+            {
+                throw new ArgumentNullException(nameof(selectExpression));
+            }
+
+            List<TProjectedType> entities = await _dbContext.Set<TEntity>().Select(selectExpression).ToListAsync();
+
+            return entities;
+        }
+
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class
@@ -67,24 +113,7 @@ namespace EFCore.GenericRepository.Repository
             return projectedEntites;
         }
 
-        public async Task<List<TEntity>> GetEntityListAsync(Specification<TEntity> specification, bool asNoTracking = false)
-        {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<List<TProjectedType>> GetEntityListAsync<TProjectedType>(
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class
@@ -111,43 +140,46 @@ namespace EFCore.GenericRepository.Repository
                 throw new ArgumentNullException(nameof(id));
             }
 
-            if (asNoTracking == false)
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+
+            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+            if (primaryKeyName == null || primaryKeyType == null)
             {
-                TEntity entity = await _dbContext.Set<TEntity>().FindAsync(id);
-                return entity;
+                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
             }
-            else
+
+            object primayKeyValue = null;
+
+            try
             {
-                IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
-
-                string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-                Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-                if (primaryKeyName == null || primaryKeyType == null)
-                {
-                    throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-                }
-
-                Type primaryKeyValueType = id.GetType();
-
-                if (primaryKeyType != primaryKeyValueType)
-                {
-                    throw new ArgumentException($"You can not assign a value of type {primaryKeyValueType} to a property of type {primaryKeyType}");
-                }
-
-                ParameterExpression pe = Expression.Parameter(typeof(TEntity), "entity");
-                MemberExpression me = Expression.Property(pe, primaryKeyName);
-                ConstantExpression constant = Expression.Constant(id, primaryKeyValueType);
-                BinaryExpression body = Expression.Equal(me, constant);
-                Expression<Func<TEntity, bool>> expressionTree = Expression.Lambda<Func<TEntity, bool>>(body, new[] { pe });
-
-                TEntity entity = await _dbContext.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(expressionTree);
-
-                return entity;
+                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
             }
+            catch (Exception)
+            {
+                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
+            }
+
+            ParameterExpression pe = Expression.Parameter(typeof(TEntity), "entity");
+            MemberExpression me = Expression.Property(pe, primaryKeyName);
+            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
+            BinaryExpression body = Expression.Equal(me, constant);
+            Expression<Func<TEntity, bool>> expressionTree = Expression.Lambda<Func<TEntity, bool>>(body, new[] { pe });
+
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            if (asNoTracking)
+            {
+                TEntity noTrackedEntity = await query.AsNoTracking().FirstOrDefaultAsync(expressionTree);
+                return noTrackedEntity;
+            }
+
+            TEntity trackedEntity = await query.FirstOrDefaultAsync(expressionTree);
+            return trackedEntity;
         }
 
-        public async Task<TProjectedType> GetEntityByIdAsync<TProjectedType>(
+        public async Task<TProjectedType> GetProjectedEntityByIdAsync<TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class
@@ -172,16 +204,20 @@ namespace EFCore.GenericRepository.Repository
                 throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
             }
 
-            Type primaryKeyValueType = id.GetType();
+            object primayKeyValue = null;
 
-            if (primaryKeyType != primaryKeyValueType)
+            try
             {
-                throw new ArgumentException($"You can not assign a value of type {primaryKeyValueType} to a property of type {primaryKeyType}");
+                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
             }
 
             ParameterExpression pe = Expression.Parameter(typeof(TEntity), "entity");
             MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(id, primaryKeyValueType);
+            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
             BinaryExpression body = Expression.Equal(me, constant);
             Expression<Func<TEntity, bool>> expressionTree = Expression.Lambda<Func<TEntity, bool>>(body, new[] { pe });
 
@@ -207,7 +243,24 @@ namespace EFCore.GenericRepository.Repository
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<TProjectedType> GetEntityAsync<TProjectedType>(
+        public async Task<TEntity> GetEntityAsync(Specification<TEntity> specification, bool asNoTracking = false)
+        {
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            if (specification != null)
+            {
+                query = query.GetSpecifiedQuery(specification);
+            }
+
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class
@@ -227,24 +280,7 @@ namespace EFCore.GenericRepository.Repository
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
-        public async Task<TEntity> GetEntityAsync(Specification<TEntity> specification, bool asNoTracking = false)
-        {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.FirstOrDefaultAsync();
-        }
-
-        public async Task<TProjectedType> GetEntityAsync<TProjectedType>(
+        public async Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class

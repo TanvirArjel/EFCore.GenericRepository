@@ -13,10 +13,19 @@ namespace EFCore.GenericRepository.Repository
     public interface IRepository<TEntity>
         where TEntity : class
     {
-        IQueryable<TEntity> Entities { get; set; }
+        IQueryable<TEntity> Entities { get; }
 
         /// <summary>
-        /// This method takes <paramref name="condition"/> as parameter and returns <see cref="List{T}"/> where T is <see cref="TEntity"/>.
+        /// This method returns <see cref="List{TEntity}"/> without any filter. Call only when you want pull all the data from the source.
+        /// </summary>
+        /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
+        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// </param>
+        /// <returns>Returns <see cref="Task"/> of <see cref="List{TEntity}"/>.</returns>
+        Task<List<TEntity>> GetEntityListAsync(bool asNoTracking = false);
+
+        /// <summary>
+        /// This method takes <paramref name="condition"/> as parameter and returns <see cref="List{TEntity}"/>.
         /// </summary>
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
@@ -26,20 +35,7 @@ namespace EFCore.GenericRepository.Repository
         Task<List<TEntity>> GetEntityListAsync(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false);
 
         /// <summary>
-        /// This method takes <paramref name="condition"/> as parameter and returns <see cref="List{TProjectedType}"/>.
-        /// </summary>
-        /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="condition">The condition on which entity list will be returned.</param>
-        /// <param name="selectExpression">The LINQ select query.</param>
-        /// <returns>Returns <see cref="Task"/> of <see cref="List{TProjectedType}"/>.</returns>
-        /// /// <exception cref="ArgumentNullException"> thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
-        Task<List<TProjectedType>> GetEntityListAsync<TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class;
-
-        /// <summary>
-        /// This method takes <paramref name="specification"/> as parameter and returns <see cref="List{T}"/> where T is <see cref="TEntity"/>.
+        /// This method takes <paramref name="specification"/> as parameter and returns <see cref="List{TEntity}"/>.
         /// </summary>
         /// <param name="specification">A <see cref="Specification{TEntity}"/> object which contains all the conditions and criteria
         /// on which data will be returned.
@@ -51,17 +47,39 @@ namespace EFCore.GenericRepository.Repository
         Task<List<TEntity>> GetEntityListAsync(Specification<TEntity> specification, bool asNoTracking = false);
 
         /// <summary>
+        /// This method returns <see cref="List{TProjectedType}"/> without any filter.
+        /// </summary>
+        /// <typeparam name="TProjectedType">The type to which <see cref="TEntity"/> will be projected.</typeparam>
+        /// <param name="selectExpression">A <b>LINQ</b> select query.</param>
+        /// <returns>Returns <see cref="Task{List{TProjectedType}}"/>.</returns>
+        Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(Expression<Func<TEntity, TProjectedType>> selectExpression)
+            where TProjectedType : class;
+
+        /// <summary>
+        /// This method takes <paramref name="condition"/> as parameter and returns <see cref="List{TProjectedType}"/>.
+        /// </summary>
+        /// <typeparam name="TProjectedType">The projected type.</typeparam>
+        /// <param name="condition">The condition on which entity list will be returned.</param>
+        /// <param name="selectExpression">The LINQ select query.</param>
+        /// <returns>Returns <see cref="Task{List{TProjectedType}}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
+        Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
+            Expression<Func<TEntity, bool>> condition,
+            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            where TProjectedType : class;
+
+        /// <summary>
         /// This method takes <paramref name="specification"/> and <paramref name="selectExpression"/> as parameters and
-        /// returns <see cref="List{T}"/> where T is <see cref="TProjectedType"/>.
+        /// returns <see cref="List{TProjectedType}"/>.
         /// </summary>
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="specification">A <see cref="Specification{TEntity}"/> object which contains all the conditions and criteria
         /// on which data will be returned.
         /// </param>
         /// <param name="selectExpression">The LINQ select query.</param>
-        /// <returns><see cref="List{TProjectedType}"/> where T is <see cref="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException"> thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
-        Task<List<TProjectedType>> GetEntityListAsync<TProjectedType>(
+        /// <returns>Return <see cref="Task{List{TProjectedType}}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
+        Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class;
@@ -85,8 +103,8 @@ namespace EFCore.GenericRepository.Repository
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="selectExpression">The LINQ select query.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException"> thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
-        Task<TProjectedType> GetEntityByIdAsync<TProjectedType>(
+        /// <exception cref="ArgumentNullException">Thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
+        Task<TProjectedType> GetProjectedEntityByIdAsync<TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class;
@@ -102,19 +120,6 @@ namespace EFCore.GenericRepository.Repository
         Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false);
 
         /// <summary>
-        /// This method takes <paramref name="condition"/> as parameter and returns <see cref="TEntity"/>.
-        /// </summary>
-        /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
-        /// <param name="selectExpression">The select <b>LINQ</b> query.</param>
-        /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// /// <exception cref="ArgumentNullException"> thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
-        Task<TProjectedType> GetEntityAsync<TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class;
-
-        /// <summary>
         /// This method takes <paramref name="specification"/> as parameter and returns <see cref="TEntity"/>.
         /// </summary>
         /// <param name="specification">A <see cref="Specification{TEntity}"/> object which contains all the conditions and criteria
@@ -127,6 +132,19 @@ namespace EFCore.GenericRepository.Repository
         Task<TEntity> GetEntityAsync(Specification<TEntity> specification, bool asNoTracking = false);
 
         /// <summary>
+        /// This method takes <paramref name="condition"/> as parameter and returns <see cref="TEntity"/>.
+        /// </summary>
+        /// <typeparam name="TProjectedType">The projected type.</typeparam>
+        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="selectExpression">The select <b>LINQ</b> query.</param>
+        /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
+        Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
+            Expression<Func<TEntity, bool>> condition,
+            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            where TProjectedType : class;
+
+        /// <summary>
         /// This method takes <paramref name="specification"/> and <paramref name="selectExpression"/> and returns <see cref="TProjectedType"/>.
         /// </summary>
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
@@ -135,8 +153,8 @@ namespace EFCore.GenericRepository.Repository
         /// </param>
         /// <param name="selectExpression">The select <b>LINQ</b> query.</param>
         /// <returns>Retuns <see cref="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException"> thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
-        Task<TProjectedType> GetEntityAsync<TProjectedType>(
+        /// <exception cref="ArgumentNullException">Thrown if <see cref="selectExpression"/> is <em>NULL</em>.</exception>
+        Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TProjectedType : class;

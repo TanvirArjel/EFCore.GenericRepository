@@ -15,16 +15,26 @@ namespace EFCore.GenericRepository
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Register all the necessary TanvirArjelExceptionHandler services to the ASP.NET Core Dependency Injection container
+        /// Register all the necessary services to the ASP.NET Core Dependency Injection container.
         /// </summary>
-        /// <param name="services">The <see cref="IServiceCollection"/> instance this method extends.</param>
-        /// <param name="dbContext">Connection String of the <c>SQL Server</c> database to which exception will logged.</param>
-        /// <exception cref="ArgumentNullException"> Thrown if <c>SQL Server</c> connection string is null or empty.</exception>
-        public static void AddGenericRepository(this IServiceCollection services, DbContext dbContext)
+        /// <typeparam name="TDbContext">Your EF Core DbContext.</typeparam>
+        /// <param name="services">The type to be extended.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is NULL.</exception>
+        /// <exception cref="ApplicationException">Thrown if <typeparamref name="TDbContext"/> is NULL.</exception>
+        public static void AddGenericRepository<TDbContext>(this IServiceCollection services)
+            where TDbContext : DbContext
         {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            DbContext dbContext = serviceProvider.GetService<TDbContext>();
+
             if (dbContext == null)
             {
-                throw new ArgumentNullException(nameof(dbContext));
+                throw new ApplicationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
             }
 
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>(uow => new UnitOfWork.UnitOfWork(dbContext));
