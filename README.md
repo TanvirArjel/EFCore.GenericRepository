@@ -24,9 +24,19 @@ This library is a perfect Generic Repository implementation for EF Core ORM whic
 
 ## How do I get started?
 
-First install the lastest version of `EFCore.GenericRepository` nuget package into your project as follows:
+First install the appropriate version of `EFCore.GenericRepository` nuget package into your project as follows:
 
-    Install-Package EFCore.GenericRepository
+**For EF Core 2.x :**
+
+    Install-Package EFCore.GenericRepository -Version 2.0.0
+    
+**For EF Core 3.0 :**
+
+    Install-Package EFCore.GenericRepository -Version 3.0.0
+    
+**For EF Core >= 3.1 :**
+
+    Install-Package EFCore.GenericRepository -Version 3.1.0
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
@@ -39,7 +49,18 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     
 ## Usage:
 
-#### 1. To get all the data of the table:
+#### 1. To get all the data:
 
+    var employeeList =  await _unitOfWork.Repository<Employee>().GetEntityListAsync();
+    
+    var employeeNoTrackedList = await _unitOfWork.Repository<Employee>().GetEntityListAsync(asNoTracking: true);
+    
+#### 2. To get filtered list of data:
 
+    var employeeList =  await _unitOfWork.Repository<Employee>()
+                        .GetEntityListAsync(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software");
+                        
+    var employeeNoTrackedList = await _unitOfWork.Repository<Employee>()
+                                .GetEntityListAsync(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software", asNoTracking: true);
 
+#### 3. To get list of data by Specification<T>
