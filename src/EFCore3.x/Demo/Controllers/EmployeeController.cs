@@ -1,14 +1,13 @@
 ﻿using Demo.Data;
 using Demo.Data.Models;
-using EFCore.GenericRepository;
-using EFCore.GenericRepository.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
+using TanvirArjel.EFCore.GenericRepository.Services;
+using TanvirArjel.EFCore.GenericRepository;
 
 namespace Demo.Controllers
 {
@@ -27,13 +26,13 @@ namespace Demo.Controllers
         {
 
             Specification<Employee> specification = new Specification<Employee>();
+            specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
+            specification.Includes = ep => ep.Include(e => e.Department);
+            specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
+            specification.Skip = 0;
+            specification.Take = 10;
 
-            List<Employee> entityListAsync = await _unitOfWork.Repository<Employee>()
-                .GetProjectedEntityListAsync(specification, e => new Employee
-                {
-                    EmployeeId = e.EmployeeId,
-                    EmployeeName = e.EmployeeName
-                });
+            Employee entityListAsync = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(1, true);
 
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 

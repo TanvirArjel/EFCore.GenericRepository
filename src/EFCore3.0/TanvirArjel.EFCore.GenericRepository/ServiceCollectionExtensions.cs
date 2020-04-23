@@ -3,11 +3,12 @@
 // </copyright>
 
 using System;
-using EFCore.GenericRepository.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using TanvirArjel.EFCore.GenericRepository.Implementations;
+using TanvirArjel.EFCore.GenericRepository.Services;
 
-namespace EFCore.GenericRepository
+namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
     /// Contain all the service collection extension methods.
@@ -37,7 +38,7 @@ namespace EFCore.GenericRepository
                 throw new ApplicationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
             }
 
-            services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>(uow => new UnitOfWork.UnitOfWork(dbContext));
+            services.AddScoped<IUnitOfWork, UnitOfWork>(uow => new UnitOfWork(dbContext));
         }
     }
 }

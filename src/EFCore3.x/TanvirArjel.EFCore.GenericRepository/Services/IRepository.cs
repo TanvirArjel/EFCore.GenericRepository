@@ -8,7 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace EFCore.GenericRepository.Repository
+namespace TanvirArjel.EFCore.GenericRepository.Services
 {
     public interface IRepository<TEntity>
         where TEntity : class

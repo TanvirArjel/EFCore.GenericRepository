@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TanvirArjel.EFCore.GenericRepository.UnitOfWork;
+using TanvirArjel.EFCore.GenericRepository.Services;
 
 namespace Demo.Controllers
 {

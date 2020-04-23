@@ -8,7 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace EFCore.GenericRepository
+namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
     /// This object hold the query specifications.

@@ -7,9 +7,9 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using TanvirArjel.EFCore.GenericRepository.Repository;
+using TanvirArjel.EFCore.GenericRepository.Services;
 
-namespace TanvirArjel.EFCore.GenericRepository.UnitOfWork
+namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
     internal class UnitOfWork : IUnitOfWork
     {

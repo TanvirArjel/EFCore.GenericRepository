@@ -1,11 +1,11 @@
 using Demo.Data;
-using EFCore.GenericRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TanvirArjel.EFCore.GenericRepository;
 
 namespace Demo
 {

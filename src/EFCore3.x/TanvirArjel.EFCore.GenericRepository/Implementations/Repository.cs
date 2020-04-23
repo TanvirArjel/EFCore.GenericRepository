@@ -12,8 +12,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using TanvirArjel.EFCore.GenericRepository.Services;
 
-namespace TanvirArjel.EFCore.GenericRepository.Repository
+namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
     internal class Repository<TEntity> : IRepository<TEntity>
         where TEntity : class

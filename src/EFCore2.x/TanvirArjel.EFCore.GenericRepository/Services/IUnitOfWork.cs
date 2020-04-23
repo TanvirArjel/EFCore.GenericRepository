@@ -3,9 +3,8 @@
 // </copyright>
 
 using System.Threading.Tasks;
-using TanvirArjel.EFCore.GenericRepository.Repository;
 
-namespace TanvirArjel.EFCore.GenericRepository.UnitOfWork
+namespace TanvirArjel.EFCore.GenericRepository.Services
 {
     public interface IUnitOfWork
     {

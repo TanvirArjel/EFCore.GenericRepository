@@ -6,10 +6,10 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
-using EFCore.GenericRepository.Repository;
 using Microsoft.EntityFrameworkCore;
+using TanvirArjel.EFCore.GenericRepository.Services;
 
-namespace EFCore.GenericRepository.UnitOfWork
+namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
     internal class UnitOfWork : IUnitOfWork
     {

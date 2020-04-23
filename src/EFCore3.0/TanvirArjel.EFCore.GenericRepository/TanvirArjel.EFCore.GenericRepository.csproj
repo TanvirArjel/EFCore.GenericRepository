@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>EFCore.GenericRepository</AssemblyName>
-    <RootNamespace>EFCore.GenericRepository</RootNamespace>
-    <Description>This library is a perfect Generic Repository implementation for EF Core ORM which will remove your pain to write repository layer for your .NET Core or .NET project.
+    <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
+    <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
+    <Description>This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers pain to write repository layer for each .NET Core and .NET project.
 
 This library includes following notable features:
 
@@ -12,7 +12,7 @@ This library includes following notable features:
 
 2. It’s providing the Generic Repository through Unit of Work pattern.
 
-3. It has all the required methods to query your data in whatever you want without getting IQueryable&lt;T&gt; from the repository.
+3. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
 
 4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
 
@@ -20,7 +20,7 @@ This library includes following notable features:
 
 6. It also has support to run raw SQL command against your relational database.
 
-7. It also has support to choose whether you would like track your query entities or not.
+7. It also has support to choose whether you would like to track your query entity/entities or not.
 
 8. It has also support to reset your EF Core DbContext state whenever you really needed.
 
@@ -31,11 +31,12 @@ This library includes following notable features:
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>Git</RepositoryType>
-    <PackageTags>EF Core, Repository Layer, Generic Repository, Unit Of Work, .NET, .NET Core, ASP.NET Core</PackageTags>
-    <PackageReleaseNotes>This is the initial release of this library while targetting EF Core version 3.0</PackageReleaseNotes>
+    <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
+    <PackageReleaseNotes>This release is for targetting EF Core version 3.0</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>3.0.0</Version>
+    <Authors>TanvirArjel</Authors>
   </PropertyGroup>
 
   <ItemGroup>

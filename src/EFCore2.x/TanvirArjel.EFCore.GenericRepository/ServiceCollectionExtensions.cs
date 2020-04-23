@@ -5,7 +5,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TanvirArjel.EFCore.GenericRepository.UnitOfWork;
+using TanvirArjel.EFCore.GenericRepository.Implementations;
+using TanvirArjel.EFCore.GenericRepository.Services;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
@@ -37,7 +38,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ApplicationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
             }
 
-            services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>(uow => new UnitOfWork.UnitOfWork(dbContext));
+            services.AddScoped<IUnitOfWork, UnitOfWork>(uow => new UnitOfWork(dbContext));
         }
     }
 }

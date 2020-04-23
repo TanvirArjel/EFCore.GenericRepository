@@ -8,7 +8,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFCore.GenericRepository
+namespace TanvirArjel.EFCore.GenericRepository
 {
     internal static class SpecificationEvaluator
     {

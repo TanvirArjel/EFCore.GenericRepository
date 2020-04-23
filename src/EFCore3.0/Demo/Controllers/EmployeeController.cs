@@ -1,7 +1,5 @@
 ﻿using Demo.Data;
 using Demo.Data.Models;
-using EFCore.GenericRepository;
-using EFCore.GenericRepository.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +7,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
+using TanvirArjel.EFCore.GenericRepository.Services;
+using TanvirArjel.EFCore.GenericRepository;
 
 namespace Demo.Controllers
 {
