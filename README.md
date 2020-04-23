@@ -10,7 +10,7 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 3. It has all the required methods to query your data in whatever way you want without getting IQueryable<T> from the repository.
 
-4. It also has **Specification<T>** pattern support so that you can build your query dynamically i.e. differed query building.
+4. It also has **`Specification<T>`** pattern support so that you can build your query dynamically i.e. differed query building.
 
 5. It has also database level projection support for your query.
 
@@ -70,6 +70,8 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
              return employee;
          }
     }
+    
+## More Details:
 
 #### 1. To get all the data:
 
@@ -98,7 +100,7 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
                                   .GetEntityListAsync(specification);
                                   
     List<Employee> noTrackedEmployeeList = await _unitOfWork.Repository<Employee>()
-                                           .GetEntityListAsync(specification);
+                                           .GetEntityListAsync(specification, true);
                                   
  #### 4. To get projected entity list:
  
@@ -110,7 +112,7 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
     var filteredProjectedList = await _unitOfWork.Repository<Employee>()
                       .GetProjectedEntityListAsync(e => e.IsActive, e => new { e.EmployeeId, e.EmployeeName});
                                             
- #### 6. To get projected entity list by Specification<T>:
+ #### 6. To get projected entity list by `Specification<T>`:
  
     Specification<Employee> specification = new Specification<Employee>();
     specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
@@ -138,7 +140,7 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
     
     Employee noTrackedEmployee = await _unitOfWork.Repository<Employee>().GetEntityAsync(e => e.EmployeeName == "Tanvir", true);
     
-#### 10. To get single entity by Specification<T>:
+#### 10. To get single entity by `Specification<T>`:
     
     Specification<Employee> specification = new Specification<Employee>();
     specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
@@ -153,7 +155,7 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
 
     var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityAsync(e => e.EmployeeName == "Tanvir",e => new { e.EmployeeId, e.EmployeeName});
     
-#### 12. To get single entity by Specification<T>:
+#### 12. To get single entity by `Specification<T>`:
     
     Specification<Employee> specification = new Specification<Employee>();
     specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
@@ -237,7 +239,7 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
 #### 20. To get count of enities with or without condition:
 
     int count =   _unitOfWork.Repository<Employee>().GetCountAsync(); // Count of all
-    int count =   _unitOfWork.Repository<Employee>().GetCountAsync(e => e.EmployeeName = "Tanvir"); // Count of specified condtion
+    int count =   _unitOfWork.Repository<Employee>().GetCountAsync(e => e.EmployeeName = "Tanvir"); // Count with specified condtion
     
-    long longCount =   _unitOfWork.Repository<Employee>().GetLongCountAsync(); // Count of all
-    long longCount =   _unitOfWork.Repository<Employee>().GetLongCountAsync(e => e.EmployeeName = "Tanvir"); // Count of specified condtion
+    long longCount =   _unitOfWork.Repository<Employee>().GetLongCountAsync(); // Long count of all
+    long longCount =   _unitOfWork.Repository<Employee>().GetLongCountAsync(e => e.EmployeeName = "Tanvir"); // Long count with specified condtion
