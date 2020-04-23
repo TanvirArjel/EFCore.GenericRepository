@@ -1,6 +1,6 @@
 # EF Core Generic Repository
 
-This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers pain to write repository layer for each .NET Core and .NET project.
+This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
 ## This library includes following notable features:
 
@@ -24,7 +24,7 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 ## How do I get started?
 
-First install the appropriate version of `TanvirArjel.EFCore.GenericRepository` nuget package into your project as follows:
+First install the appropriate version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
 **For EF Core 2.x :**
 
