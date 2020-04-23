@@ -22,6 +22,10 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 9.  Most importantly, it has full Unit Testing support.
 
+# Giving a star
+
+**If you find this library useful, please don't forget to encouraging me to do such more stuffs by giving a star to this repository. Thank you.**
+
 ## How do I get started?
 
 First install the appropriate version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
