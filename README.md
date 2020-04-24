@@ -103,14 +103,15 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
                                            .GetEntityListAsync(specification, true);
                                   
  #### 4. To get projected entity list:
- 
-    var projectedList = await _unitOfWork.Repository<Employee>()
-                      .GetProjectedEntityListAsync(e => new { e.EmployeeId, e.EmployeeName});
+    
+    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+    var projectedList = await _unitOfWork.Repository<Employee>().GetProjectedEntityListAsync(selectExpression);
                       
  #### 5. To get filtered projected entity list:
  
+    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
     var filteredProjectedList = await _unitOfWork.Repository<Employee>()
-                      .GetProjectedEntityListAsync(e => e.IsActive, e => new { e.EmployeeId, e.EmployeeName});
+                      .GetProjectedEntityListAsync(e => e.IsActive, selectExpression);
                                             
  #### 6. To get projected entity list by `Specification<T>`:
  
@@ -121,8 +122,9 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
     specification.Skip = 0;
     specification.Take = 10;
     
+    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
     var projectedList = await _unitOfWork.Repository<Employee>()
-                      .GetProjectedEntityListAsync(specification, e => new { e.EmployeeId, e.EmployeeName});
+                      .GetProjectedEntityListAsync(specification, selectExpression);
                       
 #### 7. To get an entity by Id (primary key):
 
@@ -131,8 +133,9 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
     Employee noTrackedEmployee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(1, true);
     
 #### 8. To get a projected entity by Id (primary key):
-
-    var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityByIdAsync(1,e => new { e.EmployeeId, e.EmployeeName});
+    
+    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+    var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityByIdAsync(1, selectExpression);
 
 #### 9. To get single entity by any condition / filter:
 
@@ -153,16 +156,18 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
     
 #### 11. To get single projected entity by any condition / filter:
 
-    var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityAsync(e => e.EmployeeName == "Tanvir",e => new { e.EmployeeId, e.EmployeeName});
+    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+    var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityAsync(e => e.EmployeeName == "Tanvir", selectExpression);
     
-#### 12. To get single entity by `Specification<T>`:
+#### 12. To get single projected entity by `Specification<T>`:
     
     Specification<Employee> specification = new Specification<Employee>();
     specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
     specification.Includes = sp => sp.Include(e => e.Department);
     specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
     
-    var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityAsync(specification,e => new { e.EmployeeId, e.EmployeeName});
+    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+    var projectedEntity = await _unitOfWork.Repository<Employee>().GetProjectedEntityAsync(specification, selectExpression);
 
 #### 13. To check if an entity exists:
 
