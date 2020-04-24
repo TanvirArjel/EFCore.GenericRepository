@@ -12,15 +12,15 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 4. It also has **`Specification<T>`** pattern support so that you can build your query dynamically i.e. differed query building.
 
-5. It has also database level projection support for your query.
+5. It also has database level projection support for your query.
 
 6. It also has support to run raw SQL command against your relational database.
 
 7. It also has support to choose whether you would like to track your query entity/entities or not.
 
-8. It has also support to reset your EF Core DbContext state whenever you really needed.
+8. It also has support to reset your EF Core DbContext state whenever you really needed.
 
-9.  Most importantly, it has full Unit Testing support.
+9. Most importantly, it has full Unit Testing support.
 
 ## Giving a star*
 
