@@ -96,11 +96,9 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
     specification.Skip = 0;
     specification.Take = 10;
 
-    List<Employee> employeeList = await _unitOfWork.Repository<Employee>()
-                                  .GetEntityListAsync(specification);
+    List<Employee> employeeList = await _unitOfWork.Repository<Employee>().GetEntityListAsync(specification);
                                   
-    List<Employee> noTrackedEmployeeList = await _unitOfWork.Repository<Employee>()
-                                           .GetEntityListAsync(specification, true);
+    List<Employee> noTrackedEmployeeList = await _unitOfWork.Repository<Employee>() .GetEntityListAsync(specification, true);
                                   
  #### 4. To get projected entity list:
     
