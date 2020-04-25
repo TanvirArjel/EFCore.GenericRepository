@@ -32,15 +32,15 @@ First install the appropriate version of `TanvirArjel.EFCore.GenericRepository` 
 
 **For EF Core 2.x :**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 2.0.0
+    Install-Package TanvirArjel.EFCore.GenericRepository -Version 2.0.1
     
 **For EF Core 3.0 :**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.0.0
+    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.0.1
     
 **For EF Core >= 3.1 :**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.1.0
+    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.1.1
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
