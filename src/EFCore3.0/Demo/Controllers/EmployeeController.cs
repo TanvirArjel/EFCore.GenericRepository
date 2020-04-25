@@ -35,6 +35,8 @@ namespace Demo.Controllers
                     EmployeeName = e.EmployeeName
                 });
 
+            await _unitOfWork.Repository<Employee>().GetEntityListAsync();
+
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 
             _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToList();
@@ -49,7 +51,7 @@ namespace Demo.Controllers
             {
                 return NotFound();
             }
-            Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(id);
+            Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(null);
             if (employee == null)
             {
                 return NotFound();

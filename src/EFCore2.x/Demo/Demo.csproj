@@ -9,11 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <ProjectReference Include="..\TanvirArjel.EFCore.GenericRepository\TanvirArjel.EFCore.GenericRepository.csproj" />
+    <PackageReference Include="TanvirArjel.EFCore.GenericRepository" Version="2.0.1" />
   </ItemGroup>
 
 </Project>

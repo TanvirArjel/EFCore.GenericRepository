@@ -79,8 +79,8 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.ToListAsync();
         }
 
-        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
+            Expression<Func<TEntity, TProjectedType>> selectExpression)
         {
             if (selectExpression == null)
             {
@@ -95,7 +95,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class
         {
             if (selectExpression == null)
             {
@@ -117,7 +116,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class
         {
             if (selectExpression == null)
             {
@@ -183,7 +181,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<TProjectedType> GetProjectedEntityByIdAsync<TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class
         {
             if (id == null)
             {
@@ -264,7 +261,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class
         {
             if (selectExpression == null)
             {
@@ -284,7 +280,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
-            where TProjectedType : class
         {
             if (selectExpression == null)
             {

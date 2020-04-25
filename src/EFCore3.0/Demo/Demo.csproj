@@ -18,10 +18,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TanvirArjel.EFCore.GenericRepository\TanvirArjel.EFCore.GenericRepository.csproj" />
+    <PackageReference Include="TanvirArjel.EFCore.GenericRepository" Version="3.0.1" />
   </ItemGroup>
 
 

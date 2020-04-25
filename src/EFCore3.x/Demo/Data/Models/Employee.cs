@@ -13,6 +13,6 @@ namespace Demo.Data.Models
         [Required]
         public string DepartmentName { get; set; }
 
-        public Department Department { get; set; }
+        //public Department Department { get; set; }
     }
 }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TanvirArjel.EFCore.GenericRepository.Services
 {
+    /// <summary>
+    /// Contains all the UnitOfWork services.
+    /// </summary>
     public interface IUnitOfWork
     {
         /// <summary>

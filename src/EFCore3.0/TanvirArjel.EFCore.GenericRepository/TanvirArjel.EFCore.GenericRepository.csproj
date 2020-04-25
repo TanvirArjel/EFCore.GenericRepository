@@ -2,11 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
     <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
     <Description>This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers pain to write repository layer for each .NET Core and .NET project.
 
-This library includes following notable features:
+This library includes the following notable features:
 
 1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
 
@@ -16,15 +18,16 @@ This library includes following notable features:
 
 4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
 
-5. It has also database level projection support for your query.
+5. It also has database level projection support for your query.
 
 6. It also has support to run raw SQL command against your relational database.
 
 7. It also has support to choose whether you would like to track your query entity/entities or not.
 
-8. It has also support to reset your EF Core DbContext state whenever you really needed.
+8. It also has support to reset your EF Core DbContext state whenever you really needed.
 
 9.  Most importantly, it has full Unit Testing support.</Description>
+    <Title>EF Core Generic Repository</Title>
     <Copyright>©2020 TanvirArjel. All rights reserved.</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
@@ -32,11 +35,14 @@ This library includes following notable features:
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>This release is for targetting EF Core version 3.0</PackageReleaseNotes>
+    <PackageReleaseNotes>The release contains the following bug fixes:
+
+1. Entity projection to value type was not working due to the reference type constraint. It has been fixed.
+2. XML comments were not showing on IntelliSense. It has been fixed.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
     <Authors>TanvirArjel</Authors>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>

@@ -26,13 +26,17 @@ namespace Demo.Controllers
         {
 
             Specification<Employee> specification = new Specification<Employee>();
-            specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
-            specification.Includes = ep => ep.Include(e => e.Department);
-            specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
-            specification.Skip = 0;
-            specification.Take = 10;
+            //specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
+            //specification.Includes = ep => ep.Include(e => e.Department);
+            //specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
+            //specification.Skip = 0;
+            //specification.Take = 10;
 
             Employee entityListAsync = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(1, true);
+
+            long v = _context.Set<Employee>().Select(e => e.EmployeeId).FirstOrDefault();
+
+            long employeeId = await _unitOfWork.Repository<Employee>().GetProjectedEntityByIdAsync(1, e => e.EmployeeId);
 
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 
