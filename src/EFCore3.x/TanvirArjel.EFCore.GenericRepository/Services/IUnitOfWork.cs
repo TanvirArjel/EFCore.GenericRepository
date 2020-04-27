@@ -2,6 +2,7 @@
 // Copyright (c) TanvirArjel. All rights reserved.
 // </copyright>
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TanvirArjel.EFCore.GenericRepository.Services
@@ -16,7 +17,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Services
         /// </summary>
         /// <typeparam name="T">The database entity type.</typeparam>
         /// <returns>Returns <see cref="Repository{T}"/>.</returns>
-        IRepository<T> Repository<T>()
+        IUnitOfWorkRepository<T> Repository<T>()
             where T : class;
 
         /// <summary>
@@ -43,7 +44,8 @@ namespace TanvirArjel.EFCore.GenericRepository.Services
         /// <summary>
         /// Trigger the execution of the EF core commands against the configuired database.
         /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

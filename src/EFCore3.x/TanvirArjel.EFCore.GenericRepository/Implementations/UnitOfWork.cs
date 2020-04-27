@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TanvirArjel.EFCore.GenericRepository.Services;
@@ -22,7 +23,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             _dbContext = dbContext;
         }
 
-        public IRepository<T> Repository<T>()
+        public IUnitOfWorkRepository<T> Repository<T>()
             where T : class
         {
             if (_repositories == null)
@@ -34,7 +35,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
 
             if (!_repositories.ContainsKey(type))
             {
-                Type repositoryType = typeof(Repository<>);
+                Type repositoryType = typeof(UnitOfWorkRepository<>);
 
                 object repositoryInstance =
                     Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _dbContext);
@@ -42,7 +43,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 _repositories.Add(type, repositoryInstance);
             }
 
-            return (IRepository<T>)_repositories[type];
+            return (IUnitOfWorkRepository<T>)_repositories[type];
         }
 
         public int ExecuteSqlCommand(string sql, params object[] parameters)
@@ -61,9 +62,9 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 .ForEach(e => e.State = EntityState.Detached);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

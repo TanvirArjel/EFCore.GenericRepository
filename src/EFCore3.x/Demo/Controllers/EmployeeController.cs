@@ -14,17 +14,19 @@ namespace Demo.Controllers
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository _repository;
         private readonly DemoDbContext _context;
-        public EmployeeController(IUnitOfWork unitOfWork, DemoDbContext context)
+        public EmployeeController(IUnitOfWork unitOfWork, IRepository repository, DemoDbContext context)
         {
             _unitOfWork = unitOfWork;
+            _repository = repository;
             _context = context;
         }
 
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-
+            await _unitOfWork.Repository<Employee>().GetLongCountAsync(null);
             Specification<Employee> specification = new Specification<Employee>();
             //specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
             //specification.Includes = ep => ep.Include(e => e.Department);

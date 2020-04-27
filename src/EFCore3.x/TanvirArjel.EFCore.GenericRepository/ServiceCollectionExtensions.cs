@@ -38,6 +38,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ApplicationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
             }
 
+            services.AddScoped<IRepository, Repository>(r => new Repository(dbContext));
             services.AddScoped<IUnitOfWork, UnitOfWork>(uow => new UnitOfWork(dbContext));
         }
     }
