@@ -6,7 +6,7 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
 
-2. It’s providing the Generic Repository through Unit of Work pattern.
+2. It’s providing the Generic Repository with and without Unit of Work pattern.
 
 3. It has all the required methods to query your data in whatever way you want without getting IQueryable<T> from the repository.
 
@@ -30,17 +30,17 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 First install the appropriate version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
-**For EF Core 2.x :**
+**For EF Core 2.x.x :**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 2.0.1
+    Install-Package TanvirArjel.EFCore.GenericRepository -Version 2.0.2
     
-**For EF Core 3.0 :**
+**For EF Core 3.0.x :**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.0.1
+    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.0.2
     
-**For EF Core >= 3.1 :**
+**For EF Core >= 3.1.x :**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.1.1
+    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.1.2
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
@@ -54,11 +54,12 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     
 ## Usage:
 
-Now inject `IUnitOfWork` interface in your relevant class constructor and use as follows:
+1.If you want to use Generic repository through Unit of Work pattern, then inject `IUnitOfWork` interface in your relevant class constructor and use as follows:
 
     public class EmployeeService
     {
          private readonly IUnitOfWork _unitOfWork;
+         
          public EmployeeService(IUnitOfWork unitOfWork)
          {
              _unitOfWork = unitOfWork;
@@ -67,6 +68,24 @@ Now inject `IUnitOfWork` interface in your relevant class constructor and use as
          public async Task<Employee> GetEmployeeAsync(int employeeId)
          {
              Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(1);
+             return employee;
+         }
+    }
+    
+2.If you want to use Generic repository without Unit of Work pattern, then inject `IRepository` interface in your relevant class constructor and use as follows:
+
+    public class EmployeeService
+    {
+         private readonly IRepository _repository;
+         
+         public EmployeeService(IRepository repository)
+         {
+             _repository = repository;
+         }
+         
+         public async Task<Employee> GetEmployeeAsync(int employeeId)
+         {
+             Employee employee = await _repository.GetEntityByIdAsync<Employee>(1);
              return employee;
          }
     }
