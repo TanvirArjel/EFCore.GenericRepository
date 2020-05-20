@@ -12,7 +12,7 @@ This library includes the following notable features:
 
 1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
 
-2. It’s providing the Generic Repository through Unit of Work pattern.
+2. It’s providing the Generic Repository with and without Unit of Work pattern.
 
 3. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
 
@@ -35,12 +35,9 @@ This library includes the following notable features:
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>The release contains the following bug fixes:
-
-1. Entity projection to value type was not working due to the reference type constraint. It has been fixed.
-2. XML comments were not showing on IntelliSense. It has been fixed.</PackageReleaseNotes>
+    <PackageReleaseNotes>1. This release added support of generic repository through generic methods for more simplicity.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>3.0.1</Version>
+    <Version>3.0.2</Version>
     <Authors>TanvirArjel</Authors>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
@@ -62,7 +59,8 @@ This library includes the following notable features:
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -71,7 +69,7 @@ This library includes the following notable features:
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.19" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

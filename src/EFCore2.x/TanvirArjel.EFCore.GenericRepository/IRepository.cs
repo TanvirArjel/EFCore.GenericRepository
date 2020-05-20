@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TanvirArjel.EFCore.GenericRepository.Services
+namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
     /// Contains all the repository methods.
@@ -19,7 +19,10 @@ namespace TanvirArjel.EFCore.GenericRepository.Services
         /// <summary>
         /// Gets <see cref="IQueryable{T}"/> of the entity.
         /// </summary>
-        IQueryable Entities { get; }
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <returns>Returns <see cref="IQueryable{T}"/>.</returns>
+        IQueryable<TEntity> GetQueryable<TEntity>()
+            where TEntity : class;
 
         /// <summary>
         /// This method returns <see cref="List{T}"/> without any filter. Call only when you want to pull all the data from the source.

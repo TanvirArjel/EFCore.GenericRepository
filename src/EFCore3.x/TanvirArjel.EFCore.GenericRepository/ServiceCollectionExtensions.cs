@@ -6,7 +6,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TanvirArjel.EFCore.GenericRepository.Implementations;
-using TanvirArjel.EFCore.GenericRepository.Services;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {

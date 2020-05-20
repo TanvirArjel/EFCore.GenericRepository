@@ -6,46 +6,49 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using TanvirArjel.EFCore.GenericRepository.Services;
 
 namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
-    internal class Repository<TEntity> : IRepository<TEntity>
-        where TEntity : class
+    internal class Repository : IRepository
     {
         private readonly DbContext _dbContext;
 
         public Repository(DbContext dbContext)
         {
             _dbContext = dbContext;
-            Entities = dbContext.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> Entities { get; }
-
-        public async Task<List<TEntity>> GetEntityListAsync(bool asNoTracking = false)
+        public IQueryable<T> GetQueryable<T>()
+            where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            return _dbContext.Set<T>();
+        }
+
+        public async Task<List<T>> GetEntityListAsync<T>(bool asNoTracking = false)
+            where T : class
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (asNoTracking)
             {
                 query = query.AsNoTracking();
             }
 
-            List<TEntity> entities = await query.ToListAsync();
+            List<T> entities = await query.ToListAsync();
 
             return entities;
         }
 
-        public async Task<List<TEntity>> GetEntityListAsync(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false)
+        public async Task<List<T>> GetEntityListAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
+             where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (condition != null)
             {
@@ -57,14 +60,15 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 query = query.AsNoTracking();
             }
 
-            List<TEntity> entities = await query.ToListAsync();
+            List<T> entities = await query.ToListAsync();
 
             return entities;
         }
 
-        public async Task<List<TEntity>> GetEntityListAsync(Specification<TEntity> specification, bool asNoTracking = false)
+        public async Task<List<T>> GetEntityListAsync<T>(Specification<T> specification, bool asNoTracking = false)
+            where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (specification != null)
             {
@@ -79,29 +83,31 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.ToListAsync();
         }
 
-        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<T, TProjectedType>(
+            Expression<Func<T, TProjectedType>> selectExpression)
+            where T : class
         {
             if (selectExpression == null)
             {
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            List<TProjectedType> entities = await _dbContext.Set<TEntity>().Select(selectExpression).ToListAsync();
+            List<TProjectedType> entities = await _dbContext.Set<T>().Select(selectExpression).ToListAsync();
 
             return entities;
         }
 
-        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<T, TProjectedType>(
+            Expression<Func<T, bool>> condition,
+            Expression<Func<T, TProjectedType>> selectExpression)
+            where T : class
         {
             if (selectExpression == null)
             {
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (condition != null)
             {
@@ -113,16 +119,17 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return projectedEntites;
         }
 
-        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<TProjectedType>(
-            Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+        public async Task<List<TProjectedType>> GetProjectedEntityListAsync<T, TProjectedType>(
+            Specification<T> specification,
+            Expression<Func<T, TProjectedType>> selectExpression)
+            where T : class
         {
             if (selectExpression == null)
             {
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (specification != null)
             {
@@ -132,14 +139,15 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).ToListAsync();
         }
 
-        public async Task<TEntity> GetEntityByIdAsync(object id, bool asNoTracking = false)
+        public async Task<T> GetEntityByIdAsync<T>(object id, bool asNoTracking = false)
+            where T : class
         {
             if (id == null)
             {
                 throw new ArgumentNullException(nameof(id));
             }
 
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
 
             string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
             Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
@@ -160,27 +168,28 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
             }
 
-            ParameterExpression pe = Expression.Parameter(typeof(TEntity), "entity");
+            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
             MemberExpression me = Expression.Property(pe, primaryKeyName);
             ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
             BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<TEntity, bool>> expressionTree = Expression.Lambda<Func<TEntity, bool>>(body, new[] { pe });
+            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
 
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (asNoTracking)
             {
-                TEntity noTrackedEntity = await query.AsNoTracking().FirstOrDefaultAsync(expressionTree);
+                T noTrackedEntity = await query.AsNoTracking().FirstOrDefaultAsync(expressionTree);
                 return noTrackedEntity;
             }
 
-            TEntity trackedEntity = await query.FirstOrDefaultAsync(expressionTree);
+            T trackedEntity = await query.FirstOrDefaultAsync(expressionTree);
             return trackedEntity;
         }
 
-        public async Task<TProjectedType> GetProjectedEntityByIdAsync<TProjectedType>(
+        public async Task<TProjectedType> GetProjectedEntityByIdAsync<T, TProjectedType>(
             object id,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<T, TProjectedType>> selectExpression)
+            where T : class
         {
             if (id == null)
             {
@@ -192,7 +201,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
 
             string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
             Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
@@ -213,20 +222,21 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
             }
 
-            ParameterExpression pe = Expression.Parameter(typeof(TEntity), "entity");
+            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
             MemberExpression me = Expression.Property(pe, primaryKeyName);
             ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
             BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<TEntity, bool>> expressionTree = Expression.Lambda<Func<TEntity, bool>>(body, new[] { pe });
+            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
 
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync();
         }
 
-        public async Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false)
+        public async Task<T> GetEntityAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
+           where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (condition != null)
             {
@@ -241,9 +251,10 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<TEntity> GetEntityAsync(Specification<TEntity> specification, bool asNoTracking = false)
+        public async Task<T> GetEntityAsync<T>(Specification<T> specification, bool asNoTracking = false)
+            where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (specification != null)
             {
@@ -258,16 +269,17 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+        public async Task<TProjectedType> GetProjectedEntityAsync<T, TProjectedType>(
+            Expression<Func<T, bool>> condition,
+            Expression<Func<T, TProjectedType>> selectExpression)
+            where T : class
         {
             if (selectExpression == null)
             {
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (condition != null)
             {
@@ -277,16 +289,17 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
-        public async Task<TProjectedType> GetProjectedEntityAsync<TProjectedType>(
-            Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+        public async Task<TProjectedType> GetProjectedEntityAsync<T, TProjectedType>(
+            Specification<T> specification,
+            Expression<Func<T, TProjectedType>> selectExpression)
+            where T : class
         {
             if (selectExpression == null)
             {
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (specification != null)
             {
@@ -296,30 +309,34 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IsEntityExistsAsync(Expression<Func<TEntity, bool>> condition)
+        public async Task<bool> IsEntityExistsAsync<T>(Expression<Func<T, bool>> condition)
+           where T : class
         {
             if (condition == null)
             {
                 return false;
             }
 
-            bool isExists = await _dbContext.Set<TEntity>().AnyAsync(condition);
+            bool isExists = await _dbContext.Set<T>().AnyAsync(condition);
             return isExists;
         }
 
-        public async Task InsertEntityAsync(TEntity entity)
+        public async Task InsertEntityAsync<T>(T entity)
+           where T : class
         {
-            await _dbContext.Set<TEntity>().AddAsync(entity);
+            await _dbContext.Set<T>().AddAsync(entity);
         }
 
-        public async Task InsertEntitiesAsync(IEnumerable<TEntity> entities)
+        public async Task InsertEntitiesAsync<T>(IEnumerable<T> entities)
+            where T : class
         {
-            await _dbContext.Set<TEntity>().AddRangeAsync(entities);
+            await _dbContext.Set<T>().AddRangeAsync(entities);
         }
 
-        public void UpdateEntity(TEntity entity)
+        public void UpdateEntity<T>(T entity)
+            where T : class
         {
-            EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
+            EntityEntry<T> trackedEntity = _dbContext.ChangeTracker.Entries<T>().FirstOrDefault(x => x.Entity == entity);
 
             if (trackedEntity != null)
             {
@@ -327,35 +344,46 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             }
             else
             {
-                _dbContext.Set<TEntity>().Update(entity);
+                _dbContext.Set<T>().Update(entity);
             }
         }
 
-        public void UpdateEntities(IEnumerable<TEntity> entities)
+        public void UpdateEntities<T>(IEnumerable<T> entities)
+            where T : class
         {
-            _dbContext.Set<TEntity>().UpdateRange(entities);
+            _dbContext.Set<T>().UpdateRange(entities);
         }
 
-        public void DeleteEntity(TEntity entity)
+        public void DeleteEntity<T>(T entity)
+            where T : class
         {
-            _dbContext.Set<TEntity>().Remove(entity);
+            _dbContext.Set<T>().Remove(entity);
         }
 
-        public void DeleteEntities(IEnumerable<TEntity> entities)
+        public void DeleteEntities<T>(IEnumerable<T> entities)
+            where T : class
         {
-            _dbContext.Set<TEntity>().RemoveRange(entities);
+            _dbContext.Set<T>().RemoveRange(entities);
         }
 
-        public async Task<int> GetCountAsync(params Expression<Func<TEntity, bool>>[] conditions)
+        public async Task<int> GetCountAsync<T>()
+            where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            int count = await _dbContext.Set<T>().CountAsync();
+            return count;
+        }
+
+        public async Task<int> GetCountAsync<T>(params Expression<Func<T, bool>>[] conditions)
+            where T : class
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (conditions == null)
             {
                 return await query.CountAsync();
             }
 
-            foreach (Expression<Func<TEntity, bool>> expression in conditions)
+            foreach (Expression<Func<T, bool>> expression in conditions)
             {
                 query = query.Where(expression);
             }
@@ -363,21 +391,51 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.CountAsync();
         }
 
-        public async Task<long> GetLongCountAsync(params Expression<Func<TEntity, bool>>[] conditions)
+        public async Task<long> GetLongCountAsync<T>()
+            where T : class
         {
-            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            long count = await _dbContext.Set<T>().LongCountAsync();
+            return count;
+        }
+
+        public async Task<long> GetLongCountAsync<T>(params Expression<Func<T, bool>>[] conditions)
+            where T : class
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
 
             if (conditions == null)
             {
                 return await query.LongCountAsync();
             }
 
-            foreach (Expression<Func<TEntity, bool>> expression in conditions)
+            foreach (Expression<Func<T, bool>> expression in conditions)
             {
                 query = query.Where(expression);
             }
 
             return await query.LongCountAsync();
+        }
+
+        // DbConext level members
+        public int ExecuteSqlCommand(string sql, params object[] parameters)
+        {
+            return _dbContext.Database.ExecuteSqlCommand(sql, parameters);
+        }
+
+        public async Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
+        {
+            return await _dbContext.Database.ExecuteSqlCommandAsync(sql, parameters);
+        }
+
+        public void ResetContextState()
+        {
+            _dbContext.ChangeTracker.Entries().Where(e => e.Entity != null).ToList()
+                .ForEach(e => e.State = EntityState.Detached);
+        }
+
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

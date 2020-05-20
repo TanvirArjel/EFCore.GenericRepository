@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace TanvirArjel.EFCore.GenericRepository.Services
+namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
     /// Contains all the repository methods.

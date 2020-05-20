@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
-using TanvirArjel.EFCore.GenericRepository.Services;
 using TanvirArjel.EFCore.GenericRepository;
+using System.Collections.Generic;
 
 namespace Demo.Controllers
 {
@@ -26,7 +26,7 @@ namespace Demo.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            await _unitOfWork.Repository<Employee>().GetLongCountAsync(null);
+            await _unitOfWork.Repository<Employee>().GetLongCountAsync();
             Specification<Employee> specification = new Specification<Employee>();
             //specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
             //specification.Includes = ep => ep.Include(e => e.Department);
@@ -34,17 +34,18 @@ namespace Demo.Controllers
             //specification.Skip = 0;
             //specification.Take = 10;
 
-            Employee entityListAsync = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(1, true);
+            List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
+            Employee entityListAsync = await _repository.GetEntityByIdAsync<Employee>(1, true);
 
-            long v = _context.Set<Employee>().Select(e => e.EmployeeId).FirstOrDefault();
 
-            long employeeId = await _unitOfWork.Repository<Employee>().GetProjectedEntityByIdAsync(1, e => e.EmployeeId);
+
+            long v1 = await _repository.GetProjectedEntityByIdAsync<Employee, long>(1, e => e.EmployeeId);
 
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 
             _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToList();
             //await _unitOfWork.Repository<Employee>().GetEn
-            return View(entityListAsync);
+            return View(lists);
         }
 
         // GET: Employee/Details/5

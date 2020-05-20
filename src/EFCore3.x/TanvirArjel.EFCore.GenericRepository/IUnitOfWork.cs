@@ -5,7 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TanvirArjel.EFCore.GenericRepository.Services
+namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
     /// Contains all the UnitOfWork services.

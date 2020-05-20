@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using TanvirArjel.EFCore.GenericRepository.Services;
 
 namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
@@ -25,7 +24,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             _dbContext = dbContext;
         }
 
-        public IQueryable Entities => throw new NotImplementedException();
+        public IQueryable<T> GetQueryable<T>()
+            where T : class
+        {
+            return _dbContext.Set<T>();
+        }
 
         public async Task<List<T>> GetEntityListAsync<T>(bool asNoTracking = false)
             where T : class
