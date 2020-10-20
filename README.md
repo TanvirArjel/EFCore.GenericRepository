@@ -54,26 +54,6 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     
 ## Usage:
 
-1.If you want to use Generic repository through Unit of Work pattern, then inject `IUnitOfWork` interface in your relevant class constructor and use as follows:
-
-    public class EmployeeService
-    {
-         private readonly IUnitOfWork _unitOfWork;
-         
-         public EmployeeService(IUnitOfWork unitOfWork)
-         {
-             _unitOfWork = unitOfWork;
-         }
-         
-         public async Task<Employee> GetEmployeeAsync(int employeeId)
-         {
-             Employee employee = await _unitOfWork.Repository<Employee>().GetEntityByIdAsync(1);
-             return employee;
-         }
-    }
-    
-2.If you want to use Generic repository without Unit of Work pattern, then inject `IRepository` interface in your relevant class constructor and use as follows:
-
     public class EmployeeService
     {
          private readonly IRepository _repository;
@@ -257,8 +237,8 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     
 #### 20. To get the count of entities with or without condition:
 
-    int count =   _repository.GetCountAsync<Employee>(); // Count of all
-    int count =   _repository.GetCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Count with specified condtion
+    int count =   await _repository.GetCountAsync<Employee>(); // Count of all
+    int count =   await _repository.GetCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Count with specified condtion
     
-    long longCount =   _repository.GetLongCountAsync<Employee>(); // Long count of all
-    long longCount =   _repository.GetLongCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Long count with specified condtion
+    long longCount =   await _repository.GetLongCountAsync<Employee>(); // Long count of all
+    long longCount =   await _repository.GetLongCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Long count with specified condtion
