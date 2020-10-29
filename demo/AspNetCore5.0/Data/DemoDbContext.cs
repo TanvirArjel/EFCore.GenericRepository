@@ -1,8 +1,8 @@
 ﻿using System;
-using AspNetCore3._1.Data.Models;
+using AspNetCore5._0.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AspNetCore3._1.Data
+namespace AspNetCore5._0.Data
 {
     public class DemoDbContext : DbContext
     {
@@ -22,6 +22,6 @@ namespace AspNetCore3._1.Data
             modelBuilder.Entity<Employee>().HasKey(e => e.EmployeeId);
         }
 
-        public DbSet<AspNetCore3._1.Data.Models.Employee> Employee { get; set; }
+        public DbSet<Employee> Employee { get; set; }
     }
 }

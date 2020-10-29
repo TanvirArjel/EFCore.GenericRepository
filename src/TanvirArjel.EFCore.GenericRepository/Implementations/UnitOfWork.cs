@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
+    [Obsolete]
     internal class UnitOfWork : IUnitOfWork
     {
         private readonly DbContext _dbContext;

@@ -205,7 +205,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be inserted.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task InsertEntityAsync<TEntity>(TEntity entity)
+        Task<object[]> InsertEntityAsync<TEntity>(TEntity entity)
             where TEntity : class;
 
         /// <summary>

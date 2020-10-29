@@ -321,10 +321,15 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return isExists;
         }
 
-        public async Task InsertEntityAsync<T>(T entity)
+        public async Task<object[]> InsertEntityAsync<T>(T entity)
            where T : class
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+            EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity);
+
+            object[] primaryKeyValue = entityEntry.Metadata.FindPrimaryKey().Properties.
+                Select(p => entityEntry.Property(p.Name).CurrentValue).ToArray();
+
+            return primaryKeyValue;
         }
 
         public async Task InsertEntitiesAsync<T>(IEnumerable<T> entities)
