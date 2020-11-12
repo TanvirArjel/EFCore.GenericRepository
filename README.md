@@ -28,19 +28,9 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 ## How do I get started?
 
-First install the appropriate version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
+First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
-**For EF Core 2.x.x :**
-
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 2.0.2
-    
-**For EF Core 3.0.x :**
-
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.0.2
-    
-**For EF Core >= 3.1.x :**
-
-    Install-Package TanvirArjel.EFCore.GenericRepository -Version 3.1.2
+    Install-Package TanvirArjel.EFCore.GenericRepository
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
