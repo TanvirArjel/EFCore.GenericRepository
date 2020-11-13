@@ -6,12 +6,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
     <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
-    <Description>
-      This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
+    <Description>This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
       This library includes the following notable features:
 
-      1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
+      1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 ,.NET Standard 2.1 and .NET 5.0 support.
 
       2. It’s providing the Generic Repository with and without Unit of Work pattern.
 
@@ -27,15 +26,14 @@
 
       8. It also has support to reset your EF Core DbContext state whenever you really needed.
 
-      9.  Most importantly, it has full Unit Testing support.
-    </Description>
+      9.  Most importantly, it has full Unit Testing support.</Description>
     <Title>EF Core Generic Repository</Title>
     <Copyright>©2020 TanvirArjel. All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. This release added support of generic repository through generic methods for more simplicity.</PackageReleaseNotes>
+    <PackageReleaseNotes>1. EF Core 5.0 support has been added.</PackageReleaseNotes>
     <Version>5.0.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -61,7 +59,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0-*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
@@ -73,7 +71,7 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0-*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
   </ItemGroup>
 
   <ItemGroup>
