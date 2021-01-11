@@ -32,6 +32,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetListAsync<TEntity>(bool)` instead.")]
         Task<List<TEntity>> GetEntityListAsync<TEntity>(bool asNoTracking = false)
             where TEntity : class;
 
@@ -55,6 +56,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetListAsync<TEntity>(Expression<Func<TEntity, bool>>, bool)` instead.")]
         Task<List<TEntity>> GetEntityListAsync<TEntity>(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false)
             where TEntity : class;
 
@@ -81,6 +83,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetListAsync<TEntity>(Specification<TEntity>, bool)` instead.")]
         Task<List<TEntity>> GetEntityListAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking = false)
             where TEntity : class;
 
@@ -105,6 +108,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The type to which <typeparamref name="TEntity"/> will be projected.</typeparam>
         /// <param name="selectExpression">A <b>LINQ</b> select query.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetProjectedListAsync<TEntity, TProjectedType>(Expression<Func<TEntity, TProjectedType>>)` instead.")]
         Task<List<TProjectedType>> GetProjectedEntityListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TEntity : class;
@@ -129,6 +133,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetProjectedListAsync()` instead.")]
         Task<List<TProjectedType>> GetProjectedEntityListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -160,6 +165,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetProjectedListAsync()` instead.")]
         Task<List<TProjectedType>> GetProjectedEntityListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -192,6 +198,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetByIdAsync<TEntity>(object, bool)` instead.")]
         Task<TEntity> GetEntityByIdAsync<TEntity>(object id, bool asNoTracking = false)
             where TEntity : class;
 
@@ -218,6 +225,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetProjectedByIdAsync()` instead.")]
         Task<TProjectedType> GetProjectedEntityByIdAsync<TEntity, TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -247,6 +255,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetAsync()` instead.")]
         Task<TEntity> GetEntityAsync<TEntity>(Expression<Func<TEntity, bool>> condition, bool asNoTracking = false)
             where TEntity : class;
 
@@ -287,6 +296,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetAsync()` instead.")]
         Task<TEntity> GetEntityAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking = false)
             where TEntity : class;
 
@@ -299,6 +309,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetProjectedAsync()` instead.")]
         Task<TProjectedType> GetProjectedEntityAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -330,6 +341,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `GetProjectedAsync()` instead.")]
         Task<TProjectedType> GetProjectedEntityAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -359,6 +371,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition based on which the existence will checked.</param>
         /// <returns>Returns <see cref="bool"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `ExistsAsync()` instead.")]
         Task<bool> IsEntityExistsAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
             where TEntity : class;
 
@@ -379,6 +392,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be inserted.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `InsertAsync()` instead.")]
         Task<object[]> InsertEntityAsync<TEntity>(TEntity entity)
             where TEntity : class;
 
@@ -409,6 +423,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities to be inserted.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `InsertAsync()` instead.")]
         Task InsertEntitiesAsync<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class;
 
@@ -418,6 +433,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be updated.</param>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `Update()` instead.")]
         void UpdateEntity<TEntity>(TEntity entity)
             where TEntity : class;
 
@@ -445,6 +461,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities to be updated.</param>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `Update()` instead.")]
         void UpdateEntities<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class;
 
@@ -454,6 +471,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be deleted.</param>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `Delete()` instead.")]
         void DeleteEntity<TEntity>(TEntity entity)
             where TEntity : class;
 
@@ -481,6 +499,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The list of entities to be deleted.</param>
+        [Obsolete("This method will be removed in version 6.0.0. Please use `Delete()` instead.")]
         void DeleteEntities<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class;
 

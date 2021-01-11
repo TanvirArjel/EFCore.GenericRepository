@@ -649,14 +649,38 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public void UpdateEntity<T>(T entity)
             where T : class
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             EntityEntry<T> trackedEntity = _dbContext.ChangeTracker.Entries<T>().FirstOrDefault(x => x.Entity == entity);
 
-            if (trackedEntity != null)
+            if (trackedEntity == null)
             {
-                _dbContext.Entry(entity).CurrentValues.SetValues(entity);
-            }
-            else
-            {
+                IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+
+                if (entityType == null)
+                {
+                    throw new InvalidOperationException($"{typeof(T).Name} is not part of EF Core DbContext model");
+                }
+
+                string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+
+                if (primaryKeyName != null)
+                {
+                    Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+                    object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
+
+                    object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
+
+                    if (primaryKeyDefaultValue.Equals(primaryValue))
+                    {
+                        throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
+                    }
+                }
+
                 _dbContext.Set<T>().Update(entity);
             }
         }
@@ -664,14 +688,38 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public void Update<T>(T entity)
             where T : class
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             EntityEntry<T> trackedEntity = _dbContext.ChangeTracker.Entries<T>().FirstOrDefault(x => x.Entity == entity);
 
-            if (trackedEntity != null)
+            if (trackedEntity == null)
             {
-                _dbContext.Entry(entity).CurrentValues.SetValues(entity);
-            }
-            else
-            {
+                IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+
+                if (entityType == null)
+                {
+                    throw new InvalidOperationException($"{typeof(T).Name} is not part of EF Core DbContext model");
+                }
+
+                string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+
+                if (primaryKeyName != null)
+                {
+                    Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+                    object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
+
+                    object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
+
+                    if (primaryKeyDefaultValue.Equals(primaryValue))
+                    {
+                        throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
+                    }
+                }
+
                 _dbContext.Set<T>().Update(entity);
             }
         }
