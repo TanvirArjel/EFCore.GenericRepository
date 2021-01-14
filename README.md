@@ -55,7 +55,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
          
          public async Task<Employee> GetEmployeeAsync(int employeeId)
          {
-             Employee employee = await _repository.GetEntityByIdAsync<Employee>(1);
+             Employee employee = await _repository.GetByIdAsync<Employee>(1);
              return employee;
          }
     }
@@ -64,16 +64,16 @@ Then in the `ConfirugeServices` method of the `Startup` class:
 
 #### 1. To get all the data:
 
-    var employeeList =  await _repository.GetEntityListAsync<Employee>();
+    var employeeList =  await _repository.GetListAsync<Employee>();
     
-    var noTrackedEmployeeList = await _repository.GetEntityListAsync<Employee>(asNoTracking: true);
+    var noTrackedEmployeeList = await _repository.GetListAsync<Employee>(asNoTracking: true);
     
 #### 2. To get a filtered list of data:
 
-    var employeeList =  await _repository.GetEntityListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software");
+    var employeeList =  await _repository.GetListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software");
                         
     var noTrackedEmployeeList = await _repository
-                                .GetEntityListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software", asNoTracking: true);
+                                .GetListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software", asNoTracking: true);
 
 #### 3. To get a list of data by Specification<T>:
     
@@ -84,19 +84,19 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     specification.Skip = 0;
     specification.Take = 10;
 
-    List<Employee> employeeList = await _repository.GetEntityListAsync<Employee>(specification);
+    List<Employee> employeeList = await _repository.GetListAsync<Employee>(specification);
                                   
-    List<Employee> noTrackedEmployeeList = await _repository.GetEntityListAsync<Employee>(specification, true);
+    List<Employee> noTrackedEmployeeList = await _repository.GetListAsync<Employee>(specification, true);
                                   
  #### 4. To get the projected entity list:
     
     Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedList = await _repository.GetProjectedEntityListAsync<Employee, object>(selectExpression);
+    var projectedList = await _repository.GetProjectedListAsync<Employee, object>(selectExpression);
                       
  #### 5. To get filtered projected entity list:
  
     Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var filteredProjectedList = await _repository.GetProjectedEntityListAsync<Employee, object>(e => e.IsActive, selectExpression);
+    var filteredProjectedList = await _repository.GetProjectedListAsync<Employee, object>(e => e.IsActive, selectExpression);
                                             
  #### 6. To get the projected entity list by `Specification<T>`:
  
@@ -108,24 +108,24 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     specification.Take = 10;
     
     Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedList = await _repository.GetProjectedEntityListAsync<Employee, object>(specification, selectExpression);
+    var projectedList = await _repository.GetProjectedListAsync<Employee, object>(specification, selectExpression);
                       
 #### 7. To get an entity by Id (primary key):
 
-    Employee employee = await _repository.GetEntityByIdAsync<Employee>(1);
+    Employee employee = await _repository.GetByIdAsync<Employee>(1);
     
-    Employee noTrackedEmployee = await _repository.GetEntityByIdAsync<Employee>(1, true);
+    Employee noTrackedEmployee = await _repository.GetByIdAsync<Employee>(1, true);
     
 #### 8. To get a projected entity by Id (primary key):
     
     Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedEntity = await _repository.GetProjectedEntityByIdAsync<Employee, object>(1, selectExpression);
+    var projectedEntity = await _repository.GetProjectedByIdAsync<Employee, object>(1, selectExpression);
 
 #### 9. To get a single entity by any condition/filter:
 
-    Employee employee = await _repository.GetEntityAsync<Employee>(e => e.EmployeeName == "Tanvir");
+    Employee employee = await _repository.GetAsync<Employee>(e => e.EmployeeName == "Tanvir");
     
-    Employee noTrackedEmployee = await _repository.GetEntityAsync<Employee>(e => e.EmployeeName == "Tanvir", true);
+    Employee noTrackedEmployee = await _repository.GetAsync<Employee>(e => e.EmployeeName == "Tanvir", true);
     
 #### 10. To get a single entity by `Specification<T>`:
     
@@ -134,14 +134,14 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     specification.Includes = sp => sp.Include(e => e.Department);
     specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
     
-    Employee employee = await _repository.GetEntityAsync<Employee>(specification);
+    Employee employee = await _repository.GetAsync<Employee>(specification);
     
-    Employee noTrackedEmployee = await _repository.GetEntityAsync<Employee>(specification, true);
+    Employee noTrackedEmployee = await _repository.GetAsync<Employee>(specification, true);
     
 #### 11. To get a single projected entity by any condition/filter:
 
     Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedEntity = await _repository.GetProjectedEntityAsync<Employee, object>(e => e.EmployeeName == "Tanvir", selectExpression);
+    var projectedEntity = await _repository.GetProjectedAsync<Employee, object>(e => e.EmployeeName == "Tanvir", selectExpression);
     
 #### 12. To get a single projected entity by `Specification<T>`:
     
@@ -151,11 +151,11 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
     
     Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedEntity = await _repository.GetProjectedEntityAsync<Employee, object>(specification, selectExpression);
+    var projectedEntity = await _repository.GetProjectedAsync<Employee, object>(specification, selectExpression);
 
 #### 13. To check if an entity exists:
 
-    bool isExists = await _repository.IsEntityExistsAsync<Employee>(e => e.EmployeeName == "Tanvir");
+    bool isExists = await _repository.ExistsAsync<Employee>(e => e.EmployeeName == "Tanvir");
     
 #### 14. To create or insert a new entity:
 
@@ -165,7 +165,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        ..........
     }
     
-    await _repository.InsertEntityAsync<Employee>(employeeToBeCreated);
+    await _repository.InsertAsync<Employee>(employeeToBeCreated);
     await _repository.SaveChangesAsync();
     
 #### 15. To create or insert a collection of new entities:
@@ -176,7 +176,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        new Employee(){},
     }
     
-    await _repository.InsertEntitiesAsync<Employee>(employeesToBeCreated);
+    await _repository.InsertAsync<Employee>(employeesToBeCreated);
     await _repository.SaveChangesAsync();
     
 #### 16. To update or modify an entity:
@@ -188,7 +188,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        ..........
     }
     
-    _repository.UpdateEntity<Employee>(employeeToBeUpdated);
+    _repository.Update<Employee>(employeeToBeUpdated);
     await _repository.SaveChangesAsync();
     
 #### 17. To update or modify the collection of entities:
@@ -199,7 +199,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        new Employee(){},
     }
     
-    _repository.UpdateEntities<Employee>(employeesToBeUpdated);
+    _repository.Update<Employee>(employeesToBeUpdated);
     await _repository.SaveChangesAsync();
     
 #### 18. To delete an entity:
@@ -211,7 +211,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        ..........
     }
     
-    _repository.DeleteEntity<Employee>(employeeToBeDeleted);
+    _repository.Delete<Employee>(employeeToBeDeleted);
     await _repository.SaveChangesAsync();
     
 #### 19. To delete a collection of entities:
@@ -222,7 +222,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        new Employee(){},
     }
     
-    _repository.DeleteEntities<Employee>(employeesToBeDeleted);
+    _repository.Delete<Employee>(employeesToBeDeleted);
     await _repository.SaveChangesAsync();
     
 #### 20. To get the count of entities with or without condition:
