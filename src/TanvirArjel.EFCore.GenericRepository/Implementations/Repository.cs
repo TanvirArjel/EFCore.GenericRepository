@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
@@ -33,22 +34,37 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<List<T>> GetEntityListAsync<T>(bool asNoTracking = false)
             where T : class
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            List<T> entities = await query.ToListAsync();
-
-            return entities;
+            return await GetListAsync<T>(false);
         }
 
-        public async Task<List<T>> GetListAsync<T>(bool asNoTracking = false)
+        public async Task<List<T>> GetListAsync<T>()
+            where T : class
+        {
+            return await GetListAsync<T>(false);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(bool asNoTracking)
+            where T : class
+        {
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> nullValue = null;
+            return await GetListAsync<T>(nullValue, asNoTracking);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(Func<IQueryable<T>, IIncludableQueryable<T, object>> includes)
+            where T : class
+        {
+            return await GetListAsync<T>(includes, false);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(Func<IQueryable<T>, IIncludableQueryable<T, object>> includes, bool asNoTracking)
             where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
+
+            if (includes != null)
+            {
+                query = includes(query);
+            }
 
             if (asNoTracking)
             {
@@ -63,24 +79,25 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<List<T>> GetEntityListAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
              where T : class
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            List<T> entities = await query.ToListAsync();
-
-            return entities;
+            return await GetListAsync(condition, asNoTracking);
         }
 
-        public async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
+        public async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition)
+             where T : class
+        {
+            return await GetListAsync(condition, false);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking)
+             where T : class
+        {
+            return await GetListAsync(condition, null, asNoTracking);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(
+            Expression<Func<T, bool>> condition,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+            bool asNoTracking)
              where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
@@ -88,6 +105,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             if (condition != null)
             {
                 query = query.Where(condition);
+            }
+
+            if (includes != null)
+            {
+                query = includes(query);
             }
 
             if (asNoTracking)
@@ -103,22 +125,16 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<List<T>> GetEntityListAsync<T>(Specification<T> specification, bool asNoTracking = false)
             where T : class
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.ToListAsync();
+            return await GetListAsync(specification, asNoTracking);
         }
 
-        public async Task<List<T>> GetListAsync<T>(Specification<T> specification, bool asNoTracking = false)
+        public async Task<List<T>> GetListAsync<T>(Specification<T> specification)
+           where T : class
+        {
+            return await GetListAsync(specification, false);
+        }
+
+        public async Task<List<T>> GetListAsync<T>(Specification<T> specification, bool asNoTracking)
            where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
@@ -256,46 +272,47 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(id));
             }
 
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primayKeyValue = null;
-
-            try
-            {
-                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (asNoTracking)
-            {
-                T noTrackedEntity = await query.AsNoTracking().FirstOrDefaultAsync(expressionTree);
-                return noTrackedEntity;
-            }
-
-            T trackedEntity = await query.FirstOrDefaultAsync(expressionTree);
+            T trackedEntity = await GetByIdAsync<T>(id, asNoTracking);
             return trackedEntity;
         }
 
-        public async Task<T> GetByIdAsync<T>(object id, bool asNoTracking = false)
+        public async Task<T> GetByIdAsync<T>(object id)
+            where T : class
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            T trackedEntity = await GetByIdAsync<T>(id, false);
+            return trackedEntity;
+        }
+
+        public async Task<T> GetByIdAsync<T>(object id, bool asNoTracking)
+            where T : class
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            T trackedEntity = await GetByIdAsync<T>(id, null, asNoTracking);
+            return trackedEntity;
+        }
+
+        public async Task<T> GetByIdAsync<T>(object id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes)
+            where T : class
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            T trackedEntity = await GetByIdAsync<T>(id, includes, false);
+            return trackedEntity;
+        }
+
+        public async Task<T> GetByIdAsync<T>(object id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes, bool asNoTracking = false)
             where T : class
         {
             if (id == null)
@@ -332,10 +349,14 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
 
             IQueryable<T> query = _dbContext.Set<T>();
 
+            if (includes != null)
+            {
+                query = includes(query);
+            }
+
             if (asNoTracking)
             {
-                T noTrackedEntity = await query.AsNoTracking().FirstOrDefaultAsync(expressionTree);
-                return noTrackedEntity;
+                query = query.AsNoTracking();
             }
 
             T trackedEntity = await query.FirstOrDefaultAsync(expressionTree);
@@ -439,22 +460,33 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<T> GetEntityAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
            where T : class
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.FirstOrDefaultAsync();
+            return await GetAsync(condition, asNoTracking);
         }
 
-        public async Task<T> GetAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
+        public async Task<T> GetAsync<T>(Expression<Func<T, bool>> condition)
+           where T : class
+        {
+            return await GetAsync(condition, null, false);
+        }
+
+        public async Task<T> GetAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking)
+           where T : class
+        {
+            return await GetAsync(condition, null, asNoTracking);
+        }
+
+        public async Task<T> GetAsync<T>(
+            Expression<Func<T, bool>> condition,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes)
+           where T : class
+        {
+            return await GetAsync(condition, includes, false);
+        }
+
+        public async Task<T> GetAsync<T>(
+            Expression<Func<T, bool>> condition,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+            bool asNoTracking)
            where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
@@ -462,6 +494,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             if (condition != null)
             {
                 query = query.Where(condition);
+            }
+
+            if (includes != null)
+            {
+                query = includes(query);
             }
 
             if (asNoTracking)
@@ -475,22 +512,16 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<T> GetEntityAsync<T>(Specification<T> specification, bool asNoTracking = false)
             where T : class
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.FirstOrDefaultAsync();
+            return await GetAsync(specification, asNoTracking);
         }
 
-        public async Task<T> GetAsync<T>(Specification<T> specification, bool asNoTracking = false)
+        public async Task<T> GetAsync<T>(Specification<T> specification)
+            where T : class
+        {
+            return await GetAsync(specification, false);
+        }
+
+        public async Task<T> GetAsync<T>(Specification<T> specification, bool asNoTracking)
             where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
@@ -591,36 +622,33 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<bool> IsEntityExistsAsync<T>(Expression<Func<T, bool>> condition)
            where T : class
         {
-            if (condition == null)
-            {
-                return false;
-            }
+            return await ExistsAsync<T>(condition);
+        }
 
-            bool isExists = await _dbContext.Set<T>().AnyAsync(condition);
-            return isExists;
+        public async Task<bool> ExistsAsync<T>()
+           where T : class
+        {
+            return await ExistsAsync<T>(null);
         }
 
         public async Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> condition)
            where T : class
         {
+            IQueryable<T> query = _dbContext.Set<T>();
+
             if (condition == null)
             {
-                return false;
+                return await query.AnyAsync();
             }
 
-            bool isExists = await _dbContext.Set<T>().AnyAsync(condition);
+            bool isExists = await query.AnyAsync(condition);
             return isExists;
         }
 
         public async Task<object[]> InsertEntityAsync<T>(T entity)
            where T : class
         {
-            EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity);
-
-            object[] primaryKeyValue = entityEntry.Metadata.FindPrimaryKey().Properties.
-                Select(p => entityEntry.Property(p.Name).CurrentValue).ToArray();
-
-            return primaryKeyValue;
+            return await InsertAsync<T>(entity);
         }
 
         public async Task<object[]> InsertAsync<T>(T entity)
@@ -654,35 +682,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            EntityEntry<T> trackedEntity = _dbContext.ChangeTracker.Entries<T>().FirstOrDefault(x => x.Entity == entity);
-
-            if (trackedEntity == null)
-            {
-                IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-                if (entityType == null)
-                {
-                    throw new InvalidOperationException($"{typeof(T).Name} is not part of EF Core DbContext model");
-                }
-
-                string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-
-                if (primaryKeyName != null)
-                {
-                    Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-                    object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
-
-                    object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
-
-                    if (primaryKeyDefaultValue.Equals(primaryValue))
-                    {
-                        throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
-                    }
-                }
-
-                _dbContext.Set<T>().Update(entity);
-            }
+            Update<T>(entity);
         }
 
         public void Update<T>(T entity)
