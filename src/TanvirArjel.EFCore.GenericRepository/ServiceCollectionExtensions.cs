@@ -34,7 +34,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             if (dbContext == null)
             {
-                throw new ApplicationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
+                throw new InvalidOperationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
             }
 
             services.AddScoped<IRepository, Repository>(r => new Repository(dbContext));

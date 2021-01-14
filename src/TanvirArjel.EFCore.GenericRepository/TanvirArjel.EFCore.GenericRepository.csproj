@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
@@ -28,13 +28,15 @@
 
       9.  Most importantly, it has full Unit Testing support.</Description>
     <Title>EF Core Generic Repository</Title>
-    <Copyright>©2020 TanvirArjel. All rights reserved.</Copyright>
+    <Copyright>©2021 TanvirArjel. All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. EF Core 5.0 support has been added.</PackageReleaseNotes>
-    <Version>5.0.0</Version>
+    <PackageReleaseNotes>1. Some method names have been simplified.
+
+2. New overloads have been added.</PackageReleaseNotes>
+    <Version>5.1.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>TanvirArjel</Authors>
@@ -66,16 +68,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.*" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.0.*" />
-  </ItemGroup>
-  
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -84,7 +81,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.4" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.*" />
   </ItemGroup>
 
 </Project>

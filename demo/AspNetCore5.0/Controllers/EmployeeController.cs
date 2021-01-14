@@ -35,8 +35,7 @@ namespace AspNetCore5._0.Controllers
             //specification.Take = 10;
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
-            Employee entityListAsync = await _repository.GetByIdAsync<Employee>(1, true);
-
+            Employee entityListAsync = await _repository.GetByIdAsync<Employee>(1, q => q.Include(e => e.Department), true);
 
             long v1 = await _repository.GetProjectedByIdAsync<Employee, long>(1, e => e.EmployeeId);
 

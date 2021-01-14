@@ -525,7 +525,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes a predicate based on which existence of the entity will be determined
+        /// This method checks whether the database table contains any record.
         /// and returns <see cref="Task"/> of <see cref="bool"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>

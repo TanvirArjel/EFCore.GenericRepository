@@ -8,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
@@ -170,7 +169,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <param name="condition">The condition based on which the existence will checked.</param>
         /// <returns>Returns <see cref="bool"/>.</returns>
-        Task<bool> IsEntityExistsAsync([NotNull] Expression<Func<TEntity, bool>> condition);
+        Task<bool> IsEntityExistsAsync(Expression<Func<TEntity, bool>> condition);
 
         /// <summary>
         /// This method takes an <see cref="object"/> of type <typeparamref name="TEntity"/> to be inserted and returns <see cref="Task"/>.
@@ -178,7 +177,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <param name="entity">The entity to be inserted.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task InsertEntityAsync([NotNull] TEntity entity);
+        Task InsertEntityAsync(TEntity entity);
 
         /// <summary>
         /// This method takes <em>IEnumerable</em> of entities to be inserted and returns <see cref="Task"/>.
@@ -186,35 +185,35 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <param name="entities">The entities to be inserted.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task InsertEntitiesAsync([NotNull] IEnumerable<TEntity> entities);
+        Task InsertEntitiesAsync(IEnumerable<TEntity> entities);
 
         /// <summary>
         /// This method takes an <see cref="object"/> of type <typeparamref name="TEntity"/> to be updated and returns <see cref="void"/>.
         /// Update in the database will be affected after calling <see cref="IUnitOfWork.SaveChangesAsync(CancellationToken)"/> method.
         /// </summary>
         /// <param name="entity">The entity to be updated.</param>
-        void UpdateEntity([NotNull] TEntity entity);
+        void UpdateEntity(TEntity entity);
 
         /// <summary>
         /// This method takes <em>IEnumerable</em> of entities to be updated and returns <see cref="void"/>.
         /// Update in the database will be affected after calling <see cref="IUnitOfWork.SaveChangesAsync(CancellationToken)"/> method.
         /// </summary>
         /// <param name="entities">The entities to be updated.</param>
-        void UpdateEntities([NotNull] IEnumerable<TEntity> entities);
+        void UpdateEntities(IEnumerable<TEntity> entities);
 
         /// <summary>
         /// This method takes <typeparamref name="TEntity"/>, delete the entity and returns <see cref="void"/>.
         /// Deletion in the database will be affected after calling <see cref="IUnitOfWork.SaveChangesAsync(CancellationToken)"/> method.
         /// </summary>
         /// <param name="entity">The entity to be deleted.</param>
-        void DeleteEntity([NotNull] TEntity entity);
+        void DeleteEntity(TEntity entity);
 
         /// <summary>
         /// This method takes <see cref="IEnumerable{TEntity}"/> of entities, delete those entities and returns <see cref="void"/>.
         /// Deletion in the database will be affected after calling <see cref="IUnitOfWork.SaveChangesAsync(CancellationToken)"/> method.
         /// </summary>
         /// <param name="entities">The list of entities to be deleted.</param>
-        void DeleteEntities([NotNull] IEnumerable<TEntity> entities);
+        void DeleteEntities(IEnumerable<TEntity> entities);
 
         /// <summary>
         /// This method returns all count in <see cref="int"/> type.
@@ -227,7 +226,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <param name="conditions">The condition or conditions based on which count will be done.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="int"/>.</returns>
-        Task<int> GetCountAsync([NotNull] params Expression<Func<TEntity, bool>>[] conditions);
+        Task<int> GetCountAsync(params Expression<Func<TEntity, bool>>[] conditions);
 
         /// <summary>
         /// This method returns all long count in <see cref="long"/> type.
@@ -240,6 +239,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <param name="conditions">The condition or conditions based on which count will be done.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="long"/>.</returns>
-        Task<long> GetLongCountAsync([NotNull] params Expression<Func<TEntity, bool>>[] conditions);
+        Task<long> GetLongCountAsync(params Expression<Func<TEntity, bool>>[] conditions);
     }
 }
