@@ -19,10 +19,50 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
     internal class Repository : IRepository
     {
         private readonly DbContext _dbContext;
+        private readonly Dictionary<string, DbTransaction> _transactions;
 
         public Repository(DbContext dbContext)
         {
-            _dbContext = dbContext;
+            this._dbContext = dbContext;
+            this._transactions = new Dictionary<string, DbTransaction>();
+        }
+
+        public void OpenTransaction(string name, IsolationLevel level = IsolationLevel.Unspecified)
+        {
+            DbTransaction tran = this._dbContext.Database.GetDbConnection().BeginTransaction(level);
+            this._transactions.Add(name, tran);
+            this._dbContext.Database.UseTransaction(tran);
+        }
+
+        public void SwitchCurrentTransaction(string name)
+        {
+            bool exist = this._transactions.TryGetValue(name, out DbTransaction tran);
+            if (!exist)
+            {
+                throw new KeyNotFoundException(name);
+            }
+            this._dbContext.Database.UseTransaction(tran);
+        }
+        
+        public void CloseTransaction(string name, bool commit)
+        {
+            bool exist = this._transactions.TryGetValue(name, out DbTransaction tran);
+            if (!exist)
+            {
+                throw new KeyNotFoundException(name);
+            }
+
+            if (commit)
+            {
+                tran.Commit();
+            }
+            else
+            {
+                tran.Rollback();
+            }
+
+            tran.Dispose();
+            this._transactions.Remove(name);
         }
 
         public IQueryable<T> GetQueryable<T>()
