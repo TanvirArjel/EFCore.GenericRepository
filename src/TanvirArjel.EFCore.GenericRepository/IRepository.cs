@@ -18,6 +18,26 @@ namespace TanvirArjel.EFCore.GenericRepository
     public interface IRepository
     {
         /// <summary>
+        /// Open a new transaction and switch on it for futur queries
+        /// </summary>
+        /// <param name="name">Name of the transaction</param>
+        /// <param name="level"><see cref="IsolationLevel"/> to be applied on this transaction. (Default to <see cref="IsolationLevel.Unspecified"/>)</param>
+        void OpenTransaction(string name, IsolationLevel level = IsolationLevel.Unspecified);
+
+        /// <summary>
+        /// Close an opened transcation
+        /// </summary>
+        /// <param name="name">This name of the transaction to close</param>
+        /// <param name="commit"><c>True</c> if commit must be applied, <c>False</c> if roolback must be applied</param>
+        void CloseTransaction(string name, bool commit);
+
+        /// <summary>
+        /// Switch current transaction to another created one
+        /// </summary>
+        /// <param name="name">Name of the transaction to switch to</param>
+        void SwitchCurrentTransaction(string name);
+        
+        /// <summary>
         /// Gets <see cref="IQueryable{T}"/> of the entity.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
