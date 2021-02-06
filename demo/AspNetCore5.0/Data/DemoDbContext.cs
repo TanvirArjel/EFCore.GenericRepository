@@ -23,5 +23,6 @@ namespace AspNetCore5._0.Data
         }
 
         public DbSet<Employee> Employee { get; set; }
+        public DbSet<EmployeeHistory> EmployeeHistories { get; set; }
     }
 }

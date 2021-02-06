@@ -35,11 +35,11 @@ namespace AspNetCore3._1.Controllers
             //specification.Take = 10;
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
-            Employee entityListAsync = await _repository.GetEntityByIdAsync<Employee>(1, true);
+            Employee entityListAsync = await _repository.GetByIdAsync<Employee>(1, true);
 
 
 
-            long v1 = await _repository.GetProjectedEntityByIdAsync<Employee, long>(1, e => e.EmployeeId);
+            long v1 = await _repository.GetProjectedByIdAsync<Employee, long>(1, e => e.EmployeeId);
 
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 
@@ -55,7 +55,7 @@ namespace AspNetCore3._1.Controllers
             {
                 return NotFound();
             }
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -79,8 +79,7 @@ namespace AspNetCore3._1.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repository.InsertEntityAsync(employee);
-                await _repository.SaveChangesAsync();
+                await _repository.InsertAsync(employee);
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);
@@ -94,7 +93,7 @@ namespace AspNetCore3._1.Controllers
                 return NotFound();
             }
 
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -121,11 +120,10 @@ namespace AspNetCore3._1.Controllers
 
             if (ModelState.IsValid)
             {
-                Employee employeeToBeUpdated = await _repository.GetEntityByIdAsync<Employee>(employee.EmployeeId);
+                Employee employeeToBeUpdated = await _repository.GetByIdAsync<Employee>(employee.EmployeeId);
                 employeeToBeUpdated.EmployeeName = employee.EmployeeName;
                 employeeToBeUpdated.DepartmentName = employee.DepartmentName;
-                _repository.UpdateEntity(employeeToBeUpdated);
-                await _repository.SaveChangesAsync();
+                await _repository.UpdateAsync(employeeToBeUpdated);
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);
@@ -139,7 +137,7 @@ namespace AspNetCore3._1.Controllers
                 return NotFound();
             }
 
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -153,9 +151,8 @@ namespace AspNetCore3._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
-            _repository.DeleteEntity(employee);
-            await _repository.SaveChangesAsync();
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            await _repository.DeleteAsync(employee);
             return RedirectToAction(nameof(Index));
         }
 

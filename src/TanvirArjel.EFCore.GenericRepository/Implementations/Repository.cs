@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,16 +14,66 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
     internal class Repository : IRepository
     {
         private readonly DbContext _dbContext;
+        private readonly Dictionary<string, IDbContextTransaction> _transactions;
 
         public Repository(DbContext dbContext)
         {
             _dbContext = dbContext;
+            _transactions = new Dictionary<string, IDbContextTransaction>();
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync(
+            IsolationLevel isolationLevel = IsolationLevel.Unspecified,
+            CancellationToken cancellationToken = default)
+        {
+            IDbContextTransaction dbContextTransaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+            return dbContextTransaction;
+        }
+
+        public async Task BeginTransactionAsync(
+            string trnasactionId,
+            IsolationLevel isolationLevel = IsolationLevel.Unspecified,
+            CancellationToken cancellationToken = default)
+        {
+            IDbContextTransaction dbContextTransaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+            _transactions.Add(trnasactionId, dbContextTransaction);
+        }
+
+        public async Task CommitTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default)
+        {
+            bool exist = _transactions.TryGetValue(trnasactionId, out IDbContextTransaction transaction);
+
+            if (!exist)
+            {
+                throw new KeyNotFoundException(nameof(trnasactionId));
+            }
+
+            await transaction.CommitAsync(cancellationToken);
+
+            transaction.Dispose();
+            _transactions.Remove(trnasactionId);
+        }
+
+        public async Task RollbackTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default)
+        {
+            bool exist = _transactions.TryGetValue(trnasactionId, out IDbContextTransaction transaction);
+
+            if (!exist)
+            {
+                throw new KeyNotFoundException(nameof(trnasactionId));
+            }
+
+            await transaction.RollbackAsync(cancellationToken);
+
+            transaction.Dispose();
+            _transactions.Remove(trnasactionId);
         }
 
         public IQueryable<T> GetQueryable<T>()
@@ -645,16 +696,18 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return isExists;
         }
 
+        [Obsolete]
         public async Task<object[]> InsertEntityAsync<T>(T entity)
            where T : class
         {
             return await InsertAsync<T>(entity);
         }
 
-        public async Task<object[]> InsertAsync<T>(T entity)
+        public async Task<object[]> InsertAsync<T>(T entity, CancellationToken cancellationToken = default)
            where T : class
         {
-            EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity);
+            EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             object[] primaryKeyValue = entityEntry.Metadata.FindPrimaryKey().Properties.
                 Select(p => entityEntry.Property(p.Name).CurrentValue).ToArray();
@@ -662,16 +715,19 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return primaryKeyValue;
         }
 
-        public async Task InsertAsync<T>(IEnumerable<T> entities)
+        public async Task InsertAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
            where T : class
         {
-            await _dbContext.Set<T>().AddRangeAsync(entities);
+            await _dbContext.Set<T>().AddRangeAsync(entities, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        [Obsolete]
         public async Task InsertEntitiesAsync<T>(IEnumerable<T> entities)
             where T : class
         {
             await _dbContext.Set<T>().AddRangeAsync(entities);
+            await _dbContext.SaveChangesAsync();
         }
 
         public void UpdateEntity<T>(T entity)
@@ -682,10 +738,10 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            Update<T>(entity);
+            UpdateAsync<T>(entity).GetAwaiter().GetResult();
         }
 
-        public void Update<T>(T entity)
+        public async Task UpdateAsync<T>(T entity, CancellationToken cancellationToken = default)
             where T : class
         {
             if (entity == null)
@@ -721,43 +777,53 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 }
 
                 _dbContext.Set<T>().Update(entity);
+                await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }
 
-        public void Update<T>(IEnumerable<T> entities)
+        public async Task UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
             _dbContext.Set<T>().UpdateRange(entities);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        [Obsolete]
         public void UpdateEntities<T>(IEnumerable<T> entities)
             where T : class
         {
             _dbContext.Set<T>().UpdateRange(entities);
+            _dbContext.SaveChanges();
         }
 
+        [Obsolete]
         public void DeleteEntity<T>(T entity)
             where T : class
         {
             _dbContext.Set<T>().Remove(entity);
+            _dbContext.SaveChanges();
         }
 
-        public void Delete<T>(T entity)
+        public async Task DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
             where T : class
         {
             _dbContext.Set<T>().Remove(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        [Obsolete]
         public void DeleteEntities<T>(IEnumerable<T> entities)
             where T : class
         {
             _dbContext.Set<T>().RemoveRange(entities);
+            _dbContext.SaveChanges();
         }
 
-        public void Delete<T>(IEnumerable<T> entities)
+        public async Task DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
             _dbContext.Set<T>().RemoveRange(entities);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<int> GetCountAsync<T>()
@@ -825,11 +891,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         {
             _dbContext.ChangeTracker.Entries().Where(e => e.Entity != null).ToList()
                 .ForEach(e => e.State = EntityState.Detached);
-        }
-
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

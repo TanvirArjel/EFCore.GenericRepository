@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCore5._0.Data;
@@ -53,7 +54,7 @@ namespace AspNetCore5._0.Controllers
             {
                 return NotFound();
             }
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -73,13 +74,40 @@ namespace AspNetCore5._0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,EmployeeName,DepartmentName")] Employee employee)
+        public async Task<IActionResult> Create(Employee employee)
         {
             if (ModelState.IsValid)
             {
-                await _repository.InsertEntityAsync(employee);
-                await _repository.SaveChangesAsync();
+                string transactionId = Guid.NewGuid().ToString();
+
+                try
+                {
+                    await _repository.BeginTransactionAsync(transactionId, IsolationLevel.ReadCommitted);
+
+                    employee.DepartmentId = 1;
+
+                    object[] primaryKeys = await _repository.InsertAsync(employee);
+
+
+                    long employeeId = (long)primaryKeys[0];
+                    EmployeeHistory employeeHistory = new EmployeeHistory()
+                    {
+                        EmployeeId = employeeId,
+                        DepartmentId = employee.DepartmentId,
+                        EmployeeName = employee.EmployeeName
+                    };
+
+                    await _repository.InsertAsync(employeeHistory);
+
+                    await _repository.CommitTransactionAsync(transactionId);
+                }
+                catch (Exception)
+                {
+                    await _repository.RollbackTransactionAsync(transactionId);
+                }
+
                 return RedirectToAction(nameof(Index));
+
             }
             return View(employee);
         }
@@ -92,7 +120,7 @@ namespace AspNetCore5._0.Controllers
                 return NotFound();
             }
 
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -119,11 +147,10 @@ namespace AspNetCore5._0.Controllers
 
             if (ModelState.IsValid)
             {
-                Employee employeeToBeUpdated = await _repository.GetEntityByIdAsync<Employee>(employee.EmployeeId);
+                Employee employeeToBeUpdated = await _repository.GetByIdAsync<Employee>(employee.EmployeeId);
                 employeeToBeUpdated.EmployeeName = employee.EmployeeName;
                 employeeToBeUpdated.DepartmentName = employee.DepartmentName;
-                _repository.UpdateEntity(employeeToBeUpdated);
-                await _repository.SaveChangesAsync();
+                await _repository.UpdateAsync(employeeToBeUpdated);
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);
@@ -137,7 +164,7 @@ namespace AspNetCore5._0.Controllers
                 return NotFound();
             }
 
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -151,9 +178,8 @@ namespace AspNetCore5._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Employee employee = await _repository.GetEntityByIdAsync<Employee>(id);
-            _repository.DeleteEntity(employee);
-            await _repository.SaveChangesAsync();
+            Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            await _repository.DeleteAsync(employee);
             return RedirectToAction(nameof(Index));
         }
 

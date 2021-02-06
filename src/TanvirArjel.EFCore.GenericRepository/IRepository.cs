@@ -4,11 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
@@ -17,6 +19,39 @@ namespace TanvirArjel.EFCore.GenericRepository
     /// </summary>
     public interface IRepository
     {
+        /// <summary>
+        /// Begin a new database transaction.
+        /// </summary>
+        /// <param name="isolationLevel"><see cref="IsolationLevel"/> to be applied on this transaction. (Default to <see cref="IsolationLevel.Unspecified"/>).</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns a <see cref="IDbContextTransaction"/> instance.</returns>
+        Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.Unspecified, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Begin a new database transaction and being tracked by the name provided.
+        /// </summary>
+        /// <param name="trnasactionId">An unique string to track the transaction.</param>
+        /// <param name="isolationLevel"><see cref="IsolationLevel"/> to be applied on this transaction. (Default to <see cref="IsolationLevel.Unspecified"/>).</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task BeginTransactionAsync(string trnasactionId, IsolationLevel isolationLevel = IsolationLevel.Unspecified, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Commit the transaction with provided name.
+        /// </summary>
+        /// <param name="trnasactionId">The unique id of the transaction to be committed.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task CommitTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Rollback the transaction with provided name.
+        /// </summary>
+        /// <param name="trnasactionId">The unique id of the transaction to be committed.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task RollbackTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Gets <see cref="IQueryable{T}"/> of the entity.
         /// </summary>
@@ -544,39 +579,37 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <typeparamref name="TEntity"/> to be inserted and returns <see cref="Task"/>.
-        /// Insertion in the database will be done after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <typeparamref name="TEntity"/>, insert it into database and returns <see cref="Task{TResult}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be inserted.</param>
-        /// <returns>Returns <see cref="Task"/>.</returns>
+        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         [Obsolete("This method will be removed in version 6.0.0. Please use `InsertAsync(TEntity)` instead.")]
         Task<object[]> InsertEntityAsync<TEntity>(TEntity entity)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <typeparamref name="TEntity"/> to be inserted and returns <see cref="Task"/>.
-        /// Insertion in the database will be done after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <typeparamref name="TEntity"/>, insert it into database and returns <see cref="Task{TResult}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be inserted.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task<object[]> InsertAsync<TEntity>(TEntity entity)
+        Task<object[]> InsertAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <typeparamref name="TEntity"/> to be inserted and returns <see cref="Task"/>.
-        /// Insertion in the database will be done after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <typeparamref name="TEntity"/>, insert it into the database and returns <see cref="Task"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities to be inserted.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task InsertAsync<TEntity>(IEnumerable<TEntity> entities)
+        Task InsertAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <em>IEnumerable</em> of entities to be inserted and returns <see cref="Task"/>.
-        /// Insertion in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <em>IEnumerable</em> of entities, insert them into database and returns <see cref="Task"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities to be inserted.</param>
@@ -586,8 +619,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <typeparamref name="TEntity"/> to be updated and returns <see cref="void"/>.
-        /// Update in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <typeparamref name="TEntity"/>, send update operation to the database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be updated.</param>
@@ -596,26 +628,27 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <typeparamref name="TEntity"/> to be updated and returns <see cref="void"/>.
-        /// Update in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <typeparamref name="TEntity"/>, send update operation to the database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be updated.</param>
-        void Update<TEntity>(TEntity entity)
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <see cref="IEnumerable{TEntity}"/> of entities to be updated and returns <see cref="void"/>.
-        /// Update in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <see cref="IEnumerable{TEntity}"/> of entities, send update operation to the database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities to be updated.</param>
-        void Update<TEntity>(IEnumerable<TEntity> entities)
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task UpdateAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <see cref="IEnumerable{TEntity}"/> of entities to be updated and returns <see cref="void"/>.
-        /// Update in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <see cref="IEnumerable{TEntity}"/> of entities, send update operation to the database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities to be updated.</param>
@@ -624,8 +657,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes an entity of type <typeparamref name="TEntity"/>, delete the entity and returns <see cref="void"/>.
-        /// Deletion in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes an entity of type <typeparamref name="TEntity"/>, delete the entity from database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be deleted.</param>
@@ -634,26 +666,27 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes an entity of type <typeparamref name="TEntity"/>, delete the entity and returns <see cref="void"/>.
-        /// Deletion in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes an entity of type <typeparamref name="TEntity"/>, delete the entity from database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity to be deleted.</param>
-        void Delete<TEntity>(TEntity entity)
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task DeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <see cref="IEnumerable{T}"/> of entities, delete those entities and returns <see cref="void"/>.
-        /// Deletion in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <see cref="IEnumerable{T}"/> of entities, delete those entities from database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The list of entities to be deleted.</param>
-        void Delete<TEntity>(IEnumerable<TEntity> entities)
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task DeleteAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <see cref="IEnumerable{T}"/> of entities, delete those entities and returns <see cref="void"/>.
-        /// Deletion in the database will be affected after calling <see cref="SaveChangesAsync(CancellationToken)"/> method.
+        /// This method takes <see cref="IEnumerable{T}"/> of entities, delete those entities from database and returns <see cref="void"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The list of entities to be deleted.</param>
@@ -717,12 +750,5 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Reset the DbContext state by removing all the tracked and attached entities.
         /// </summary>
         void ResetContextState();
-
-        /// <summary>
-        /// Saves all changes made in this context to the database.
-        /// </summary>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task"/>.</returns>
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
