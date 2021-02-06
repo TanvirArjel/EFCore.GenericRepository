@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
     <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
-    <Description>This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
+    <Description>This library is an Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
       This library includes the following notable features:
 
@@ -33,10 +33,10 @@
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. Some method names have been simplified.
+    <PackageReleaseNotes>1. Transaction support has been added.
 
-2. New overloads have been added.</PackageReleaseNotes>
-    <Version>5.1.0</Version>
+2. Contain some breaking changes. Please visit GitHub repository for more details.</PackageReleaseNotes>
+    <Version>5.2.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>TanvirArjel</Authors>

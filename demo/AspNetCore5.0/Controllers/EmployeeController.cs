@@ -7,6 +7,7 @@ using AspNetCore5._0.Data;
 using AspNetCore5._0.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using TanvirArjel.EFCore.GenericRepository;
 
 namespace AspNetCore5._0.Controllers
@@ -78,12 +79,10 @@ namespace AspNetCore5._0.Controllers
         {
             if (ModelState.IsValid)
             {
-                string transactionId = Guid.NewGuid().ToString();
+                IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
 
                 try
                 {
-                    await _repository.BeginTransactionAsync(transactionId, IsolationLevel.ReadCommitted);
-
                     employee.DepartmentId = 1;
 
                     object[] primaryKeys = await _repository.InsertAsync(employee);
@@ -99,11 +98,11 @@ namespace AspNetCore5._0.Controllers
 
                     await _repository.InsertAsync(employeeHistory);
 
-                    await _repository.CommitTransactionAsync(transactionId);
+                    await transaction.CommitAsync();
                 }
                 catch (Exception)
                 {
-                    await _repository.RollbackTransactionAsync(transactionId);
+                    await transaction.RollbackAsync();
                 }
 
                 return RedirectToAction(nameof(Index));

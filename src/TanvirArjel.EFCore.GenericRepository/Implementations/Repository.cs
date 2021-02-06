@@ -21,12 +21,10 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
     internal class Repository : IRepository
     {
         private readonly DbContext _dbContext;
-        private readonly Dictionary<string, IDbContextTransaction> _transactions;
 
         public Repository(DbContext dbContext)
         {
             _dbContext = dbContext;
-            _transactions = new Dictionary<string, IDbContextTransaction>();
         }
 
         public async Task<IDbContextTransaction> BeginTransactionAsync(
@@ -37,51 +35,13 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return dbContextTransaction;
         }
 
-        public async Task BeginTransactionAsync(
-            string trnasactionId,
-            IsolationLevel isolationLevel = IsolationLevel.Unspecified,
-            CancellationToken cancellationToken = default)
-        {
-            IDbContextTransaction dbContextTransaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
-            _transactions.Add(trnasactionId, dbContextTransaction);
-        }
-
-        public async Task CommitTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default)
-        {
-            bool exist = _transactions.TryGetValue(trnasactionId, out IDbContextTransaction transaction);
-
-            if (!exist)
-            {
-                throw new KeyNotFoundException(nameof(trnasactionId));
-            }
-
-            await transaction.CommitAsync(cancellationToken);
-
-            transaction.Dispose();
-            _transactions.Remove(trnasactionId);
-        }
-
-        public async Task RollbackTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default)
-        {
-            bool exist = _transactions.TryGetValue(trnasactionId, out IDbContextTransaction transaction);
-
-            if (!exist)
-            {
-                throw new KeyNotFoundException(nameof(trnasactionId));
-            }
-
-            await transaction.RollbackAsync(cancellationToken);
-
-            transaction.Dispose();
-            _transactions.Remove(trnasactionId);
-        }
-
         public IQueryable<T> GetQueryable<T>()
             where T : class
         {
             return _dbContext.Set<T>();
         }
 
+        [Obsolete]
         public async Task<List<T>> GetEntityListAsync<T>(bool asNoTracking = false)
             where T : class
         {
@@ -127,6 +87,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return entities;
         }
 
+        [Obsolete]
         public async Task<List<T>> GetEntityListAsync<T>(Expression<Func<T, bool>> condition, bool asNoTracking = false)
              where T : class
         {
@@ -173,6 +134,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return entities;
         }
 
+        [Obsolete]
         public async Task<List<T>> GetEntityListAsync<T>(Specification<T> specification, bool asNoTracking = false)
             where T : class
         {
@@ -203,6 +165,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.ToListAsync();
         }
 
+        [Obsolete]
         public async Task<List<TProjectedType>> GetProjectedEntityListAsync<T, TProjectedType>(
             Expression<Func<T, TProjectedType>> selectExpression)
             where T : class
@@ -231,6 +194,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return entities;
         }
 
+        [Obsolete]
         public async Task<List<TProjectedType>> GetProjectedEntityListAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -275,6 +239,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return projectedEntites;
         }
 
+        [Obsolete]
         public async Task<List<TProjectedType>> GetProjectedEntityListAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -315,6 +280,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).ToListAsync();
         }
 
+        [Obsolete]
         public async Task<T> GetEntityByIdAsync<T>(object id, bool asNoTracking = false)
             where T : class
         {
@@ -414,6 +380,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return trackedEntity;
         }
 
+        [Obsolete]
         public async Task<TProjectedType> GetProjectedEntityByIdAsync<T, TProjectedType>(
             object id,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -560,6 +527,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.FirstOrDefaultAsync();
         }
 
+        [Obsolete]
         public async Task<T> GetEntityAsync<T>(Specification<T> specification, bool asNoTracking = false)
             where T : class
         {
@@ -590,6 +558,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.FirstOrDefaultAsync();
         }
 
+        [Obsolete]
         public async Task<TProjectedType> GetProjectedEntityAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -630,6 +599,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
+        [Obsolete]
         public async Task<TProjectedType> GetProjectedEntityAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -670,6 +640,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
+        [Obsolete]
         public async Task<bool> IsEntityExistsAsync<T>(Expression<Func<T, bool>> condition)
            where T : class
         {
@@ -730,6 +701,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             await _dbContext.SaveChangesAsync();
         }
 
+        [Obsolete]
         public void UpdateEntity<T>(T entity)
             where T : class
         {
@@ -887,10 +859,19 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
         }
 
+        public async Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
+        }
+
         public void ResetContextState()
         {
+#if NETCOREAPP3_1
             _dbContext.ChangeTracker.Entries().Where(e => e.Entity != null).ToList()
-                .ForEach(e => e.State = EntityState.Detached);
+                            .ForEach(e => e.State = EntityState.Detached);
+#else
+            _dbContext.ChangeTracker.Clear();
+#endif
         }
     }
 }

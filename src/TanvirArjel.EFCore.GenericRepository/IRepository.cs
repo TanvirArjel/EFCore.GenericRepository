@@ -25,32 +25,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="isolationLevel"><see cref="IsolationLevel"/> to be applied on this transaction. (Default to <see cref="IsolationLevel.Unspecified"/>).</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns a <see cref="IDbContextTransaction"/> instance.</returns>
-        Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.Unspecified, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Begin a new database transaction and being tracked by the name provided.
-        /// </summary>
-        /// <param name="trnasactionId">An unique string to track the transaction.</param>
-        /// <param name="isolationLevel"><see cref="IsolationLevel"/> to be applied on this transaction. (Default to <see cref="IsolationLevel.Unspecified"/>).</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task"/>.</returns>
-        Task BeginTransactionAsync(string trnasactionId, IsolationLevel isolationLevel = IsolationLevel.Unspecified, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Commit the transaction with provided name.
-        /// </summary>
-        /// <param name="trnasactionId">The unique id of the transaction to be committed.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task"/>.</returns>
-        Task CommitTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Rollback the transaction with provided name.
-        /// </summary>
-        /// <param name="trnasactionId">The unique id of the transaction to be committed.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task"/>.</returns>
-        Task RollbackTransactionAsync(string trnasactionId, CancellationToken cancellationToken = default);
+        Task<IDbContextTransaction> BeginTransactionAsync(
+            IsolationLevel isolationLevel = IsolationLevel.Unspecified,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets <see cref="IQueryable{T}"/> of the entity.
@@ -745,6 +722,15 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="parameters">The paramters in the sql string.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
+
+        /// <summary>
+        /// Execute raw sql command against the configured database asynchronously.
+        /// </summary>
+        /// <param name="sql">The sql string.</param>
+        /// <param name="parameters">The paramters in the sql string.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Reset the DbContext state by removing all the tracked and attached entities.
