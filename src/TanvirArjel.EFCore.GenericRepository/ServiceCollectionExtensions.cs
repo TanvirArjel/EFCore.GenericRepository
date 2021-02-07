@@ -20,7 +20,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TDbContext">Your EF Core DbContext.</typeparam>
         /// <param name="services">The type to be extended.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is NULL.</exception>
-        /// <exception cref="ApplicationException">Thrown if <typeparamref name="TDbContext"/> is NULL.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if <typeparamref name="TDbContext"/> is NULL.</exception>
         public static void AddGenericRepository<TDbContext>(this IServiceCollection services)
             where TDbContext : DbContext
         {
@@ -38,7 +38,6 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             services.AddScoped<IRepository, Repository>(r => new Repository(dbContext));
-            services.AddScoped<IUnitOfWork, UnitOfWork>(uow => new UnitOfWork(dbContext));
         }
     }
 }
