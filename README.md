@@ -1,12 +1,12 @@
 # EF Core Generic Repository
 
-This library is an almost perfect Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
+This library is Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
 ## This library includes following notable features:
 
-1. This library can be run on any .NET Core or .NET application which has .NET Standard 2.0 and .NET Standard 2.1 support.
+1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
 
-2. It’s providing the Generic Repository with and without Unit of Work pattern.
+2. It’s providing the Generic Repository with database transaction support.
 
 3. It has all the required methods to query your data in whatever way you want without getting IQueryable<T> from the repository.
 
@@ -30,7 +30,13 @@ This library is an almost perfect Generic Repository implementation for EF Core 
 
 First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
+**Package Manager Console:**
+
     Install-Package TanvirArjel.EFCore.GenericRepository
+    
+**.NET CLI:**
+
+    dotnet add package TanvirArjel.EFCore.GenericRepository
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
@@ -42,7 +48,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
         services.AddGenericRepository<DemoDbContext>(); // Call it just after registering your DbConext.
     }
     
-## Usage:
+## Usage: Query
 
     public class EmployeeService
     {
@@ -59,6 +65,53 @@ Then in the `ConfirugeServices` method of the `Startup` class:
              return employee;
          }
     }
+    
+## Usage: Command
+
+    public class EmployeeService
+    {
+         private readonly IRepository _repository;
+         
+         public EmployeeService(IRepository repository)
+         {
+             _repository = repository;
+         }
+         
+         // Single database operation.
+         public async Task<int> CreateAsync(Employee employee)
+         {
+             object[] primaryKeys = await _repository.InsertAsync(employee);
+             return (int)primaryKeys[0];
+         }
+         
+         // Multiple database operation.
+         public async Task<int>> CreateAsync(Employee employee)
+         {
+                IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+                try
+                {
+                    object[] primaryKeys = await _repository.InsertAsync(employee);
+                    
+                    long employeeId = (long)primaryKeys[0];
+                    EmployeeHistory employeeHistory = new EmployeeHistory()
+                    {
+                        EmployeeId = employeeId,
+                        DepartmentId = employee.DepartmentId,
+                        EmployeeName = employee.EmployeeName
+                    };
+
+                    await _repository.InsertAsync(employeeHistory);
+
+                    await transaction.CommitAsync();
+                    
+                    return employeeId;
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+        }
     
 ## More Details:
 
@@ -166,7 +219,6 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     }
     
     await _repository.InsertAsync<Employee>(employeeToBeCreated);
-    await _repository.SaveChangesAsync();
     
 #### 15. To create or insert a collection of new entities:
 
@@ -177,7 +229,6 @@ Then in the `ConfirugeServices` method of the `Startup` class:
     }
     
     await _repository.InsertAsync<Employee>(employeesToBeCreated);
-    await _repository.SaveChangesAsync();
     
 #### 16. To update or modify an entity:
 
@@ -188,8 +239,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        ..........
     }
     
-    _repository.Update<Employee>(employeeToBeUpdated);
-    await _repository.SaveChangesAsync();
+    await _repository.UpdateAsync<Employee>(employeeToBeUpdated);
     
 #### 17. To update or modify the collection of entities:
 
@@ -199,8 +249,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        new Employee(){},
     }
     
-    _repository.Update<Employee>(employeesToBeUpdated);
-    await _repository.SaveChangesAsync();
+    await _repository.UpdateAsync<Employee>(employeesToBeUpdated);
     
 #### 18. To delete an entity:
 
@@ -211,8 +260,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        ..........
     }
     
-    _repository.Delete<Employee>(employeeToBeDeleted);
-    await _repository.SaveChangesAsync();
+    await _repository.DeleteAsync<Employee>(employeeToBeDeleted);
     
 #### 19. To delete a collection of entities:
 
@@ -222,8 +270,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
        new Employee(){},
     }
     
-    _repository.Delete<Employee>(employeesToBeDeleted);
-    await _repository.SaveChangesAsync();
+    await _repository.DeleteAsync<Employee>(employeesToBeDeleted);
     
 #### 20. To get the count of entities with or without condition:
 
