@@ -6,7 +6,7 @@ This library is Generic Repository implementation for EF Core ORM which will rem
 
 **If you find this library useful, please don't forget to encouraging me to do such more stuffs by giving a star to this repository. Thank you.**
 
-## Breaking Changes in version 5.2.0
+## Breaking Changes in version 5.2.1
 
 1. `repository.SaveChangesAsync()` method has been removed. Please look at the below usage documention for more details.
  
@@ -47,10 +47,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
 
     public void ConfigureServices(IServiceCollection services)
     {
-        string connectionString = Configuration.GetConnectionString("RepositoryDbConnection");
-        services.AddDbContext<DemoDbContext>(option => option.UseSqlServer(connectionString));
-        
-        services.AddGenericRepository<DemoDbContext>(); // Call it just after registering your DbConext.
+        services.AddGenericRepository<YourDbContext>();
     }
     
 ## Usage: Query
