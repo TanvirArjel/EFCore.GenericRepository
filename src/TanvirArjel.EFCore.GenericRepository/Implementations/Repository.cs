@@ -677,6 +677,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task<object[]> InsertAsync<T>(T entity, CancellationToken cancellationToken = default)
            where T : class
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -689,6 +694,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task InsertAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
            where T : class
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
             await _dbContext.Set<T>().AddRangeAsync(entities, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -697,6 +707,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task InsertEntitiesAsync<T>(IEnumerable<T> entities)
             where T : class
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
             await _dbContext.Set<T>().AddRangeAsync(entities);
             await _dbContext.SaveChangesAsync();
         }
@@ -756,6 +771,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
             _dbContext.Set<T>().UpdateRange(entities);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -764,6 +784,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public void UpdateEntities<T>(IEnumerable<T> entities)
             where T : class
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
             _dbContext.Set<T>().UpdateRange(entities);
             _dbContext.SaveChanges();
         }
@@ -772,6 +797,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public void DeleteEntity<T>(T entity)
             where T : class
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             _dbContext.Set<T>().Remove(entity);
             _dbContext.SaveChanges();
         }
@@ -779,6 +809,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
             where T : class
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -787,6 +822,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public void DeleteEntities<T>(IEnumerable<T> entities)
             where T : class
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
             _dbContext.Set<T>().RemoveRange(entities);
             _dbContext.SaveChanges();
         }
@@ -794,6 +834,11 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         public async Task DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
             _dbContext.Set<T>().RemoveRange(entities);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }

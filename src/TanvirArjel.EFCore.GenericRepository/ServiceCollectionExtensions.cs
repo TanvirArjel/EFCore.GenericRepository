@@ -19,9 +19,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TDbContext">Your EF Core DbContext.</typeparam>
         /// <param name="services">The type to be extended.</param>
+        /// <param name="lifetime">The life time of the service.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is NULL.</exception>
         /// <exception cref="InvalidOperationException">Thrown if <typeparamref name="TDbContext"/> is NULL.</exception>
-        public static void AddGenericRepository<TDbContext>(this IServiceCollection services)
+        public static void AddGenericRepository<TDbContext>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
             where TDbContext : DbContext
         {
             if (services == null)
@@ -29,15 +30,10 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(services));
             }
 
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
-            DbContext dbContext = serviceProvider.GetService<TDbContext>();
-
-            if (dbContext == null)
-            {
-                throw new InvalidOperationException($"Please register your {typeof(TDbContext)} before calling {nameof(AddGenericRepository)}.");
-            }
-
-            services.AddScoped<IRepository, Repository>(r => new Repository(dbContext));
+            services.Add(new ServiceDescriptor(
+                typeof(IRepository),
+                serviceProvider => new Repository(ActivatorUtilities.CreateInstance<TDbContext>(serviceProvider)),
+                lifetime));
         }
     }
 }

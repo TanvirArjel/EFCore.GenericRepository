@@ -35,8 +35,10 @@
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
     <PackageReleaseNotes>1. Database transaction support has been added.
 
-2. Contain some breaking changes. Please visit GitHub repository for more details about breaking changes.</PackageReleaseNotes>
-    <Version>5.2.0</Version>
+2. Contain some breaking changes. Please visit GitHub repository for more details about breaking changes.
+
+3. Issues on multiple concurrent reqeusts has been solved.</PackageReleaseNotes>
+    <Version>5.2.1</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>TanvirArjel</Authors>
