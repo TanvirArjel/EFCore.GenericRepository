@@ -2,16 +2,16 @@
 
 This library is Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
-## Giving a star (⭐)
+## ⭐ Giving a star ⭐
 
 **If you find this library useful, please don't forget to encouraging me to do such more stuffs by giving a star to this repository. Thank you.**
 
-## Breaking Changes in version 5.2.1
+## 🔥 Breaking Changes in version 5.2.1 🔥
 
 1. `repository.SaveChangesAsync()` method has been removed. Please look at the below usage documention for more details.
  
 
-## This library includes following notable features:
+## ⚙️ This library includes following notable features: ⚙️
 
 1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
 
@@ -31,7 +31,7 @@ This library is Generic Repository implementation for EF Core ORM which will rem
 
 9. Most importantly, it has full Unit Testing support.
 
-## How do I get started?
+## ✈️ How do I get started? ✈️
 
 First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
@@ -50,7 +50,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
         services.AddGenericRepository<YourDbContext>();
     }
     
-## Usage: Query
+## 🛠️ Usage: Query 🛠️
 
     public class EmployeeService
     {
@@ -68,7 +68,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
          }
     }
     
-## Usage: Command
+## 🛠️ Usage: Command 🛠️
 
     public class EmployeeService
     {
@@ -115,7 +115,7 @@ Then in the `ConfirugeServices` method of the `Startup` class:
                 }
         }
     
-## More Details:
+## 🕮 More Details: 🕮
 
 #### 1. To get all the data:
 
