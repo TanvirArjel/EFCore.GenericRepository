@@ -301,8 +301,8 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T trackedEntity = await GetByIdAsync<T>(id, false);
-            return trackedEntity;
+            T enity = await GetByIdAsync<T>(id, false);
+            return enity;
         }
 
         public async Task<T> GetByIdAsync<T>(object id, bool asNoTracking)
@@ -313,8 +313,8 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T trackedEntity = await GetByIdAsync<T>(id, null, asNoTracking);
-            return trackedEntity;
+            T enity = await GetByIdAsync<T>(id, null, asNoTracking);
+            return enity;
         }
 
         public async Task<T> GetByIdAsync<T>(object id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes)
@@ -325,8 +325,8 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T trackedEntity = await GetByIdAsync<T>(id, includes, false);
-            return trackedEntity;
+            T enity = await GetByIdAsync<T>(id, includes, false);
+            return enity;
         }
 
         public async Task<T> GetByIdAsync<T>(object id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes, bool asNoTracking = false)
@@ -376,8 +376,8 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 query = query.AsNoTracking();
             }
 
-            T trackedEntity = await query.FirstOrDefaultAsync(expressionTree);
-            return trackedEntity;
+            T enity = await query.FirstOrDefaultAsync(expressionTree);
+            return enity;
         }
 
         [Obsolete]
@@ -764,8 +764,9 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 }
 
                 _dbContext.Set<T>().Update(entity);
-                await _dbContext.SaveChangesAsync(cancellationToken);
             }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)

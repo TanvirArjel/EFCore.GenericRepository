@@ -15,13 +15,12 @@ namespace TanvirArjel.EFCore.GenericRepository
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Register all the necessary services to the ASP.NET Core Dependency Injection container.
+        /// Add generic repository services to the ASP.NET Core Dependency Injection container.
         /// </summary>
         /// <typeparam name="TDbContext">Your EF Core DbContext.</typeparam>
         /// <param name="services">The type to be extended.</param>
         /// <param name="lifetime">The life time of the service.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is NULL.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if <typeparamref name="TDbContext"/> is NULL.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is <see langword="null"/>.</exception>
         public static void AddGenericRepository<TDbContext>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
             where TDbContext : DbContext
         {
