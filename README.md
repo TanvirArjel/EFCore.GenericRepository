@@ -45,75 +45,81 @@ First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuge
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddGenericRepository<YourDbContext>();
-    }
+```C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddGenericRepository<YourDbContext>();
+}
+```
     
 ## 🛠️ Usage: Query 🛠️
 
-    public class EmployeeService
+```C#
+public class EmployeeService
+{
+    private readonly IRepository _repository;
+
+    public EmployeeService(IRepository repository)
     {
-         private readonly IRepository _repository;
-         
-         public EmployeeService(IRepository repository)
-         {
-             _repository = repository;
-         }
-         
-         public async Task<Employee> GetEmployeeAsync(int employeeId)
-         {
-             Employee employee = await _repository.GetByIdAsync<Employee>(1);
-             return employee;
-         }
+        _repository = repository;
     }
-    
+
+    public async Task<Employee> GetEmployeeAsync(int employeeId)
+    {
+        Employee employee = await _repository.GetByIdAsync<Employee>(1);
+        return employee;
+    }
+}
+```
 ## 🛠️ Usage: Command 🛠️
 
-    public class EmployeeService
+```C#
+public class EmployeeService
+{
+    private readonly IRepository _repository;
+
+    public EmployeeService(IRepository repository)
     {
-         private readonly IRepository _repository;
-         
-         public EmployeeService(IRepository repository)
-         {
-             _repository = repository;
-         }
-         
-         // Single database operation.
-         public async Task<int> CreateAsync(Employee employee)
-         {
-             object[] primaryKeys = await _repository.InsertAsync(employee);
-             return (int)primaryKeys[0];
-         }
-         
-         // Multiple database operations.
-         public async Task<int>> CreateAsync(Employee employee)
-         {
-                IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-                try
-                {
-                    object[] primaryKeys = await _repository.InsertAsync(employee);
-                    
-                    long employeeId = (long)primaryKeys[0];
-                    EmployeeHistory employeeHistory = new EmployeeHistory()
-                    {
-                        EmployeeId = employeeId,
-                        DepartmentId = employee.DepartmentId,
-                        EmployeeName = employee.EmployeeName
-                    };
+        _repository = repository;
+    }
 
-                    await _repository.InsertAsync(employeeHistory);
+    // Single database operation.
+    public async Task<int> CreateAsync(Employee employee)
+    {
+        object[] primaryKeys = await _repository.InsertAsync(employee);
+        return (int)primaryKeys[0];
+    }
 
-                    await transaction.CommitAsync();
-                    
-                    return employeeId;
-                }
-                catch (Exception)
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-        }
+    // Multiple database operations.
+    public async Task<int>> CreateAsync(Employee employee)
+    {
+       IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+       try
+       {
+           object[] primaryKeys = await _repository.InsertAsync(employee);
+
+           long employeeId = (long)primaryKeys[0];
+           EmployeeHistory employeeHistory = new EmployeeHistory()
+           {
+               EmployeeId = employeeId,
+               DepartmentId = employee.DepartmentId,
+               EmployeeName = employee.EmployeeName
+           };
+
+           await _repository.InsertAsync(employeeHistory);
+
+           await transaction.CommitAsync();
+
+           return employeeId;
+       }
+       catch (Exception)
+       {
+           await transaction.RollbackAsync();
+           throw;
+       }
+    }
+}
+```
     
 ## 🕮 More Details: 🕮
 
