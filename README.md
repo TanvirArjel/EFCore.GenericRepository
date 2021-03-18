@@ -37,247 +37,297 @@ First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuge
 
 **Package Manager Console:**
 
-    Install-Package TanvirArjel.EFCore.GenericRepository
+```C#
+Install-Package TanvirArjel.EFCore.GenericRepository
+```
     
 **.NET CLI:**
 
-    dotnet add package TanvirArjel.EFCore.GenericRepository
+```C#
+dotnet add package TanvirArjel.EFCore.GenericRepository
+```
     
 Then in the `ConfirugeServices` method of the `Startup` class:
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddGenericRepository<YourDbContext>();
-    }
+```C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddGenericRepository<YourDbContext>();
+}
+```
     
 ## 🛠️ Usage: Query 🛠️
 
-    public class EmployeeService
+```C#
+public class EmployeeService
+{
+    private readonly IRepository _repository;
+
+    public EmployeeService(IRepository repository)
     {
-         private readonly IRepository _repository;
-         
-         public EmployeeService(IRepository repository)
-         {
-             _repository = repository;
-         }
-         
-         public async Task<Employee> GetEmployeeAsync(int employeeId)
-         {
-             Employee employee = await _repository.GetByIdAsync<Employee>(1);
-             return employee;
-         }
+        _repository = repository;
     }
-    
+
+    public async Task<Employee> GetEmployeeAsync(int employeeId)
+    {
+        Employee employee = await _repository.GetByIdAsync<Employee>(1);
+        return employee;
+    }
+}
+```
 ## 🛠️ Usage: Command 🛠️
 
-    public class EmployeeService
+```C#
+public class EmployeeService
+{
+    private readonly IRepository _repository;
+
+    public EmployeeService(IRepository repository)
     {
-         private readonly IRepository _repository;
-         
-         public EmployeeService(IRepository repository)
-         {
-             _repository = repository;
-         }
-         
-         // Single database operation.
-         public async Task<int> CreateAsync(Employee employee)
-         {
-             object[] primaryKeys = await _repository.InsertAsync(employee);
-             return (int)primaryKeys[0];
-         }
-         
-         // Multiple database operations.
-         public async Task<int>> CreateAsync(Employee employee)
-         {
-                IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-                try
-                {
-                    object[] primaryKeys = await _repository.InsertAsync(employee);
-                    
-                    long employeeId = (long)primaryKeys[0];
-                    EmployeeHistory employeeHistory = new EmployeeHistory()
-                    {
-                        EmployeeId = employeeId,
-                        DepartmentId = employee.DepartmentId,
-                        EmployeeName = employee.EmployeeName
-                    };
+        _repository = repository;
+    }
 
-                    await _repository.InsertAsync(employeeHistory);
+    // Single database operation.
+    public async Task<int> CreateAsync(Employee employee)
+    {
+        object[] primaryKeys = await _repository.InsertAsync(employee);
+        return (int)primaryKeys[0];
+    }
 
-                    await transaction.CommitAsync();
-                    
-                    return employeeId;
-                }
-                catch (Exception)
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-        }
+    // Multiple database operations.
+    public async Task<int>> CreateAsync(Employee employee)
+    {
+       IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+       try
+       {
+           object[] primaryKeys = await _repository.InsertAsync(employee);
+
+           long employeeId = (long)primaryKeys[0];
+           EmployeeHistory employeeHistory = new EmployeeHistory()
+           {
+               EmployeeId = employeeId,
+               DepartmentId = employee.DepartmentId,
+               EmployeeName = employee.EmployeeName
+           };
+
+           await _repository.InsertAsync(employeeHistory);
+
+           await transaction.CommitAsync();
+
+           return employeeId;
+       }
+       catch (Exception)
+       {
+           await transaction.RollbackAsync();
+           throw;
+       }
+    }
+}
+```
     
 ## 🕮 More Details: 🕮
 
 #### 1. To get all the data:
 
-    var employeeList =  await _repository.GetListAsync<Employee>();
-    
-    var noTrackedEmployeeList = await _repository.GetListAsync<Employee>(asNoTracking: true);
+```C#
+var employeeList =  await _repository.GetListAsync<Employee>();
+
+var noTrackedEmployeeList = await _repository.GetListAsync<Employee>(asNoTracking: true);
+````
     
 #### 2. To get a filtered list of data:
 
-    var employeeList =  await _repository.GetListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software");
-                        
-    var noTrackedEmployeeList = await _repository
-                                .GetListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software", asNoTracking: true);
+```C#
+var employeeList =  await _repository.GetListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software");
+
+var noTrackedEmployeeList = await _repository
+                            .GetListAsync<Employee>(e => e.EmployeeName.Contains("Tanvir") && e.DepartmentName == "Software", asNoTracking: true);
+```
 
 #### 3. To get a list of data by Specification<T>:
-    
-    Specification<Employee> specification = new Specification<Employee>();
-    specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
-    specification.Includes = ep => ep.Include(e => e.Department);
-    specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
-    specification.Skip = 0;
-    specification.Take = 10;
 
-    List<Employee> employeeList = await _repository.GetListAsync<Employee>(specification);
-                                  
-    List<Employee> noTrackedEmployeeList = await _repository.GetListAsync<Employee>(specification, true);
-                                  
+```C#
+Specification<Employee> specification = new Specification<Employee>();
+specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
+specification.Includes = ep => ep.Include(e => e.Department);
+specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
+specification.Skip = 0;
+specification.Take = 10;
+
+List<Employee> employeeList = await _repository.GetListAsync<Employee>(specification);
+
+List<Employee> noTrackedEmployeeList = await _repository.GetListAsync<Employee>(specification, true);
+```
+
  #### 4. To get the projected entity list:
-    
-    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedList = await _repository.GetProjectedListAsync<Employee, object>(selectExpression);
-                      
+
+```C#
+Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+var projectedList = await _repository.GetProjectedListAsync<Employee, object>(selectExpression);
+```
+
  #### 5. To get filtered projected entity list:
- 
-    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var filteredProjectedList = await _repository.GetProjectedListAsync<Employee, object>(e => e.IsActive, selectExpression);
-                                            
+
+```C#
+Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+var filteredProjectedList = await _repository.GetProjectedListAsync<Employee, object>(e => e.IsActive, selectExpression);
+```
+
  #### 6. To get the projected entity list by `Specification<T>`:
- 
-    Specification<Employee> specification = new Specification<Employee>();
-    specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
-    specification.Includes = ep => ep.Include(e => e.Department);
-    specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
-    specification.Skip = 0;
-    specification.Take = 10;
-    
-    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedList = await _repository.GetProjectedListAsync<Employee, object>(specification, selectExpression);
-                      
+
+```C#
+Specification<Employee> specification = new Specification<Employee>();
+specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
+specification.Includes = ep => ep.Include(e => e.Department);
+specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
+specification.Skip = 0;
+specification.Take = 10;
+
+Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+var projectedList = await _repository.GetProjectedListAsync<Employee, object>(specification, selectExpression);
+```
+
 #### 7. To get an entity by Id (primary key):
 
-    Employee employee = await _repository.GetByIdAsync<Employee>(1);
-    
-    Employee noTrackedEmployee = await _repository.GetByIdAsync<Employee>(1, true);
-    
+```C#
+Employee employee = await _repository.GetByIdAsync<Employee>(1);
+
+Employee noTrackedEmployee = await _repository.GetByIdAsync<Employee>(1, true);
+```
+
 #### 8. To get a projected entity by Id (primary key):
-    
-    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedEntity = await _repository.GetProjectedByIdAsync<Employee, object>(1, selectExpression);
+
+```C#
+Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+var projectedEntity = await _repository.GetProjectedByIdAsync<Employee, object>(1, selectExpression);
+```
 
 #### 9. To get a single entity by any condition/filter:
 
-    Employee employee = await _repository.GetAsync<Employee>(e => e.EmployeeName == "Tanvir");
-    
-    Employee noTrackedEmployee = await _repository.GetAsync<Employee>(e => e.EmployeeName == "Tanvir", true);
+```C#
+Employee employee = await _repository.GetAsync<Employee>(e => e.EmployeeName == "Tanvir");
+
+Employee noTrackedEmployee = await _repository.GetAsync<Employee>(e => e.EmployeeName == "Tanvir", true);
+```
     
 #### 10. To get a single entity by `Specification<T>`:
-    
-    Specification<Employee> specification = new Specification<Employee>();
-    specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
-    specification.Includes = sp => sp.Include(e => e.Department);
-    specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
-    
-    Employee employee = await _repository.GetAsync<Employee>(specification);
-    
-    Employee noTrackedEmployee = await _repository.GetAsync<Employee>(specification, true);
-    
+
+```C#
+Specification<Employee> specification = new Specification<Employee>();
+specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
+specification.Includes = sp => sp.Include(e => e.Department);
+specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
+
+Employee employee = await _repository.GetAsync<Employee>(specification);
+
+Employee noTrackedEmployee = await _repository.GetAsync<Employee>(specification, true);
+```
+
 #### 11. To get a single projected entity by any condition/filter:
 
-    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedEntity = await _repository.GetProjectedAsync<Employee, object>(e => e.EmployeeName == "Tanvir", selectExpression);
+```C#
+Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+var projectedEntity = await _repository.GetProjectedAsync<Employee, object>(e => e.EmployeeName == "Tanvir", selectExpression);
+```
     
 #### 12. To get a single projected entity by `Specification<T>`:
-    
-    Specification<Employee> specification = new Specification<Employee>();
-    specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
-    specification.Includes = sp => sp.Include(e => e.Department);
-    specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
-    
-    Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
-    var projectedEntity = await _repository.GetProjectedAsync<Employee, object>(specification, selectExpression);
+
+```C#
+Specification<Employee> specification = new Specification<Employee>();
+specification.Conditions.Add(e => e.EmployeeName == "Tanvir");
+specification.Includes = sp => sp.Include(e => e.Department);
+specification.OrderBy = sp => sp.OrderBy(e => e.Salary);
+
+Expression<Func<Employee, object>> selectExpression = e => new { e.EmployeeId, e.EmployeeName };
+var projectedEntity = await _repository.GetProjectedAsync<Employee, object>(specification, selectExpression);
+```
 
 #### 13. To check if an entity exists:
 
-    bool isExists = await _repository.ExistsAsync<Employee>(e => e.EmployeeName == "Tanvir");
-    
+```C#
+bool isExists = await _repository.ExistsAsync<Employee>(e => e.EmployeeName == "Tanvir");
+```
+
 #### 14. To create or insert a new entity:
 
-    Employee employeeToBeCreated = new Employee()
-    {
-       EmployeeName = "Tanvir",
-       ..........
-    }
-    
-    await _repository.InsertAsync<Employee>(employeeToBeCreated);
+```C#
+Employee employeeToBeCreated = new Employee()
+{
+   EmployeeName = "Tanvir",
+   ..........
+}
+
+await _repository.InsertAsync<Employee>(employeeToBeCreated);
+```
     
 #### 15. To create or insert a collection of new entities:
 
-    List<Employee> employeesToBeCreated = new List<Employee>()
-    {
-       new Employee(){},
-       new Employee(){},
-    }
-    
-    await _repository.InsertAsync<Employee>(employeesToBeCreated);
-    
+```C#
+List<Employee> employeesToBeCreated = new List<Employee>()
+{
+   new Employee(){},
+   new Employee(){},
+}
+
+await _repository.InsertAsync<Employee>(employeesToBeCreated);
+```
+
 #### 16. To update or modify an entity:
 
-    Employee employeeToBeUpdated = new Employee()
-    {
-       EmployeeId = 1,
-       EmployeeName = "Tanvir",
-       ..........
-    }
-    
-    await _repository.UpdateAsync<Employee>(employeeToBeUpdated);
-    
+```C#
+Employee employeeToBeUpdated = new Employee()
+{
+   EmployeeId = 1,
+   EmployeeName = "Tanvir",
+   ..........
+}
+
+await _repository.UpdateAsync<Employee>(employeeToBeUpdated);
+```
+
 #### 17. To update or modify the collection of entities:
 
-    List<Employee> employeesToBeUpdated = new List<Employee>()
-    {
-       new Employee(){},
-       new Employee(){},
-    }
-    
-    await _repository.UpdateAsync<Employee>(employeesToBeUpdated);
-    
+```C#
+List<Employee> employeesToBeUpdated = new List<Employee>()
+{
+   new Employee(){},
+   new Employee(){},
+}
+
+await _repository.UpdateAsync<Employee>(employeesToBeUpdated);
+```
+
 #### 18. To delete an entity:
 
-    Employee employeeToBeDeleted = new Employee()
-    {
-        EmployeeId = 1,
-        EmployeeName = "Tanvir",
-       ..........
-    }
-    
-    await _repository.DeleteAsync<Employee>(employeeToBeDeleted);
-    
+```C#
+Employee employeeToBeDeleted = new Employee()
+{
+    EmployeeId = 1,
+    EmployeeName = "Tanvir",
+   ..........
+}
+
+await _repository.DeleteAsync<Employee>(employeeToBeDeleted);
+```
+
 #### 19. To delete a collection of entities:
 
-    List<Employee> employeesToBeDeleted = new List<Employee>()
-    {
-       new Employee(){},
-       new Employee(){},
-    }
-    
-    await _repository.DeleteAsync<Employee>(employeesToBeDeleted);
-    
+```C#
+List<Employee> employeesToBeDeleted = new List<Employee>()
+{
+   new Employee(){},
+   new Employee(){},
+}
+
+await _repository.DeleteAsync<Employee>(employeesToBeDeleted);
+```
+
 #### 20. To get the count of entities with or without condition:
 
-    int count =   await _repository.GetCountAsync<Employee>(); // Count of all
-    int count =   await _repository.GetCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Count with specified condtion
-    
-    long longCount =   await _repository.GetLongCountAsync<Employee>(); // Long count of all
-    long longCount =   await _repository.GetLongCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Long count with specified condtion
+```C#
+int count =   await _repository.GetCountAsync<Employee>(); // Count of all
+int count =   await _repository.GetCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Count with specified condtion
+
+long longCount =   await _repository.GetLongCountAsync<Employee>(); // Long count of all
+long longCount =   await _repository.GetLongCountAsync<Employee>(e => e.EmployeeName = "Tanvir"); // Long count with specified condtion
+```
