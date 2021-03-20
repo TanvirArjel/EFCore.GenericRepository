@@ -26,6 +26,9 @@ namespace AspNetCore3._1.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
+            List<Department> departments = await _context.Set<Department>()
+                .Where(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad")).ToListAsync();
+
             await _repository.GetLongCountAsync<Employee>();
             Specification<Employee> specification = new Specification<Employee>();
             //specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));

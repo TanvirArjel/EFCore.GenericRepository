@@ -28,23 +28,16 @@ namespace AspNetCore5._0.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            await _repository.GetLongCountAsync<Employee>();
-            Specification<Employee> specification = new Specification<Employee>();
-            //specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
-            //specification.Includes = ep => ep.Include(e => e.Department);
-            //specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
-            //specification.Skip = 0;
-            //specification.Take = 10;
+
+            List<Department> departments = await _context.Set<Department>()
+                .Where(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad")).ToListAsync();
+
+            Specification<Department> specification = new Specification<Department>();
+            specification.Conditions.Add(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad"));
+
+            List<Department> departments1 = await _repository.GetListAsync<Department>(specification);
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
-            Employee entityListAsync = await _repository.GetByIdAsync<Employee>(1, q => q.Include(e => e.Department), true);
-
-            long v1 = await _repository.GetProjectedByIdAsync<Employee, long>(1, e => e.EmployeeId);
-
-            await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
-
-            _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToList();
-            //await _unitOfWork.Repository<Employee>().GetEn
             return View(lists);
         }
 
