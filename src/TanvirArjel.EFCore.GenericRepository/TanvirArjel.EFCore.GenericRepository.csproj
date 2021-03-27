@@ -35,11 +35,7 @@
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. Database transaction support has been added.
-
-2. Contain some breaking changes. Please visit GitHub repository for more details about breaking changes.
-
-3. Issues on multiple concurrent reqeusts has been solved.</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Obsolete methods have been removed.</PackageReleaseNotes>
     <Version>5.3.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>

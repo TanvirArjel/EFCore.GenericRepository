@@ -35,7 +35,7 @@ namespace AspNetCore5._0.Controllers
             Specification<Department> specification = new Specification<Department>();
             specification.Conditions.Add(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad"));
 
-            List<Department> departments1 = await _repository.GetListAsync<Department>(specification);
+            List<string> departments1 = await _repository.GetListAsync(specification, d => d.Name);
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
             return View(lists);
