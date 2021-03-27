@@ -223,6 +223,27 @@ namespace TanvirArjel.EFCore.GenericRepository
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TEntity : class;
 
+        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(int pageIndex, int pageSize)
+            where TEntity : class;
+
+        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(Expression<Func<TEntity, bool>> condition, int pageIndex, int pageSize)
+           where TEntity : class;
+
+        Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            int pageIndex,
+            int pageSize)
+            where TEntity : class
+            where TProjectedType : class;
+
+        Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
+            Expression<Func<TEntity, bool>> condition,
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            int pageIndex,
+            int pageSize)
+            where TEntity : class
+            where TProjectedType : class;
+
         /// <summary>
         /// This method takes <paramref name="id"/> which is the primary key value of the entity and returns the entity
         /// if found otherwise <em>NULL</em>.

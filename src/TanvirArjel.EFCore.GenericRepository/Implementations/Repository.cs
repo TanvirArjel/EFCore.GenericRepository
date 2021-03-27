@@ -256,6 +256,78 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).ToListAsync();
         }
 
+        public async Task<PaginatedList<T>> GetPaginatedListAsync<T>(int pageIndex, int pageSize)
+            where T : class
+        {
+            return await GetPaginatedListAsync<T>(null, pageIndex, pageSize);
+        }
+
+        public async Task<PaginatedList<T>> GetPaginatedListAsync<T>(
+            Expression<Func<T, bool>> condition,
+            int pageIndex,
+            int pageSize)
+            where T : class
+        {
+            if (pageIndex <= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            }
+
+            if (pageSize <= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
+            }
+
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (condition != null)
+            {
+                query = query.Where(condition);
+            }
+
+            PaginatedList<T> paginatedList = await query.ToPaginatedListAsync(pageIndex, pageSize);
+            return paginatedList;
+        }
+
+        public async Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<T, TProjectedType>(
+            Expression<Func<T, TProjectedType>> selectExpression,
+            int pageIndex,
+            int pageSize)
+            where T : class
+            where TProjectedType : class
+        {
+            return await GetPaginatedListAsync<T, TProjectedType>(null, selectExpression, pageIndex, pageSize);
+        }
+
+        public async Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<T, TProjectedType>(
+            Expression<Func<T, bool>> condition,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            int pageIndex,
+            int pageSize)
+            where T : class
+            where TProjectedType : class
+        {
+            if (pageIndex <= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            }
+
+            if (pageSize <= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize));
+            }
+
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (condition != null)
+            {
+                query = query.Where(condition);
+            }
+
+            PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression).ToPaginatedListAsync(pageIndex, pageSize);
+            return paginatedList;
+        }
+
         public async Task<T> GetByIdAsync<T>(object id)
             where T : class
         {
