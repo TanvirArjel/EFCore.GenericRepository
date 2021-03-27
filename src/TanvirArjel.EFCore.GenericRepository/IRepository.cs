@@ -169,7 +169,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -183,7 +183,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -200,7 +200,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -217,15 +217,34 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TEntity : class;
 
+        /// <summary>
+        /// This method return a <see cref="PaginatedList{T}"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="pageIndex">The current page index.</param>
+        /// <param name="pageSize">The current page size.</param>
+        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
         Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(int pageIndex, int pageSize)
             where TEntity : class;
 
+        /// <summary>
+        /// This method return a <see cref="PaginatedList{T}"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="condition">The condition on which entity list will be filtered.</param>
+        /// <param name="pageIndex">The current page index.</param>
+        /// <param name="pageSize">The current page size.</param>
+        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
         Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(Expression<Func<TEntity, bool>> condition, int pageIndex, int pageSize)
            where TEntity : class;
 
@@ -246,7 +265,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
         /// <summary>
         /// This method takes <paramref name="id"/> which is the primary key value of the entity and returns the entity
-        /// if found otherwise <em>NULL</em>.
+        /// if found otherwise <see langword="null"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
@@ -256,7 +275,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
         /// <summary>
         /// This method takes <paramref name="id"/> which is the primary key value of the entity and returns the entity
-        /// if found otherwise <em>NULL</em>.
+        /// if found otherwise <see langword="null"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
@@ -269,7 +288,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
         /// <summary>
         /// This method takes <paramref name="id"/> which is the primary key value of the entity and returns the entity
-        /// if found otherwise <em>NULL</em>.
+        /// if found otherwise <see langword="null"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
@@ -280,7 +299,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
         /// <summary>
         /// This method takes <paramref name="id"/> which is the primary key value of the entity and returns the entity
-        /// if found otherwise <em>NULL</em>.
+        /// if found otherwise <see langword="null"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
@@ -301,7 +320,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetByIdAsync<TEntity, TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -316,7 +335,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetProjectedByIdAsync<TEntity, TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -404,7 +423,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -418,7 +437,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -435,7 +454,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -452,7 +471,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <em>NULL</em>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)

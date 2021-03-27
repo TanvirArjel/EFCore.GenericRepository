@@ -37,8 +37,25 @@ namespace AspNetCore5._0.Controllers
 
             List<string> departments1 = await _repository.GetListAsync(specification, d => d.Name);
 
+            PaginatedList<Employee> paginatedList = await _repository.GetQueryable<Employee>().ToPaginatedListAsync(1, 10);
+
+            IQueryable<EmployeeDto> queryable = _repository.GetQueryable<Employee>().Select(e => new EmployeeDto
+            {
+                EmployeeName = e.EmployeeName,
+                DepartmentName = e.DepartmentName
+            }).OrderBy(e => e.EmployeeName);
+
+            PaginatedList<EmployeeDto> paginatedList1 = await queryable.ToPaginatedListAsync(1, 10);
+
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
             return View(lists);
+        }
+
+        public class EmployeeDto
+        {
+            public string EmployeeName { get; set; }
+
+            public string DepartmentName { get; set; }
         }
 
         // GET: Employee/Details/5

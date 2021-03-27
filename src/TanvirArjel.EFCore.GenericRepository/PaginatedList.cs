@@ -28,6 +28,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             TotalItems = totalItems;
+            Items = new List<T>(pageSize);
             Items.AddRange(items);
         }
 
@@ -54,6 +55,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <summary>
         /// Gets the items of the current page.
         /// </summary>
-        public List<T> Items { get; } = new List<T>();
+        public List<T> Items { get; }
     }
 }
