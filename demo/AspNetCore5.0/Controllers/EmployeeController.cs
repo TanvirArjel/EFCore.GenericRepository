@@ -39,20 +39,19 @@ namespace AspNetCore5._0.Controllers
 
             ////PaginatedList<Employee> paginatedList = await _repository.GetQueryable<Employee>().ToPaginatedListAsync(1, 10);
 
-            IQueryable<EmployeeDto> queryable = _repository.GetQueryable<Employee>()
-                .Where(e => e.EmployeeName.Contains("Ta")).Select(e => new EmployeeDto
-                {
-                    EmployeeName = e.EmployeeName,
-                    DepartmentName = e.DepartmentName
-                }).OrderBy(e => e.DepartmentName);
-
-            PaginationSpecification<Employee> specification = new PaginationSpecification<Employee>();
+            Specification<Employee> specification = new Specification<Employee>();
             specification.Conditions.Add(e => e.EmployeeName.Contains("Ta"));
             specification.Includes = q => q.Include(e => e.Department);
-            specification.PageIndex = 1;
-            specification.PageSize = 2;
+            specification.Skip = 0;
+            specification.Take = 4;
 
-            PaginatedList<Employee> paginatedList1 = await _repository.GetPaginatedListAsync(specification);
+            long count = await _repository.GetLongCountAsync(specification.Conditions);
+
+            List<EmployeeDto> paginatedList1 = await _repository.GetListAsync(specification, e => new EmployeeDto
+            {
+                EmployeeName = e.EmployeeName,
+                DepartmentName = e.DepartmentName
+            });
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
             return View(lists);

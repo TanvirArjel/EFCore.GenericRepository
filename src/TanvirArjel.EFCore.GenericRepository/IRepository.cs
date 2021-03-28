@@ -157,6 +157,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The type to which <typeparamref name="TEntity"/> will be projected.</typeparam>
         /// <param name="selectExpression">A <b>LINQ</b> select query.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TEntity : class;
@@ -184,6 +185,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -218,6 +220,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -227,12 +230,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method returns a <see cref="PaginatedList{T}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="orderBy">The order by which the list will be sorted.</param>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">The current page size.</param>
+        /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
         /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
         Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(PaginationSpecification<TEntity> specification)
             where TEntity : class;
 
@@ -241,12 +241,11 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
+        /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">The current page size.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is smaller than 1.</exception>
         Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
             PaginationSpecification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -326,6 +325,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetByIdAsync() method with same overload.")]
         Task<TProjectedType> GetProjectedByIdAsync<TEntity, TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -428,6 +428,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
         Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -462,6 +463,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
         Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression)
@@ -558,9 +560,18 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes one or more <em>predicates</em> and returns the count in <see cref="int"/> type.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="conditions">The condition or conditions based on which count will be done.</param>
+        /// <param name="condition">The condition based on which count will be done.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="int"/>.</returns>
-        Task<int> GetCountAsync<TEntity>(params Expression<Func<TEntity, bool>>[] conditions)
+        Task<int> GetCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes one or more <em>predicates</em> and returns the count in <see cref="int"/> type.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="conditions">The conditions based on which count will be done.</param>
+        /// <returns>Returns <see cref="Task"/> of <see cref="int"/>.</returns>
+        Task<int> GetCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions)
             where TEntity : class;
 
         /// <summary>
@@ -575,9 +586,18 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes one or more <em>predicates</em> and returns the count in <see cref="long"/> type.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="conditions">The condition or conditions based on which count will be done.</param>
+        /// <param name="condition">The condition based on which count will be done.</param>
         /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
-        Task<long> GetLongCountAsync<TEntity>(params Expression<Func<TEntity, bool>>[] conditions)
+        Task<long> GetLongCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes one or more <em>predicates</em> and returns the count in <see cref="long"/> type.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="conditions">The conditions based on which count will be done.</param>
+        /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
+        Task<long> GetLongCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions)
             where TEntity : class;
 
         // Context level members

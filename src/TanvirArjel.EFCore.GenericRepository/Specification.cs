@@ -12,12 +12,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         where T : class
     {
         /// <summary>
-        /// Gets or sets the value of number of entity you want to skip in your query.
+        /// Gets or sets the value of number of item you want to skip in your query.
         /// </summary>
         public int? Skip { get; set; }
 
         /// <summary>
-        /// Gets or sets the value of number of entity you want to take in your query.
+        /// Gets or sets the value of number of item you want to take in your query.
         /// </summary>
         public int? Take { get; set; }
     }

@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
@@ -20,11 +19,21 @@ namespace TanvirArjel.EFCore.GenericRepository
             // Apply paging if enabled
             if (specification.Skip != null)
             {
+                if (specification.Skip < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(specification.Skip), $"The value of {nameof(specification.Skip)} in {nameof(specification)} can not be negative.");
+                }
+
                 query = query.Skip((int)specification.Skip);
             }
 
             if (specification.Take != null)
             {
+                if (specification.Take < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(specification.Take), $"The value of {nameof(specification.Take)} in {nameof(specification)} can not be negative.");
+                }
+
                 query = query.Take((int)specification.Take);
             }
 
@@ -92,12 +101,6 @@ namespace TanvirArjel.EFCore.GenericRepository
             if (specification.Includes != null)
             {
                 query = specification.Includes(query);
-            }
-
-            // Include any string-based include statements
-            if (specification.IncludeStrings != null && specification.IncludeStrings.Any())
-            {
-                query = specification.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
             }
 
             // Apply ordering if expressions are set

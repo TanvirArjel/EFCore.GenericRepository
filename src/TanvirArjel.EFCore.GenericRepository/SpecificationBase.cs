@@ -28,11 +28,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         public Func<IQueryable<T>, IIncludableQueryable<T, object>> Includes { get; set; }
 
         /// <summary>
-        /// Gets or add the navigation entities to be eager loadded with EF Core query in string format.
-        /// </summary>
-        public List<string> IncludeStrings { get; } = new List<string>();
-
-        /// <summary>
         /// Gets or sets the <see cref="Func{T, TResult}"/> to order by your query.
         /// </summary>
         public Func<IQueryable<T>, IOrderedQueryable<T>> OrderBy { get; set; }

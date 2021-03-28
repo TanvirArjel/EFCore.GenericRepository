@@ -158,6 +158,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return entities;
         }
 
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         public async Task<List<TProjectedType>> GetProjectedListAsync<T, TProjectedType>(
             Expression<Func<T, TProjectedType>> selectExpression)
             where T : class
@@ -194,6 +195,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return projectedEntites;
         }
 
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         public async Task<List<TProjectedType>> GetProjectedListAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -236,6 +238,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).ToListAsync();
         }
 
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         public async Task<List<TProjectedType>> GetProjectedListAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -426,6 +429,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync();
         }
 
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetByIdAsync() method with same overload.")]
         public async Task<TProjectedType> GetProjectedByIdAsync<T, TProjectedType>(
             object id,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -569,6 +573,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
         public async Task<TProjectedType> GetProjectedAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -609,6 +614,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync();
         }
 
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
         public async Task<TProjectedType> GetProjectedAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression)
@@ -762,19 +768,30 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return count;
         }
 
-        public async Task<int> GetCountAsync<T>(params Expression<Func<T, bool>>[] conditions)
+        public async Task<int> GetCountAsync<T>(Expression<Func<T, bool>> condition)
             where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
 
-            if (conditions == null)
+            if (condition != null)
             {
-                return await query.CountAsync();
+                query = query.Where(condition);
             }
 
-            foreach (Expression<Func<T, bool>> expression in conditions)
+            return await query.CountAsync();
+        }
+
+        public async Task<int> GetCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions)
+            where T : class
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (conditions != null)
             {
-                query = query.Where(expression);
+                foreach (Expression<Func<T, bool>> expression in conditions)
+                {
+                    query = query.Where(expression);
+                }
             }
 
             return await query.CountAsync();
@@ -787,19 +804,30 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return count;
         }
 
-        public async Task<long> GetLongCountAsync<T>(params Expression<Func<T, bool>>[] conditions)
+        public async Task<long> GetLongCountAsync<T>(Expression<Func<T, bool>> condition)
             where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
 
-            if (conditions == null)
+            if (condition != null)
             {
-                return await query.LongCountAsync();
+                query = query.Where(condition);
             }
 
-            foreach (Expression<Func<T, bool>> expression in conditions)
+            return await query.LongCountAsync();
+        }
+
+        public async Task<long> GetLongCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions)
+            where T : class
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (conditions != null)
             {
-                query = query.Where(expression);
+                foreach (Expression<Func<T, bool>> expression in conditions)
+                {
+                    query = query.Where(expression);
+                }
             }
 
             return await query.LongCountAsync();

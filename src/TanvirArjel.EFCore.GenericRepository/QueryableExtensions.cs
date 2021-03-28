@@ -63,12 +63,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="T">Type of the <see cref="IQueryable"/>.</typeparam>
         /// <param name="source">The type to be extended.</param>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">Size of the pagiantion.</param>
-        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
+        /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
+        /// <returns>Returns <see cref="Task"/> of <see cref="PaginatedList{T}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="source"/> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
         public static async Task<PaginatedList<T>> ToPaginatedListAsync<T>(
             this IQueryable<T> source,
             PaginationSpecification<T> specification)
@@ -86,7 +84,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             IQueryable<T> countSource = source;
 
-            // modify the IQueryable using the specification's criteria expression
+            // modify the IQueryable using the specification's expression criteria
             if (specification.Conditions != null && specification.Conditions.Any())
             {
                 foreach (Expression<Func<T, bool>> conditon in specification.Conditions)
