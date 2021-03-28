@@ -8,27 +8,29 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
     <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
-    <Description>This library is an Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
+    <Description>This library is a Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
-      This library includes the following notable features:
+This library includes the following notable features:
 
-      1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
+1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
 
-      2. It’s providing the Generic Repository with database transaction support.
+2. It’s providing the Generic Repository with database transaction support.
 
-      3. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
+3. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
 
-      4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
+4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
 
-      5. It also has database level projection support for your query.
+5. It also has database-level projection support for your query.
 
-      6. It also has support to run raw SQL command against your relational database.
+6. It also has support to run raw SQL command against your relational database.
 
-      7. It also has support to choose whether you would like to track your query entity/entities or not.
+7. It also has support to choose whether you would like to track your query entity/entities or not.
 
-      8. It also has support to reset your EF Core DbContext state whenever you really needed.
+8. It also has support to reset your EF Core DbContext state whenever you really needed.
 
-      9.  Most importantly, it has full Unit Testing support. Most importantly, it facilitates the writing unit test with mocking.</Description>
+9. Most importantly, it has full Unit Testing support. Most importantly, it facilitates the writing unit test with mocking.
+
+10. It also has pagination support.</Description>
     <Title>EF Core Generic Repository</Title>
     <Copyright>©2021 TanvirArjel. All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
@@ -36,7 +38,7 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
     <PackageReleaseNotes>1. Obsolete methods have been removed.</PackageReleaseNotes>
-    <Version>5.3.0</Version>
+    <Version>5.4.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>TanvirArjel</Authors>

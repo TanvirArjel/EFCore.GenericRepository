@@ -29,23 +29,30 @@ namespace AspNetCore5._0.Controllers
         public async Task<IActionResult> Index()
         {
 
-            List<Department> departments = await _context.Set<Department>()
-                .Where(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad")).ToListAsync();
+            ////List<Department> departments = await _context.Set<Department>()
+            ////    .Where(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad")).ToListAsync();
 
-            Specification<Department> specification = new Specification<Department>();
-            specification.Conditions.Add(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad"));
+            ////Specification<Department> specification = new Specification<Department>();
+            ////specification.Conditions.Add(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad"));
 
-            List<string> departments1 = await _repository.GetListAsync(specification, d => d.Name);
+            ////List<string> departments1 = await _repository.GetListAsync(specification, d => d.Name);
 
-            PaginatedList<Employee> paginatedList = await _repository.GetQueryable<Employee>().ToPaginatedListAsync(1, 10);
+            ////PaginatedList<Employee> paginatedList = await _repository.GetQueryable<Employee>().ToPaginatedListAsync(1, 10);
 
-            IQueryable<EmployeeDto> queryable = _repository.GetQueryable<Employee>().Select(e => new EmployeeDto
-            {
-                EmployeeName = e.EmployeeName,
-                DepartmentName = e.DepartmentName
-            }).OrderBy(e => e.EmployeeName);
+            IQueryable<EmployeeDto> queryable = _repository.GetQueryable<Employee>()
+                .Where(e => e.EmployeeName.Contains("Ta")).Select(e => new EmployeeDto
+                {
+                    EmployeeName = e.EmployeeName,
+                    DepartmentName = e.DepartmentName
+                }).OrderBy(e => e.DepartmentName);
 
-            PaginatedList<EmployeeDto> paginatedList1 = await queryable.ToPaginatedListAsync(1, 10);
+            PaginationSpecification<Employee> specification = new PaginationSpecification<Employee>();
+            specification.Conditions.Add(e => e.EmployeeName.Contains("Ta"));
+            specification.Includes = q => q.Include(e => e.Department);
+            specification.PageIndex = 1;
+            specification.PageSize = 2;
+
+            PaginatedList<Employee> paginatedList1 = await _repository.GetPaginatedListAsync(specification);
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
             return View(lists);

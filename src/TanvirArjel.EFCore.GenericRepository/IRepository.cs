@@ -224,42 +224,32 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method return a <see cref="PaginatedList{T}"/>.
+        /// This method returns a <see cref="PaginatedList{T}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="orderBy">The order by which the list will be sorted.</param>
         /// <param name="pageIndex">The current page index.</param>
         /// <param name="pageSize">The current page size.</param>
         /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
-        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(int pageIndex, int pageSize)
+        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(PaginationSpecification<TEntity> specification)
             where TEntity : class;
 
         /// <summary>
-        /// This method return a <see cref="PaginatedList{T}"/>.
+        /// This method returns a <see cref="PaginatedList{T}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="condition">The condition on which entity list will be filtered.</param>
+        /// <typeparam name="TProjectedType">The projected type.</typeparam>
+        /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <param name="pageIndex">The current page index.</param>
         /// <param name="pageSize">The current page size.</param>
-        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
+        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageSize"/> is smaller than 1.</exception>
-        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(Expression<Func<TEntity, bool>> condition, int pageIndex, int pageSize)
-           where TEntity : class;
-
         Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            int pageIndex,
-            int pageSize)
-            where TEntity : class
-            where TProjectedType : class;
-
-        Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            int pageIndex,
-            int pageSize)
+            PaginationSpecification<TEntity> specification,
+            Expression<Func<TEntity, TProjectedType>> selectExpression)
             where TEntity : class
             where TProjectedType : class;
 

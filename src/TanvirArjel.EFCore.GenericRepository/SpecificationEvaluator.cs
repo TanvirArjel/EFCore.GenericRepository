@@ -15,6 +15,58 @@ namespace TanvirArjel.EFCore.GenericRepository
         public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, Specification<T> specification)
             where T : class
         {
+            IQueryable<T> query = GetSpecifiedQuery(inputQuery, (SpecificationBase<T>)specification);
+
+            // Apply paging if enabled
+            if (specification.Skip != null)
+            {
+                query = query.Skip((int)specification.Skip);
+            }
+
+            if (specification.Take != null)
+            {
+                query = query.Take((int)specification.Take);
+            }
+
+            return query;
+        }
+
+        public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, PaginationSpecification<T> specification)
+            where T : class
+        {
+            if (inputQuery == null)
+            {
+                throw new ArgumentNullException(nameof(inputQuery));
+            }
+
+            if (specification == null)
+            {
+                throw new ArgumentNullException(nameof(specification));
+            }
+
+            if (specification.PageIndex < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(specification.PageIndex), "The value of pageIndex must be greater than 0.");
+            }
+
+            if (specification.PageSize < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(specification.PageSize), "The value of pageSize must be greater than 0.");
+            }
+
+            IQueryable<T> query = GetSpecifiedQuery(inputQuery, (SpecificationBase<T>)specification);
+
+            // Apply paging if enabled
+            int skip = (specification.PageIndex - 1) * specification.PageSize;
+
+            query = query.Skip(skip).Take(specification.PageSize);
+
+            return query;
+        }
+
+        public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, SpecificationBase<T> specification)
+            where T : class
+        {
             if (inputQuery == null)
             {
                 throw new ArgumentNullException(nameof(inputQuery));
@@ -53,20 +105,9 @@ namespace TanvirArjel.EFCore.GenericRepository
             {
                 query = specification.OrderBy(query);
             }
-            else if (!(string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName) || string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName)))
+            else if (!string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName) && !string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName))
             {
                 query = query.OrderBy(specification.OrderByDynamic.ColumnName + " " + specification.OrderByDynamic.SortDirection);
-            }
-
-            // Apply paging if enabled
-            if (specification.Skip != null)
-            {
-                query = query.Skip((int)specification.Skip);
-            }
-
-            if (specification.Take != null)
-            {
-                query = query.Take((int)specification.Take);
             }
 
             return query;

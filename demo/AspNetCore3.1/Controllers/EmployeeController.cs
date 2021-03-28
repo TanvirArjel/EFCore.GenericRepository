@@ -31,18 +31,18 @@ namespace AspNetCore3._1.Controllers
 
             await _repository.GetLongCountAsync<Employee>();
             Specification<Employee> specification = new Specification<Employee>();
-            //specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
-            //specification.Includes = ep => ep.Include(e => e.Department);
-            //specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
-            //specification.Skip = 0;
-            //specification.Take = 10;
+            specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
+            specification.Includes = ep => ep.Include(e => e.Department);
+            specification.OrderBy = sp => sp.OrderBy(e => e.EmployeeName).ThenBy(e => e.DepartmentName);
+            specification.Skip = 0;
+            specification.Take = 10;
 
             List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
             Employee entityListAsync = await _repository.GetByIdAsync<Employee>(1, true);
 
 
 
-            long v1 = await _repository.GetProjectedByIdAsync<Employee, long>(1, e => e.EmployeeId);
+            Employee v1 = await _repository.GetByIdAsync<Employee>(1);
 
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 
