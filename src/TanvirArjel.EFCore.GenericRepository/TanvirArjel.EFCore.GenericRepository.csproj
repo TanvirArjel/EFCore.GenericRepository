@@ -37,7 +37,7 @@ This library includes the following notable features:
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. Obsolete methods have been removed.</PackageReleaseNotes>
+    <PackageReleaseNotes>1. Methods and extension methods have been added for pagination support.</PackageReleaseNotes>
     <Version>5.4.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>

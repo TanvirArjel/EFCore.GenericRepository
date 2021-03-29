@@ -680,12 +680,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         // Context level members
 
         /// <summary>
-        /// Execute raw sql command against the configured database.
+        /// Execute raw sql command against the configured database asynchronously.
         /// </summary>
         /// <param name="sql">The sql string.</param>
-        /// <param name="parameters">The paramters in the sql string.</param>
-        /// <returns>Returns <see cref="int"/>.</returns>
-        int ExecuteSqlCommand(string sql, params object[] parameters);
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Execute raw sql command against the configured database asynchronously.

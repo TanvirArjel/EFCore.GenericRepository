@@ -874,9 +874,9 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         }
 
         // DbConext level members
-        public int ExecuteSqlCommand(string sql, params object[] parameters)
+        public async Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)
         {
-            return _dbContext.Database.ExecuteSqlRaw(sql, parameters);
+            return await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
         }
 
         public async Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
