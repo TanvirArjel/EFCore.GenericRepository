@@ -41,8 +41,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method returns <see cref="List{T}"/> without any filter. Call only when you want to pull all the data from the source.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>()
+        Task<List<TEntity>> GetListAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -52,8 +53,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(bool asNoTracking)
+        Task<List<TEntity>> GetListAsync<TEntity>(bool asNoTracking, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -61,8 +63,11 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="includes">Navigation properties to be loaded.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes)
+        Task<List<TEntity>> GetListAsync<TEntity>(
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -73,8 +78,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes, bool asNoTracking)
+        Task<List<TEntity>> GetListAsync<TEntity>(
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -82,8 +91,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition on which entity list will be returned.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+        Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -94,8 +104,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Expression<Func<TEntity, bool>> condition, bool asNoTracking)
+        Task<List<TEntity>> GetListAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -107,11 +121,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
         Task<List<TEntity>> GetListAsync<TEntity>(
             Expression<Func<TEntity, bool>> condition,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
-            bool asNoTracking = false)
+            bool asNoTracking = false,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -121,8 +137,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="specification">A <see cref="Specification{TEntity}"/> <see cref="object"/> which contains all the conditions and criteria
         /// on which data will be returned.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Specification<TEntity> specification)
+        Task<List<TEntity>> GetListAsync<TEntity>(Specification<TEntity> specification, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -135,8 +152,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking)
+        Task<List<TEntity>> GetListAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -145,9 +163,11 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <typeparam name="TProjectedType">The type to which <typeparamref name="TEntity"/> will be projected.</typeparam>
         /// <param name="selectExpression">A <b>LINQ</b> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -156,10 +176,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <typeparam name="TProjectedType">The type to which <typeparamref name="TEntity"/> will be projected.</typeparam>
         /// <param name="selectExpression">A <b>LINQ</b> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -169,11 +191,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -183,12 +207,14 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -201,11 +227,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// on which data will be returned.
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -218,12 +246,14 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// on which data will be returned.
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -231,9 +261,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
-        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(PaginationSpecification<TEntity> specification)
+        Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(
+            PaginationSpecification<TEntity> specification,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -243,12 +276,14 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is smaller than 1.</exception>
         Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
             PaginationSpecification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class
             where TProjectedType : class;
 
@@ -258,8 +293,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetByIdAsync<TEntity>(object id)
+        Task<TEntity> GetByIdAsync<TEntity>(object id, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -271,8 +307,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetByIdAsync<TEntity>(object id, bool asNoTracking)
+        Task<TEntity> GetByIdAsync<TEntity>(object id, bool asNoTracking, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -282,8 +319,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="includes">The navigation properties to be loaded.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetByIdAsync<TEntity>(object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes)
+        Task<TEntity> GetByIdAsync<TEntity>(
+            object id,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -296,8 +337,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetByIdAsync<TEntity>(object id, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes, bool asNoTracking)
+        Task<TEntity> GetByIdAsync<TEntity>(
+            object id,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -308,11 +354,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetByIdAsync<TEntity, TProjectedType>(
             object id,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -323,12 +371,14 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetByIdAsync() method with same overload.")]
         Task<TProjectedType> GetProjectedByIdAsync<TEntity, TProjectedType>(
             object id,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -336,8 +386,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
-        Task<TEntity> GetAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+        Task<TEntity> GetAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -348,20 +399,12 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
-        /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
-        Task<TEntity> GetAsync<TEntity>(Expression<Func<TEntity, bool>> condition, bool asNoTracking)
-            where TEntity : class;
-
-        /// <summary>
-        /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
-        /// <param name="includes">Navigation properties to be loaded.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
         Task<TEntity> GetAsync<TEntity>(
             Expression<Func<TEntity, bool>> condition,
-            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes)
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -370,14 +413,30 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="includes">Navigation properties to be loaded.</param>
-        /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
-        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
         Task<TEntity> GetAsync<TEntity>(
             Expression<Func<TEntity, bool>> condition,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
-            bool asNoTracking)
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="includes">Navigation properties to be loaded.</param>
+        /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
+        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
+        Task<TEntity> GetAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -387,8 +446,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="specification">A <see cref="Specification{TEntity}"/> object which contains all the conditions and criteria
         /// on which data will be returned.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetAsync<TEntity>(Specification<TEntity> specification)
+        Task<TEntity> GetAsync<TEntity>(Specification<TEntity> specification, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -401,8 +461,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
         /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking)
+        Task<TEntity> GetAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -412,11 +473,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -426,12 +489,14 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
         Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -444,11 +509,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// on which data will be returned.
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -461,12 +528,14 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// on which data will be returned.
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
         Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression)
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -474,8 +543,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// and returns <see cref="Task"/> of <see cref="bool"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="bool"/>.</returns>
-        Task<bool> ExistsAsync<TEntity>()
+        Task<bool> ExistsAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -484,8 +554,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition based on which the existence will checked.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="bool"/>.</returns>
-        Task<bool> ExistsAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+        Task<bool> ExistsAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -552,8 +623,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method returns all count in <see cref="int"/> type.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="int"/>.</returns>
-        Task<int> GetCountAsync<TEntity>()
+        Task<int> GetCountAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -561,8 +633,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition based on which count will be done.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="int"/>.</returns>
-        Task<int> GetCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+        Task<int> GetCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -570,16 +643,18 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="conditions">The conditions based on which count will be done.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="int"/>.</returns>
-        Task<int> GetCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions)
+        Task<int> GetCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
         /// This method returns all count in <see cref="long"/> type.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
-        Task<long> GetLongCountAsync<TEntity>()
+        Task<long> GetLongCountAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -587,8 +662,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition based on which count will be done.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
-        Task<long> GetLongCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition)
+        Task<long> GetLongCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -596,8 +672,9 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="conditions">The conditions based on which count will be done.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
-        Task<long> GetLongCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions)
+        Task<long> GetLongCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         // Context level members
