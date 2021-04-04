@@ -1,15 +1,27 @@
 # EF Core Generic Repository
 
-This library is Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
+This library is a Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
 ## ⭐ Giving a star ⭐
 
 **If you find this library useful, please don't forget to encouraging me to do such more stuffs by giving a star to this repository. Thank you.**
 
-## 🔥 Breaking Changes in version 5.2.1 🔥
+## 🔥 What's new 🔥
 
-1. `repository.SaveChangesAsync()` method has been removed. Please look at the below usage documention for more details.
- 
+### Pagination Support:
+```C#
+PaginationSpecification<Employee> specification = new PaginationSpecification<Employee>();
+specification.Conditions.Add(e => e.Name.Contains("Ta"));
+specification.PageIndex = 1;
+specification.PageSize = 10;
+
+PaginatedList<EmployeeDto> paginatedList = await _repository.GetPaginatedListAsync(specification, e => new EmployeeDto
+{
+    Id = e.Id
+    Name = e.Name,
+    DepartmentName = e.DepartmentName
+});
+```
 
 ## ⚙️ This library includes following notable features: ⚙️
 
@@ -30,6 +42,8 @@ This library is Generic Repository implementation for EF Core ORM which will rem
 8. It also has support to reset your EF Core DbContext state whenever you really needed.
 
 9. Most importantly, it has full Unit Testing support.
+
+11. Pagination support.
 
 ## ✈️ How do I get started? ✈️
 
