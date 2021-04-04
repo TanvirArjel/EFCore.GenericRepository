@@ -17,6 +17,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.0" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="TanvirArjel.Extensions.Microsoft.DependencyInjection" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup>

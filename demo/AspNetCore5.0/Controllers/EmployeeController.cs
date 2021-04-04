@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using AspNetCore5._0.Data;
 using AspNetCore5._0.Data.Models;
@@ -39,29 +38,8 @@ namespace AspNetCore5._0.Controllers
 
             ////PaginatedList<Employee> paginatedList = await _repository.GetQueryable<Employee>().ToPaginatedListAsync(1, 10);
 
-            Specification<Employee> specification = new Specification<Employee>();
-            specification.Conditions.Add(e => e.EmployeeName.Contains("Ta"));
-            specification.Includes = q => q.Include(e => e.Department);
-            specification.Skip = 0;
-            specification.Take = 4;
-
-            long count = await _repository.GetLongCountAsync(specification.Conditions);
-
-            List<EmployeeDto> paginatedList1 = await _repository.GetListAsync(specification, e => new EmployeeDto
-            {
-                EmployeeName = e.EmployeeName,
-                DepartmentName = e.DepartmentName
-            });
-
-            List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
+            List<Employee> lists = await _repository.GetQueryable<Employee>().ToListAsync();
             return View(lists);
-        }
-
-        public class EmployeeDto
-        {
-            public string EmployeeName { get; set; }
-
-            public string DepartmentName { get; set; }
         }
 
         // GET: Employee/Details/5
