@@ -4,6 +4,7 @@ using System.Data;
 using System.Threading.Tasks;
 using AspNetCore5._0.Data;
 using AspNetCore5._0.Data.Models;
+using AspNetCore5._0.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -27,17 +28,13 @@ namespace AspNetCore5._0.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
+            //var list = _context.SqlQuery(
+            //    () => new { EmployeeName = "", DepartmentName = "" },
+            //    "Select EmployeeName,DepartmentName from Employee Where EmployeeId = @p0", 1);
+            List<string> enumerable = _context.GetFromQuery<string>("Select EmployeeName from Employee Where EmployeeId = @p0", 1);
 
-            ////List<Department> departments = await _context.Set<Department>()
-            ////    .Where(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad")).ToListAsync();
-
-            ////Specification<Department> specification = new Specification<Department>();
-            ////specification.Conditions.Add(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad"));
-
-            ////List<string> departments1 = await _repository.GetListAsync(specification, d => d.Name);
-
-            ////PaginatedList<Employee> paginatedList = await _repository.GetQueryable<Employee>().ToPaginatedListAsync(1, 10);
-
+            //List<EmployeeDto> list2 = _context.ExecSQL<EmployeeDto>("Select EmployeeName,DepartmentName from Employee Where EmployeeId = @p0", 1);
+            //List<string> list1 = _context.ExecSQL<string>("Select EmployeeName from Employee");
             List<Employee> lists = await _repository.GetQueryable<Employee>().ToListAsync();
             return View(lists);
         }
