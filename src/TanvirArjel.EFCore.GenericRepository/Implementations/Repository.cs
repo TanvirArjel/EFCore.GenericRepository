@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
+using TanvirArjel.EFCore.GenericRepository.Extensions;
 
 namespace TanvirArjel.EFCore.GenericRepository.Implementations
 {
@@ -874,6 +875,42 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         }
 
         // DbConext level members
+        public async Task<List<T>> GetListFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                throw new ArgumentNullException(nameof(sql));
+            }
+
+            IEnumerable<object> parameters = new List<object>();
+
+            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+            return items;
+        }
+
+        public async Task<List<T>> GetListFromRawSqlAsync<T>(string sql, object parameter, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                throw new ArgumentNullException(nameof(sql));
+            }
+
+            List<object> parameters = new List<object>() { parameter };
+            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+            return items;
+        }
+
+        public async Task<List<T>> GetListFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                throw new ArgumentNullException(nameof(sql));
+            }
+
+            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+            return items;
+        }
+
         public async Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);

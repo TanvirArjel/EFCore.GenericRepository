@@ -678,6 +678,11 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         // Context level members
+        Task<List<T>> GetListFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default);
+
+        Task<List<T>> GetListFromRawSqlAsync<T>(string sql, object parameter, CancellationToken cancellationToken = default);
+
+        Task<List<T>> GetListFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Execute raw sql command against the configured database asynchronously.

@@ -4,7 +4,6 @@ using System.Data;
 using System.Threading.Tasks;
 using AspNetCore5._0.Data;
 using AspNetCore5._0.Data.Models;
-using AspNetCore5._0.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -31,9 +30,8 @@ namespace AspNetCore5._0.Controllers
             //var list = _context.SqlQuery(
             //    () => new { EmployeeName = "", DepartmentName = "" },
             //    "Select EmployeeName,DepartmentName from Employee Where EmployeeId = @p0", 1);
-            List<string> enumerable = _context.GetFromQuery<string>("Select EmployeeName from Employee Where EmployeeId = @p0", 1);
+            List<string> items = await _repository.GetListFromRawSqlAsync<string>("Select EmployeeName from Employee Where EmployeeId = @p0", 1);
 
-            //List<EmployeeDto> list2 = _context.ExecSQL<EmployeeDto>("Select EmployeeName,DepartmentName from Employee Where EmployeeId = @p0", 1);
             //List<string> list1 = _context.ExecSQL<string>("Select EmployeeName from Employee");
             List<Employee> lists = await _repository.GetQueryable<Employee>().ToListAsync();
             return View(lists);
