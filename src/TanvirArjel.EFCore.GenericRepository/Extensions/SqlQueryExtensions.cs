@@ -38,7 +38,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Extensions
 
             using DbCommand command = dbContext.Database.GetDbConnection().CreateCommand();
             command.CommandText = sql;
-            command.CommandType = CommandType.Text;
 
             if (parameters != null)
             {
@@ -53,7 +52,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Extensions
                 }
             }
 
-            dbContext.Database.OpenConnection();
+            await dbContext.Database.OpenConnectionAsync(cancellationToken);
 
             using DbDataReader result = await command.ExecuteReaderAsync(cancellationToken);
 
