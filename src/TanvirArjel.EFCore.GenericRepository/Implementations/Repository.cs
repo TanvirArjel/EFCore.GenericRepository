@@ -875,7 +875,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
         }
 
         // DbConext level members
-        public async Task<List<T>> GetListFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default)
+        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(sql))
             {
@@ -888,7 +888,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return items;
         }
 
-        public async Task<List<T>> GetListFromRawSqlAsync<T>(string sql, object parameter, CancellationToken cancellationToken = default)
+        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, object parameter, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(sql))
             {
@@ -900,7 +900,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return items;
         }
 
-        public async Task<List<T>> GetListFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
+        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(sql))
             {

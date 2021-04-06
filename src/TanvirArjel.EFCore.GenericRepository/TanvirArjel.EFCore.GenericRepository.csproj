@@ -31,15 +31,19 @@ This library includes the following notable features:
 
 9. Most importantly, it has full Unit Testing support. Most importantly, it facilitates the writing unit test with mocking.
 
-10. It also has pagination support.</Description>
+10. It also has pagination support.
+
+11. Free raw SQL query support both for complex type and primitive types.</Description>
     <Title>EF Core Generic Repository</Title>
     <Copyright>©2021 TanvirArjel. All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. Methods and extension methods have been added for pagination support.</PackageReleaseNotes>
-    <Version>5.4.0</Version>
+    <PackageReleaseNotes>1. Methods and extension methods have been added for pagination support.
+
+2. Free raw SQL query support both for complex type and primitive types has been added.</PackageReleaseNotes>
+    <Version>5.5.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>TanvirArjel</Authors>
