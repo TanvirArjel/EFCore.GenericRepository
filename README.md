@@ -23,6 +23,15 @@ PaginatedList<EmployeeDto> paginatedList = await _repository.GetPaginatedListAsy
 });
 ```
 
+### Free raw SQL support:
+
+```C#
+List<string> search = new List<string>() { "Tanvir", "Software" };
+string sqlQuery = "Select EmployeeName, DepartmentName from Employee Where EmployeeName LIKE @p0 + '%' and DepartmentName LIKE @p1 + '%'";
+List<EmployeeDto> items = await _repository.GetFromRawSqlAsync<EmployeeDto>(sqlQuery, search);
+
+```
+
 ## ⚙️ This library includes following notable features: ⚙️
 
 1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
@@ -44,6 +53,8 @@ PaginatedList<EmployeeDto> paginatedList = await _repository.GetPaginatedListAsy
 9. Most importantly, it has full Unit Testing support.
 
 11. Pagination support.
+
+13. Free raw SQL query support both for complex type and primitive types.
 
 ## ✈️ How do I get started? ✈️
 
