@@ -171,20 +171,6 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method returns <see cref="List{TProjectedType}"/> without any filter.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <typeparam name="TProjectedType">The type to which <typeparamref name="TEntity"/> will be projected.</typeparam>
-        /// <param name="selectExpression">A <b>LINQ</b> select query.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
-        Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <see cref="List{TProjectedType}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
@@ -195,23 +181,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
-        /// This method takes <see cref="Expression{Func}"/> as parameter and returns <see cref="List{TProjectedType}"/>.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="condition">The condition on which entity list will be returned.</param>
-        /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
-        Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,
             Expression<Func<TEntity, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
@@ -231,26 +200,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <returns>Return <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<List<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
-            Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
-        /// This method takes an <see cref="object"/> of <see cref="Specification{T}"/> and <paramref name="selectExpression"/> as parameters and
-        /// returns <see cref="List{TProjectedType}"/>.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="specification">A <see cref="Specification{TEntity}"/> object which contains all the conditions and criteria
-        /// on which data will be returned.
-        /// </param>
-        /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Return <see cref="Task{TResult}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
-        Task<List<TProjectedType>> GetProjectedListAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
@@ -273,6 +222,19 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method returns a <see cref="PaginatedList{T}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
+        Task<PaginatedList<TEntity>> GetListAsync<TEntity>(
+            PaginationSpecification<TEntity> specification,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method returns a <see cref="PaginatedList{T}"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
@@ -281,6 +243,24 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is smaller than 1.</exception>
         Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
+            PaginationSpecification<TEntity> specification,
+            Expression<Func<TEntity, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where TEntity : class
+            where TProjectedType : class;
+
+        /// <summary>
+        /// This method returns a <see cref="PaginatedList{T}"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <typeparam name="TProjectedType">The projected type.</typeparam>
+        /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
+        /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is smaller than 1.</exception>
+        Task<PaginatedList<TProjectedType>> GetListAsync<TEntity, TProjectedType>(
             PaginationSpecification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
@@ -358,24 +338,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetByIdAsync<TEntity, TProjectedType>(
-            object id,
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
-        /// This method takes <paramref name="id"/> which is the primary key value of the entity and returns the specified projected entity
-        /// if found otherwise null.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="id">The primary key value of the entity.</param>
-        /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task"/> of <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetByIdAsync() method with same overload.")]
-        Task<TProjectedType> GetProjectedByIdAsync<TEntity, TProjectedType>(
             object id,
             Expression<Func<TEntity, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
@@ -483,23 +445,6 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
-        /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
-        Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
         /// This method takes an <see cref="object"/> of <see cref="Specification{T}"/> and a <see cref="System.Linq"/> select  query
         /// and returns <typeparamref name="TProjectedType"/>.
         /// </summary>
@@ -513,26 +458,6 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
-            Specification<TEntity> specification,
-            Expression<Func<TEntity, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
-        /// This method takes an <see cref="object"/> of <see cref="Specification{T}"/> and a <see cref="System.Linq"/> select  query
-        /// and returns <typeparamref name="TProjectedType"/>.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <typeparam name="TProjectedType">The type of the projected entity.</typeparam>
-        /// <param name="specification">A <see cref="Specification{TEntity}"/> object which contains all the conditions and criteria
-        /// on which data will be returned.
-        /// </param>
-        /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
-        Task<TProjectedType> GetProjectedAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)

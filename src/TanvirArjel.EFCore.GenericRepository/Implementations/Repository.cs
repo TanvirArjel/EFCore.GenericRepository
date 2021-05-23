@@ -169,47 +169,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return entities;
         }
 
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
-        public async Task<List<TProjectedType>> GetProjectedListAsync<T, TProjectedType>(
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            List<TProjectedType> entities = await _dbContext.Set<T>().Select(selectExpression).ToListAsync(cancellationToken);
-
-            return entities;
-        }
-
         public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
-            Expression<Func<T, bool>> condition,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            List<TProjectedType> projectedEntites = await query.Select(selectExpression).ToListAsync(cancellationToken);
-
-            return projectedEntites;
-        }
-
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
-        public async Task<List<TProjectedType>> GetProjectedListAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
@@ -253,28 +213,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).ToListAsync(cancellationToken);
         }
 
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
-        public async Task<List<TProjectedType>> GetProjectedListAsync<T, TProjectedType>(
-            Specification<T> specification,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            return await query.Select(selectExpression).ToListAsync(cancellationToken);
-        }
-
+        [Obsolete]
         public async Task<PaginatedList<T>> GetPaginatedListAsync<T>(
             PaginationSpecification<T> specification,
             CancellationToken cancellationToken = default)
@@ -289,7 +228,46 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return paginatedList;
         }
 
+        public async Task<PaginatedList<T>> GetListAsync<T>(
+            PaginationSpecification<T> specification,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            if (specification == null)
+            {
+                throw new ArgumentNullException(nameof(specification));
+            }
+
+            PaginatedList<T> paginatedList = await _dbContext.Set<T>().ToPaginatedListAsync(specification, cancellationToken);
+            return paginatedList;
+        }
+
+        [Obsolete]
         public async Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<T, TProjectedType>(
+            PaginationSpecification<T> specification,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+            where TProjectedType : class
+        {
+            if (specification == null)
+            {
+                throw new ArgumentNullException(nameof(specification));
+            }
+
+            if (selectExpression == null)
+            {
+                throw new ArgumentNullException(nameof(selectExpression));
+            }
+
+            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery<T>((SpecificationBase<T>)specification);
+
+            PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression)
+                .ToPaginatedListAsync(specification.PageIndex, specification.PageSize, cancellationToken);
+            return paginatedList;
+        }
+
+        public async Task<PaginatedList<TProjectedType>> GetListAsync<T, TProjectedType>(
             PaginationSpecification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
@@ -455,64 +433,6 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
         }
 
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetByIdAsync() method with same overload.")]
-        public async Task<TProjectedType> GetProjectedByIdAsync<T, TProjectedType>(
-            object id,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primayKeyValue = null;
-
-            try
-            {
-                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
-        }
-
-        ////public async Task<T> GetEntityAsync<T>(
-        ////    Expression<Func<T, bool>> condition,
-        ////    bool asNoTracking = false,
-        ////    CancellationToken cancellationToken = default)
-        ////   where T : class
-        ////{
-        ////    return await GetAsync(condition, asNoTracking);
-        ////}
-
         public async Task<T> GetAsync<T>(
             Expression<Func<T, bool>> condition,
             CancellationToken cancellationToken = default)
@@ -611,51 +531,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
         }
 
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
-        public async Task<TProjectedType> GetProjectedAsync<T, TProjectedType>(
-            Expression<Func<T, bool>> condition,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
-        }
-
         public async Task<TProjectedType> GetAsync<T, TProjectedType>(
-            Specification<T> specification,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
-        }
-
-        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetAsync() method with same overload.")]
-        public async Task<TProjectedType> GetProjectedAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression,
             CancellationToken cancellationToken = default)
