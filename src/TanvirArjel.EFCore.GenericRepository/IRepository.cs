@@ -213,6 +213,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<PaginatedList<TEntity>> GetPaginatedListAsync<TEntity>(
             PaginationSpecification<TEntity> specification,
             CancellationToken cancellationToken = default)
@@ -242,6 +243,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is smaller than 1.</exception>
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<TEntity, TProjectedType>(
             PaginationSpecification<TEntity> specification,
             Expression<Func<TEntity, TProjectedType>> selectExpression,

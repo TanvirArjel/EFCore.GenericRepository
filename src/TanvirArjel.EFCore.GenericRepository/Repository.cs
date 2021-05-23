@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using TanvirArjel.EFCore.GenericRepository.Extensions;
 
-namespace TanvirArjel.EFCore.GenericRepository.Implementations
+namespace TanvirArjel.EFCore.GenericRepository
 {
     internal class Repository : IRepository
     {
@@ -52,7 +52,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             where T : class
         {
             Func<IQueryable<T>, IIncludableQueryable<T, object>> nullValue = null;
-            return await GetListAsync<T>(nullValue, asNoTracking, cancellationToken);
+            return await GetListAsync(nullValue, asNoTracking, cancellationToken);
         }
 
         public async Task<List<T>> GetListAsync<T>(
@@ -60,7 +60,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             CancellationToken cancellationToken = default)
             where T : class
         {
-            return await GetListAsync<T>(includes, false, cancellationToken);
+            return await GetListAsync(includes, false, cancellationToken);
         }
 
         public async Task<List<T>> GetListAsync<T>(
@@ -213,7 +213,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return await query.Select(selectExpression).ToListAsync(cancellationToken);
         }
 
-        [Obsolete]
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         public async Task<PaginatedList<T>> GetPaginatedListAsync<T>(
             PaginationSpecification<T> specification,
             CancellationToken cancellationToken = default)
@@ -242,7 +242,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
             return paginatedList;
         }
 
-        [Obsolete]
+        [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
         public async Task<PaginatedList<TProjectedType>> GetPaginatedListAsync<T, TProjectedType>(
             PaginationSpecification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression,
@@ -260,7 +260,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery<T>((SpecificationBase<T>)specification);
+            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery((SpecificationBase<T>)specification);
 
             PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression)
                 .ToPaginatedListAsync(specification.PageIndex, specification.PageSize, cancellationToken);
@@ -284,7 +284,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery<T>((SpecificationBase<T>)specification);
+            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery((SpecificationBase<T>)specification);
 
             PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression)
                 .ToPaginatedListAsync(specification.PageIndex, specification.PageSize, cancellationToken);
@@ -326,7 +326,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Implementations
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T enity = await GetByIdAsync<T>(id, includes, false, cancellationToken);
+            T enity = await GetByIdAsync(id, includes, false, cancellationToken);
             return enity;
         }
 
