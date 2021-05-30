@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.10">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\TanvirArjel.EFCore.GenericRepository\TanvirArjel.EFCore.GenericRepository.csproj" />
+    <ProjectReference Include="..\..\src\TanvirArjel.EFCore.GenericRepository.csproj" />
   </ItemGroup>
 
 </Project>

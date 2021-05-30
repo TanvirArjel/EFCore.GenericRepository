@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -43,7 +43,7 @@ This library includes the following notable features:
     <PackageReleaseNotes>1. Methods and extension methods have been added for pagination support.
 
 2. Free raw SQL query support both for complex type and primitive types has been added.</PackageReleaseNotes>
-    <Version>5.5.0</Version>
+    <Version>5.6.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>TanvirArjel</Authors>
@@ -52,7 +52,7 @@ This library includes the following notable features:
 
   <ItemGroup>
     <None Remove="stylecop.json" />
-    <None Include="..\..\LICENSE">
+    <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
@@ -67,9 +67,9 @@ This library includes the following notable features:
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+  <!--<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0-*" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
