@@ -22,7 +22,7 @@ namespace AspNetCore5._0
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddServicesOfType<IScopedService>();
+            services.AddServicesOfAllTypes();
             string connectionString = Configuration.GetConnectionString("RepositoryDbConnection");
             services.AddDbContext<DemoDbContext>(option => option.UseSqlServer(connectionString));
 

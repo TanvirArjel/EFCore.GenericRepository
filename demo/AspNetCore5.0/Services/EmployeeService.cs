@@ -1,15 +1,16 @@
-﻿using AspNetCore5._0.Data.Models;
-using AspNetCore5._0.Dtos;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore5._0.Data.Models;
+using AspNetCore5._0.Dtos;
+using Microsoft.EntityFrameworkCore;
 using TanvirArjel.EFCore.GenericRepository;
 using TanvirArjel.Extensions.Microsoft.DependencyInjection;
 
 namespace AspNetCore5._0.Services
 {
-    public class EmployeeService : IScopedService
+    [ScopedService]
+    public class EmployeeService
     {
         private readonly IRepository _repository;
 

@@ -1,94 +1,96 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
-    <RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
-    <Description>This library is a Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+		<DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+		<LangVersion>8.0</LangVersion>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<AssemblyName>TanvirArjel.EFCore.GenericRepository</AssemblyName>
+		<RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
+		<Description>This library is a Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
 
 This library includes the following notable features:
 
-1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
+      1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
 
-2. It’s providing the Generic Repository with database transaction support.
+      2. It’s providing the Generic Repository with database transaction support.
 
-3. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
+      3. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
 
-4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
+      4. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
 
-5. It also has database-level projection support for your query.
+      5. It also has database-level projection support for your query.
 
-6. It also has support to run raw SQL command against your relational database.
+      6. It also has support to run raw SQL command against your relational database.
 
-7. It also has support to choose whether you would like to track your query entity/entities or not.
+      7. It also has support to choose whether you would like to track your query entity/entities or not.
 
-8. It also has support to reset your EF Core DbContext state whenever you really needed.
+      8. It also has support to reset your EF Core DbContext state whenever you really needed.
 
-9. Most importantly, it has full Unit Testing support. Most importantly, it facilitates the writing unit test with mocking.
+      9. Most importantly, it has full Unit Testing support. Most importantly, it facilitates the writing unit test with mocking.
 
-10. It also has pagination support.
+      10. It also has pagination support.
 
-11. Free raw SQL query support both for complex type and primitive types.</Description>
-    <Title>EF Core Generic Repository</Title>
-    <Copyright>©2021 TanvirArjel. All rights reserved.</Copyright>
-    <PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
-    <PackageReleaseNotes>1. Methods and extension methods have been added for pagination support.
+       11. Free raw SQL query support both for complex type and primitive types.
+		</Description>
+		<Title>EF Core Generic Repository</Title>
+		<Copyright>©2021 TanvirArjel. All rights reserved.</Copyright>
+		<PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
+		<PackageReleaseNotes>1. EF Core 6.0 support has been added.
+		</PackageReleaseNotes>
+		<Version>5.6.0</Version>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageIcon>icon.png</PackageIcon>
+		<Authors>TanvirArjel</Authors>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-2. Free raw SQL query support both for complex type and primitive types has been added.</PackageReleaseNotes>
-    <Version>5.6.0</Version>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIcon>icon.png</PackageIcon>
-    <Authors>TanvirArjel</Authors>
-    <NeutralLanguage>en-US</NeutralLanguage>
-  </PropertyGroup>
+	<ItemGroup>
+		<None Remove="stylecop.json" />
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath></PackagePath>
+		</None>
+		<None Include="images\icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
 
-  <ItemGroup>
-    <None Remove="stylecop.json" />
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="images\icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+	</ItemGroup>
 
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="stylecop.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0-*" />
+	</ItemGroup>
 
-  <!--<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0-*" />
-  </ItemGroup>-->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.*" />
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.*" />
+	</ItemGroup>
 
 </Project>
