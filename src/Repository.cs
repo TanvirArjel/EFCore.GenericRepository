@@ -42,17 +42,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             return _dbContext.Set<T>();
         }
 
-        public async Task<List<T>> GetListAsync<T>(CancellationToken cancellationToken = default)
+        public Task<List<T>> GetListAsync<T>(CancellationToken cancellationToken = default)
             where T : class
         {
-            return await GetListAsync<T>(false, cancellationToken);
+            return GetListAsync<T>(false, cancellationToken);
         }
 
-        public async Task<List<T>> GetListAsync<T>(bool asNoTracking, CancellationToken cancellationToken = default)
+        public Task<List<T>> GetListAsync<T>(bool asNoTracking, CancellationToken cancellationToken = default)
             where T : class
         {
             Func<IQueryable<T>, IIncludableQueryable<T, object>> nullValue = null;
-            return await GetListAsync(nullValue, asNoTracking, cancellationToken);
+            return GetListAsync(nullValue, asNoTracking, cancellationToken);
         }
 
         public Task<List<T>> GetListAsync<T>(
@@ -81,9 +81,9 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            List<T> entities = await query.ToListAsync(cancellationToken);
+            List<T> items = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            return entities;
+            return items;
         }
 
         public Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
@@ -125,9 +125,9 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            List<T> entities = await query.ToListAsync(cancellationToken);
+            List<T> items = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            return entities;
+            return items;
         }
 
         public Task<List<T>> GetListAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
@@ -136,7 +136,10 @@ namespace TanvirArjel.EFCore.GenericRepository
             return GetListAsync(specification, false, cancellationToken);
         }
 
-        public async Task<List<T>> GetListAsync<T>(Specification<T> specification, bool asNoTracking, CancellationToken cancellationToken = default)
+        public async Task<List<T>> GetListAsync<T>(
+            Specification<T> specification,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
            where T : class
         {
             IQueryable<T> query = _dbContext.Set<T>();
@@ -151,7 +154,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            return await query.ToListAsync(cancellationToken);
+            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
@@ -164,7 +167,8 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            List<TProjectedType> entities = await _dbContext.Set<T>().Select(selectExpression).ToListAsync(cancellationToken);
+            List<TProjectedType> entities = await _dbContext.Set<T>()
+                .Select(selectExpression).ToListAsync(cancellationToken).ConfigureAwait(false);
 
             return entities;
         }
@@ -187,7 +191,8 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.Where(condition);
             }
 
-            List<TProjectedType> projectedEntites = await query.Select(selectExpression).ToListAsync(cancellationToken);
+            List<TProjectedType> projectedEntites = await query.Select(selectExpression)
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             return projectedEntites;
         }
@@ -210,7 +215,8 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.GetSpecifiedQuery(specification);
             }
 
-            return await query.Select(selectExpression).ToListAsync(cancellationToken);
+            return await query.Select(selectExpression)
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
         [Obsolete("This method has been marked as obsolete and will be removed in next version. Please use GetListAsync() method with same overload.")]
@@ -291,7 +297,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             return paginatedList;
         }
 
-        public async Task<T> GetByIdAsync<T>(object id, CancellationToken cancellationToken = default)
+        public Task<T> GetByIdAsync<T>(object id, CancellationToken cancellationToken = default)
             where T : class
         {
             if (id == null)
@@ -299,11 +305,10 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T enity = await GetByIdAsync<T>(id, false, cancellationToken);
-            return enity;
+            return GetByIdAsync<T>(id, false, cancellationToken);
         }
 
-        public async Task<T> GetByIdAsync<T>(object id, bool asNoTracking, CancellationToken cancellationToken = default)
+        public Task<T> GetByIdAsync<T>(object id, bool asNoTracking, CancellationToken cancellationToken = default)
             where T : class
         {
             if (id == null)
@@ -311,11 +316,10 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T enity = await GetByIdAsync<T>(id, null, asNoTracking, cancellationToken);
-            return enity;
+            return GetByIdAsync<T>(id, null, asNoTracking, cancellationToken);
         }
 
-        public async Task<T> GetByIdAsync<T>(
+        public Task<T> GetByIdAsync<T>(
             object id,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
             CancellationToken cancellationToken = default)
@@ -326,8 +330,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(id));
             }
 
-            T enity = await GetByIdAsync(id, includes, false, cancellationToken);
-            return enity;
+            return GetByIdAsync(id, includes, false, cancellationToken);
         }
 
         public async Task<T> GetByIdAsync<T>(
@@ -381,7 +384,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            T enity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken);
+            T enity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken).ConfigureAwait(false);
             return enity;
         }
 
@@ -430,7 +433,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             IQueryable<T> query = _dbContext.Set<T>();
 
-            return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
+            return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public Task<T> GetAsync<T>(
@@ -483,7 +486,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            return await query.FirstOrDefaultAsync(cancellationToken);
+            return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public Task<T> GetAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
@@ -507,7 +510,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            return await query.FirstOrDefaultAsync(cancellationToken);
+            return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<TProjectedType> GetAsync<T, TProjectedType>(
@@ -528,7 +531,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.Where(condition);
             }
 
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
+            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<TProjectedType> GetAsync<T, TProjectedType>(
@@ -549,7 +552,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.GetSpecifiedQuery(specification);
             }
 
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
+            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public Task<bool> ExistsAsync<T>(CancellationToken cancellationToken = default)
@@ -568,7 +571,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 return await query.AnyAsync(cancellationToken);
             }
 
-            bool isExists = await query.AnyAsync(condition, cancellationToken);
+            bool isExists = await query.AnyAsync(condition, cancellationToken).ConfigureAwait(false);
             return isExists;
         }
 
@@ -580,8 +583,8 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            EntityEntry<T> entityEntry = await _dbContext.Set<T>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             object[] primaryKeyValue = entityEntry.Metadata.FindPrimaryKey().Properties.
                 Select(p => entityEntry.Property(p.Name).CurrentValue).ToArray();
@@ -597,8 +600,8 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(entities));
             }
 
-            await _dbContext.Set<T>().AddRangeAsync(entities, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.Set<T>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task UpdateAsync<T>(T entity, CancellationToken cancellationToken = default)
@@ -639,7 +642,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 _dbContext.Set<T>().Update(entity);
             }
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
@@ -651,7 +654,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<T>().UpdateRange(entities);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
@@ -663,7 +666,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
@@ -675,13 +678,13 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<T>().RemoveRange(entities);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<int> GetCountAsync<T>(CancellationToken cancellationToken = default)
             where T : class
         {
-            int count = await _dbContext.Set<T>().CountAsync(cancellationToken);
+            int count = await _dbContext.Set<T>().CountAsync(cancellationToken).ConfigureAwait(false);
             return count;
         }
 
@@ -695,7 +698,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.Where(condition);
             }
 
-            return await query.CountAsync(cancellationToken);
+            return await query.CountAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<int> GetCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions, CancellationToken cancellationToken = default)
@@ -711,13 +714,13 @@ namespace TanvirArjel.EFCore.GenericRepository
                 }
             }
 
-            return await query.CountAsync(cancellationToken);
+            return await query.CountAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<long> GetLongCountAsync<T>(CancellationToken cancellationToken = default)
             where T : class
         {
-            long count = await _dbContext.Set<T>().LongCountAsync(cancellationToken);
+            long count = await _dbContext.Set<T>().LongCountAsync(cancellationToken).ConfigureAwait(false);
             return count;
         }
 
@@ -731,7 +734,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.Where(condition);
             }
 
-            return await query.LongCountAsync(cancellationToken);
+            return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<long> GetLongCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions, CancellationToken cancellationToken = default)
@@ -747,7 +750,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 }
             }
 
-            return await query.LongCountAsync(cancellationToken);
+            return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
         }
 
         // DbConext level members
