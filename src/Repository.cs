@@ -55,12 +55,12 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await GetListAsync(nullValue, asNoTracking, cancellationToken);
         }
 
-        public async Task<List<T>> GetListAsync<T>(
+        public Task<List<T>> GetListAsync<T>(
             Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
             CancellationToken cancellationToken = default)
             where T : class
         {
-            return await GetListAsync(includes, false, cancellationToken);
+            return GetListAsync(includes, false, cancellationToken);
         }
 
         public async Task<List<T>> GetListAsync<T>(
@@ -86,19 +86,19 @@ namespace TanvirArjel.EFCore.GenericRepository
             return entities;
         }
 
-        public async Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
+        public Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
              where T : class
         {
-            return await GetListAsync(condition, false, cancellationToken);
+            return GetListAsync(condition, false, cancellationToken);
         }
 
-        public async Task<List<T>> GetListAsync<T>(
+        public Task<List<T>> GetListAsync<T>(
             Expression<Func<T, bool>> condition,
             bool asNoTracking,
             CancellationToken cancellationToken = default)
              where T : class
         {
-            return await GetListAsync(condition, null, asNoTracking, cancellationToken);
+            return GetListAsync(condition, null, asNoTracking, cancellationToken);
         }
 
         public async Task<List<T>> GetListAsync<T>(
@@ -130,10 +130,10 @@ namespace TanvirArjel.EFCore.GenericRepository
             return entities;
         }
 
-        public async Task<List<T>> GetListAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
+        public Task<List<T>> GetListAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
            where T : class
         {
-            return await GetListAsync(specification, false, cancellationToken);
+            return GetListAsync(specification, false, cancellationToken);
         }
 
         public async Task<List<T>> GetListAsync<T>(Specification<T> specification, bool asNoTracking, CancellationToken cancellationToken = default)
@@ -433,30 +433,30 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<T> GetAsync<T>(
+        public Task<T> GetAsync<T>(
             Expression<Func<T, bool>> condition,
             CancellationToken cancellationToken = default)
            where T : class
         {
-            return await GetAsync(condition, null, false, cancellationToken);
+            return GetAsync(condition, null, false, cancellationToken);
         }
 
-        public async Task<T> GetAsync<T>(
+        public Task<T> GetAsync<T>(
             Expression<Func<T, bool>> condition,
             bool asNoTracking,
             CancellationToken cancellationToken = default)
            where T : class
         {
-            return await GetAsync(condition, null, asNoTracking, cancellationToken);
+            return GetAsync(condition, null, asNoTracking, cancellationToken);
         }
 
-        public async Task<T> GetAsync<T>(
+        public Task<T> GetAsync<T>(
             Expression<Func<T, bool>> condition,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
             CancellationToken cancellationToken = default)
            where T : class
         {
-            return await GetAsync(condition, includes, false, cancellationToken);
+            return GetAsync(condition, includes, false, cancellationToken);
         }
 
         public async Task<T> GetAsync<T>(
@@ -486,10 +486,10 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await query.FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<T> GetAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
+        public Task<T> GetAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
             where T : class
         {
-            return await GetAsync(specification, false, cancellationToken);
+            return GetAsync(specification, false, cancellationToken);
         }
 
         public async Task<T> GetAsync<T>(Specification<T> specification, bool asNoTracking, CancellationToken cancellationToken = default)
@@ -552,10 +552,10 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<bool> ExistsAsync<T>(CancellationToken cancellationToken = default)
+        public Task<bool> ExistsAsync<T>(CancellationToken cancellationToken = default)
            where T : class
         {
-            return await ExistsAsync<T>(null, cancellationToken);
+            return ExistsAsync<T>(null, cancellationToken);
         }
 
         public async Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
@@ -787,19 +787,19 @@ namespace TanvirArjel.EFCore.GenericRepository
             return items;
         }
 
-        public async Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)
+        public Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
+            return _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
         }
 
-        public async Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
+        public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
         {
-            return await _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
+            return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
         }
 
-        public async Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
+        public Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
+            return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
         }
 
         public void ResetContextState()
