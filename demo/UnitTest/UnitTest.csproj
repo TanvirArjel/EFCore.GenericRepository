@@ -23,5 +23,4 @@
   <ItemGroup>
     <ProjectReference Include="..\AspNetCore5.0\AspNetCore5.0.csproj" />
   </ItemGroup>
-
 </Project>

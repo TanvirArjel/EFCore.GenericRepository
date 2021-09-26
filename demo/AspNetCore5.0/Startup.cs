@@ -27,6 +27,7 @@ namespace AspNetCore5._0
             services.AddDbContext<DemoDbContext>(option => option.UseSqlServer(connectionString));
 
             services.AddGenericRepository<DemoDbContext>(); // Call it just after registering your DbConext.
+            services.AddQueryRepository<DemoDbContext>();
 
             services.AddControllersWithViews();
         }

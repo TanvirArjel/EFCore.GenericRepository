@@ -15,14 +15,17 @@ namespace AspNetCore5._0.Controllers
     public class EmployeeController : Controller
     {
         private readonly IRepository _repository;
+        private readonly IQueryRepository _queryRepository;
         private readonly DemoDbContext _context;
 
         public EmployeeController(
             IRepository repository,
+            IQueryRepository queryRepository,
             DemoDbContext context)
         {
             _repository = repository;
             _context = context;
+            _queryRepository = queryRepository;
         }
 
         // GET: Employee
@@ -37,7 +40,7 @@ namespace AspNetCore5._0.Controllers
                 .GetFromRawSqlAsync<EmployeeDto>(sqlQuery, search);
 
             //List<string> list1 = _context.ExecSQL<string>("Select EmployeeName from Employee");
-            List<Employee> lists = await _repository.GetQueryable<Employee>().ToListAsync();
+            List<Employee> lists = await _queryRepository.GetQueryable<Employee>().ToListAsync();
             return View(lists);
         }
 
