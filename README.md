@@ -58,7 +58,7 @@ List<EmployeeDto> items = await _repository.GetFromRawSqlAsync<EmployeeDto>(sqlQ
 
 ## ✈️ How do I get started?
 
-First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
+For full version (both query and command support), first install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
 **Package Manager Console:**
 
@@ -80,12 +80,36 @@ public void ConfigureServices(IServiceCollection services)
     services.AddGenericRepository<YourDbContext>();
 }
 ```
+
+For query version only, first install the latest version of `TanvirArjel.EFCore.QueryRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.QueryRepository) package into your project as follows:
+
+**Package Manager Console:**
+
+```C#
+Install-Package TanvirArjel.EFCore.QueryRepository
+```
+    
+**.NET CLI:**
+
+```C#
+dotnet add package TanvirArjel.EFCore.QueryRepository
+```
+    
+Then in the `ConfirugeServices` method of the `Startup` class:
+
+```C#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddQueryRepository<YourDbContext>();
+}
+```
     
 ## 🛠️ Usage: Query
 
 ```C#
 public class EmployeeService
 {
+    // For query version, please use `IQueryRepository` instead of `IRepository`
     private readonly IRepository _repository;
 
     public EmployeeService(IRepository repository)

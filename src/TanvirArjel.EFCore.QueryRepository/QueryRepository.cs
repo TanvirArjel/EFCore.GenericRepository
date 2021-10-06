@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="QueryRepository.cs" company="TanvirArjel">
+// Copyright (c) TanvirArjel. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -382,7 +386,8 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             IQueryable<T> query = _dbContext.Set<T>();
 
-            return await query.Where(expressionTree).Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            return await query.Where(expressionTree).Select(selectExpression)
+                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public Task<T> GetAsync<T>(
@@ -523,7 +528,6 @@ namespace TanvirArjel.EFCore.GenericRepository
             bool isExists = await query.AnyAsync(condition, cancellationToken).ConfigureAwait(false);
             return isExists;
         }
-
 
         public async Task<int> GetCountAsync<T>(CancellationToken cancellationToken = default)
             where T : class

@@ -1,8 +1,69 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+		<LangVersion>8.0</LangVersion>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<AssemblyName>TanvirArjel.EFCore.QueryRepository</AssemblyName>
+		<RootNamespace>TanvirArjel.EFCore.GenericRepository</RootNamespace>
+		<Description>
+			This library is a Generic Query Repository implementation for EF Core ORM which will remove developers' pain to write query repository layer for each .NET Core and .NET project.
+
+			This library includes the following notable features:
+
+			1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0+ support.
+
+			2. It has all the required methods to query your data in whatever way you want without getting IQueryable&lt;T&gt; from the repository.
+
+			3. It also has Specification&lt;T&gt; pattern support so that you can build your query dynamically i.e. differed query building.
+
+			4. It also has database-level projection support for your query.
+
+			5. It also has support to run raw SQL command against your relational database.
+
+			6. It also has support to choose whether you would like to track your query entity/entities or not.
+
+			7. Most importantly, it has full Unit Testing support. It facilitates the writing unit test with mocking.
+
+			8. It also has pagination support.
+
+			9. Free raw SQL query support both for complex type and primitive types.
+		</Description>
+		<Title>EF Core Query Repository</Title>
+		<Copyright>©2021 TanvirArjel. All rights reserved.</Copyright>
+		<PackageProjectUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/TanvirArjel/EFCore.GenericRepository</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<PackageTags>EFCore, RepositoryLayer, GenericRepository, QueryRepository, .NET, .NETCore, ASP.NETCore</PackageTags>
+		<PackageReleaseNotes>
+			1. This is the initial release of the library.
+		</PackageReleaseNotes>
+		<Version>1.0.0</Version>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageIcon>icon.png</PackageIcon>
+		<Authors>TanvirArjel</Authors>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="stylecop.json" />
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="images\icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<AdditionalFiles Include="stylecop.json" />

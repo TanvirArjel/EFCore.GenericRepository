@@ -32,6 +32,11 @@ namespace TanvirArjel.EFCore.GenericRepository
             Items.AddRange(items);
         }
 
+        // This is for serialization.
+        private PaginatedList()
+        {
+        }
+
         /// <summary>
         /// Gets the index of the current page.
         /// </summary>

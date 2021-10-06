@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="IQueryRepository.cs" company="TanvirArjel">
+// Copyright (c) TanvirArjel. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -8,6 +12,9 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
+    /// <summary>
+    /// Contains all the query methods.
+    /// </summary>
     public interface IQueryRepository
     {
         /// <summary>

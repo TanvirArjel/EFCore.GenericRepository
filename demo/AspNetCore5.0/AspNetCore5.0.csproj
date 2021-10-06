@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\TanvirArjel.EFCore.GenericRepository\TanvirArjel.EFCore.GenericRepository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
 </Project>
