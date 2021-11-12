@@ -442,6 +442,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
+        /// This method takes primary key value of the entity whose existence be determined
+        /// and returns <see cref="Task"/> of <see cref="bool"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="id">The primary key value of the entity whose the existence will checked.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="bool"/>.</returns>
+        Task<bool> ExistsByIdAsync<TEntity>(object id, CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
         /// This method returns all count in <see cref="int"/> type.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>

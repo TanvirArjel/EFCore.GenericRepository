@@ -52,6 +52,7 @@ namespace AspNetCore5._0.Controllers
                 return NotFound();
             }
             Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            bool isExistent = await _repository.ExistsByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();

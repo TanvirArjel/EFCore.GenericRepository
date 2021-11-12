@@ -58,7 +58,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Extensions
 
             List<T> list = new List<T>();
             T obj = default;
-            while (result.Read())
+            while (await result.ReadAsync(cancellationToken))
             {
                 if (!(typeof(T).IsPrimitive || typeof(T).Equals(typeof(string))))
                 {
@@ -94,7 +94,7 @@ namespace TanvirArjel.EFCore.GenericRepository.Extensions
 
             List<T> list = new List<T>();
             T t = default;
-            while (dr.Read())
+            while (await dr.ReadAsync(cancellationToken))
             {
                 if (!(typeof(T).IsPrimitive || typeof(T).Equals(typeof(string))))
                 {

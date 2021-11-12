@@ -529,6 +529,47 @@ namespace TanvirArjel.EFCore.GenericRepository
             return isExists;
         }
 
+        public async Task<bool> ExistsByIdAsync<T>(object id, CancellationToken cancellationToken = default)
+           where T : class
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+
+            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+            if (primaryKeyName == null || primaryKeyType == null)
+            {
+                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
+            }
+
+            object primayKeyValue = null;
+
+            try
+            {
+                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
+            }
+
+            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
+            MemberExpression me = Expression.Property(pe, primaryKeyName);
+            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
+            BinaryExpression body = Expression.Equal(me, constant);
+            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
+
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            bool isExistent = await query.AnyAsync(expressionTree, cancellationToken).ConfigureAwait(false);
+            return isExistent;
+        }
+
         public async Task<int> GetCountAsync<T>(CancellationToken cancellationToken = default)
             where T : class
         {

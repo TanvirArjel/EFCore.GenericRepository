@@ -44,8 +44,9 @@
 		<PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
 		<PackageReleaseNotes>
 			1. EF Core 6.0 support has been added.
+			2. ExistsByIdAsync method has been added.
 		</PackageReleaseNotes>
-		<Version>5.7.0</Version>
+		<Version>5.8.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 		<Authors>TanvirArjel</Authors>
@@ -74,7 +75,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0-*" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.*" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
