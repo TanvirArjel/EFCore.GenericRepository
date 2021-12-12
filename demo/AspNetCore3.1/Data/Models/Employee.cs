@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AspNetCore3._1.Data.Models.Abstact;
+using System.ComponentModel.DataAnnotations;
 
 namespace AspNetCore3._1.Data.Models
 {
-    public class Employee
+    public class Employee : BaseEntity
     {
         [Key]
         public long EmployeeId { get; set; }
