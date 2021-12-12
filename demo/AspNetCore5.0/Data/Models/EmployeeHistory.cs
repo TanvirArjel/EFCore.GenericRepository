@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AspNetCore5._0.Data.Models.Abstact;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspNetCore5._0.Data.Models
 {
-    public class EmployeeHistory
+    public class EmployeeHistory: BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
