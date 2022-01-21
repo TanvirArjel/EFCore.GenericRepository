@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,7 +15,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
-using TanvirArjel.EFCore.GenericRepository.Extensions;
 
 [assembly: InternalsVisibleTo("TanvirArjel.EFCore.GenericRepository")]
 
@@ -664,6 +664,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             List<object> parameters = new List<object>() { parameter };
+            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+            return items;
+        }
+
+        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<DbParameter> parameters, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(sql))
+            {
+                throw new ArgumentNullException(nameof(sql));
+            }
+
             List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
             return items;
         }

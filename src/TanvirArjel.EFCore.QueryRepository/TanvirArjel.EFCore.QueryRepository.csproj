@@ -42,7 +42,7 @@
 			1. EF Core 6.0 support has been added.
 			2. ExistsByIdAsync method has been added.
 		</PackageReleaseNotes>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 		<Authors>TanvirArjel</Authors>
