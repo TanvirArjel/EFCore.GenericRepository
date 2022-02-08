@@ -52,7 +52,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be updated.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        Task<int> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The entities to be updated.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task UpdateAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        Task<int> UpdateAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be deleted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task DeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        Task<int> DeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The list of entities to be deleted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        Task DeleteAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        Task<int> DeleteAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>

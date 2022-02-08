@@ -62,7 +62,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task UpdateAsync<T>(T entity, CancellationToken cancellationToken = default)
+        public async Task<int> UpdateAsync<T>(T entity, CancellationToken cancellationToken = default)
             where T : class
         {
             if (entity == null)
@@ -100,10 +100,11 @@ namespace TanvirArjel.EFCore.GenericRepository
                 _dbContext.Set<T>().Update(entity);
             }
 
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
-        public async Task UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+        public async Task<int> UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
             if (entities == null)
@@ -112,10 +113,11 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<T>().UpdateRange(entities);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
-        public async Task DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
+        public async Task<int> DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
             where T : class
         {
             if (entity == null)
@@ -124,10 +126,11 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
-        public async Task DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+        public async Task<int> DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
             if (entities == null)
@@ -136,7 +139,8 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<T>().RemoveRange(entities);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return count;
         }
 
         public Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)

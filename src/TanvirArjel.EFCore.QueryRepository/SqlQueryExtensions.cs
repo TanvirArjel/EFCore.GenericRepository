@@ -65,9 +65,16 @@ namespace TanvirArjel.EFCore.GenericRepository
                     obj = Activator.CreateInstance<T>();
                     foreach (PropertyInfo prop in obj.GetType().GetProperties())
                     {
-                        if (!Equals(result[prop.Name], DBNull.Value))
+                        string propertyName = prop.Name;
+                        bool isColumnExistent = result.ColumnExists(propertyName);
+                        if (isColumnExistent)
                         {
-                            prop.SetValue(obj, result[prop.Name], null);
+                            object columnValue = result[propertyName];
+
+                            if (!Equals(columnValue, DBNull.Value))
+                            {
+                                prop.SetValue(obj, columnValue, null);
+                            }
                         }
                     }
 
@@ -123,9 +130,16 @@ namespace TanvirArjel.EFCore.GenericRepository
                     obj = Activator.CreateInstance<T>();
                     foreach (PropertyInfo prop in obj.GetType().GetProperties())
                     {
-                        if (!Equals(result[prop.Name], DBNull.Value))
+                        string propertyName = prop.Name;
+                        bool isColumnExistent = result.ColumnExists(propertyName);
+                        if (isColumnExistent)
                         {
-                            prop.SetValue(obj, result[prop.Name], null);
+                            object columnValue = result[propertyName];
+
+                            if (!Equals(columnValue, DBNull.Value))
+                            {
+                                prop.SetValue(obj, columnValue, null);
+                            }
                         }
                     }
 

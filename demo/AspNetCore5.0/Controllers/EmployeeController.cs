@@ -174,8 +174,11 @@ namespace AspNetCore5._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Employee employee = await _repository.GetByIdAsync<Employee>(id);
-            await _repository.DeleteAsync(employee);
+            List<Employee> employees = await _context.Employee.ToListAsync();
+            ////_context.RemoveRange(employees);
+            int count = await _context.SaveChangesAsync();
+            //Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            //await _repository.DeleteAsync(employee);
             return RedirectToAction(nameof(Index));
         }
 
