@@ -25,8 +25,11 @@ namespace AspNetCore5._0
             services.AddServicesOfAllTypes();
             string connectionString = Configuration.GetConnectionString("RepositoryDbConnection");
             services.AddDbContext<DemoDbContext>(option => option.UseSqlServer(connectionString));
+            services.AddDbContext<DemoDbContext2>(option => option.UseSqlServer(connectionString));
 
             services.AddGenericRepository<DemoDbContext>(); // Call it just after registering your DbConext.
+            services.AddGenericMultipleRepository<DemoDbContext2>(); // Call it just after registering your DbConext.
+
             services.AddQueryRepository<DemoDbContext>();
 
             services.AddControllersWithViews();

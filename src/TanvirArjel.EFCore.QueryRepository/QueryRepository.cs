@@ -20,11 +20,11 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
-    internal class QueryRepository : IQueryRepository
+    internal class QueryRepository<TContext> : IQueryRepository where TContext : DbContext
     {
-        private readonly DbContext _dbContext;
+        private readonly TContext _dbContext;
 
-        public QueryRepository(DbContext dbContext)
+        public QueryRepository(TContext dbContext)
         {
             _dbContext = dbContext;
         }

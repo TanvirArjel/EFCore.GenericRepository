@@ -13,8 +13,9 @@ namespace TanvirArjel.EFCore.GenericRepository
     /// <summary>
     /// Contains all the repository methods.
     /// </summary>
-    public interface IRepository : IBaseRepository
+    /// <typeparam name="TContext">For Multiple Context Support</typeparam>
+    public interface IMultipleRepository<TContext>: IBaseRepository
     {
-       
+     
     }
 }

@@ -15,17 +15,20 @@ namespace AspNetCore5._0.Controllers
     public class EmployeeController : Controller
     {
         private readonly IRepository _repository;
+        private readonly IMultipleRepository<DemoDbContext2> _multipleRepository2;
         private readonly IQueryRepository _queryRepository;
         private readonly DemoDbContext _context;
 
         public EmployeeController(
             IRepository repository,
             IQueryRepository queryRepository,
-            DemoDbContext context)
+            DemoDbContext context, 
+            IMultipleRepository<DemoDbContext2> multipleRepository2)
         {
             _repository = repository;
             _context = context;
             _queryRepository = queryRepository;
+            _multipleRepository2 = multipleRepository2;
         }
 
         // GET: Employee
@@ -38,6 +41,9 @@ namespace AspNetCore5._0.Controllers
             string sqlQuery = "Select EmployeeName, DepartmentName from Employee Where EmployeeName LIKE @p0 + '%' and DepartmentName LIKE @p1 + '%'";
             List<EmployeeDto> items = await _repository
                 .GetFromRawSqlAsync<EmployeeDto>(sqlQuery, search);
+
+            List<EmployeeDto> items2 = await _multipleRepository2
+               .GetFromRawSqlAsync<EmployeeDto>(sqlQuery, search);
 
             //List<string> list1 = _context.ExecSQL<string>("Select EmployeeName from Employee");
             List<Employee> lists = await _queryRepository.GetQueryable<Employee>().ToListAsync();
