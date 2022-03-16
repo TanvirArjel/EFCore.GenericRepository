@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore5._0.Data;
 using AspNetCore5._0.Data.Models;
 using AspNetCore5._0.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,9 @@ namespace AspNetCore5._0.Services
     [ScopedService]
     public class EmployeeService
     {
-        private readonly IRepository _repository;
+        private readonly IRepository<DemoDbContext> _repository;
 
-        public EmployeeService(IRepository repository)
+        public EmployeeService(IRepository<DemoDbContext> repository)
         {
             _repository = repository;
         }

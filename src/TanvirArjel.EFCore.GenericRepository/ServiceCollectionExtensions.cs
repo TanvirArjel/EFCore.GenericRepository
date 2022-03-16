@@ -32,12 +32,36 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             services.Add(new ServiceDescriptor(
-                typeof(IRepository),
+                typeof(IRepository<TDbContext>),
                 serviceProvider =>
                 {
                     TDbContext dbContext = ActivatorUtilities.CreateInstance<TDbContext>(serviceProvider);
-                    return new Repository(dbContext);
+                    return new Repository<TDbContext>(dbContext);
                 },
+                lifetime));
+
+            return services;
+        }
+
+        /// <summary>
+        /// Add multiple context repository services to the .NET Dependency Injection container.
+        /// </summary>
+        /// <param name="services">The type to be extended.</param>
+        /// <param name="lifetime">The life time of the service.</param>
+        /// <returns>Retruns <see cref="IServiceCollection"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is <see langword="null"/>.</exception>
+        public static IServiceCollection AddMultipleRepository(
+            this IServiceCollection services,
+            ServiceLifetime lifetime = ServiceLifetime.Scoped)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            services.Add(new ServiceDescriptor(
+                typeof(IRepository<>),
+                typeof(Repository<>),
                 lifetime));
 
             return services;

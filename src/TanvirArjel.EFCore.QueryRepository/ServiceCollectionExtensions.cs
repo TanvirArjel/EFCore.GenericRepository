@@ -37,7 +37,7 @@ namespace TanvirArjel.EFCore.GenericRepository
                 {
                     TDbContext dbContext = ActivatorUtilities.CreateInstance<TDbContext>(serviceProvider);
                     dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-                    return new QueryRepository(dbContext);
+                    return new QueryRepository<TDbContext>(dbContext);
                 },
                 lifetime));
 

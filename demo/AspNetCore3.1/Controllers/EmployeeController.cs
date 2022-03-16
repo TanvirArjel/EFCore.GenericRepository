@@ -12,15 +12,18 @@ namespace AspNetCore3._1.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IRepository _repository;
+        private readonly IRepository<DemoDbContext> _repository01;
+        private readonly IRepository<DemoDbContext2> _repository02;
         private readonly DemoDbContext _context;
 
         public EmployeeController(
-            IRepository repository,
-            DemoDbContext context)
+            IRepository<DemoDbContext> repository01,
+            DemoDbContext context,
+            IRepository<DemoDbContext2> repository02)
         {
-            _repository = repository;
+            _repository01 = repository01;
             _context = context;
+            _repository02 = repository02;
         }
 
         // GET: Employee
@@ -29,7 +32,7 @@ namespace AspNetCore3._1.Controllers
             List<Department> departments = await _context.Set<Department>()
                 .Where(d => d.Employees.Any(e => e.EmployeeName == "Tanvir Ahmad")).ToListAsync();
 
-            await _repository.GetLongCountAsync<Employee>();
+            await _repository01.GetLongCountAsync<Employee>();
             Specification<Employee> specification = new Specification<Employee>();
             specification.Conditions.Add(e => e.EmployeeName.Contains("Tanvir"));
             specification.Includes = ep => ep.Include(e => e.Department);
@@ -37,12 +40,12 @@ namespace AspNetCore3._1.Controllers
             specification.Skip = 0;
             specification.Take = 10;
 
-            List<Employee> lists = _repository.GetQueryable<Employee>().ToList();
-            Employee entityListAsync = await _repository.GetByIdAsync<Employee>(1, true);
+            List<Employee> lists = _repository01.GetQueryable<Employee>().ToList();
+            Employee entityListAsync = await _repository01.GetByIdAsync<Employee>(1, true);
 
 
 
-            Employee v1 = await _repository.GetByIdAsync<Employee>(1);
+            Employee v1 = await _repository01.GetByIdAsync<Employee>(1);
 
             await _context.Set<Employee>().Where(e => e.EmployeeId == 1).ToListAsync();
 
@@ -58,7 +61,7 @@ namespace AspNetCore3._1.Controllers
             {
                 return NotFound();
             }
-            Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            Employee employee = await _repository01.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -82,7 +85,7 @@ namespace AspNetCore3._1.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repository.InsertAsync(employee);
+                await _repository01.InsertAsync(employee);
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);
@@ -96,7 +99,7 @@ namespace AspNetCore3._1.Controllers
                 return NotFound();
             }
 
-            Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            Employee employee = await _repository01.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -123,10 +126,10 @@ namespace AspNetCore3._1.Controllers
 
             if (ModelState.IsValid)
             {
-                Employee employeeToBeUpdated = await _repository.GetByIdAsync<Employee>(employee.EmployeeId);
+                Employee employeeToBeUpdated = await _repository01.GetByIdAsync<Employee>(employee.EmployeeId);
                 employeeToBeUpdated.EmployeeName = employee.EmployeeName;
                 employeeToBeUpdated.DepartmentName = employee.DepartmentName;
-                await _repository.UpdateAsync(employeeToBeUpdated);
+                await _repository01.UpdateAsync(employeeToBeUpdated);
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);
@@ -140,7 +143,7 @@ namespace AspNetCore3._1.Controllers
                 return NotFound();
             }
 
-            Employee employee = await _repository.GetByIdAsync<Employee>(id);
+            Employee employee = await _repository01.GetByIdAsync<Employee>(id);
             if (employee == null)
             {
                 return NotFound();
@@ -154,8 +157,8 @@ namespace AspNetCore3._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Employee employee = await _repository.GetByIdAsync<Employee>(id);
-            await _repository.DeleteAsync(employee);
+            Employee employee = await _repository01.GetByIdAsync<Employee>(id);
+            await _repository01.DeleteAsync(employee);
             return RedirectToAction(nameof(Index));
         }
 

@@ -23,8 +23,10 @@ namespace AspNetCore3._1
         {
             string connectionString = Configuration.GetConnectionString("RepositoryDbConnection");
             services.AddDbContext<DemoDbContext>(option => option.UseSqlServer(connectionString));
+            services.AddDbContext<DemoDbContext2>(option => option.UseSqlServer(connectionString));
 
             services.AddGenericRepository<DemoDbContext>(); // Call it just after registering your DbConext.
+            services.AddGenericRepository<DemoDbContext2>(); // Call it just after registering your DbConext.
 
             services.AddControllersWithViews();
         }

@@ -14,12 +14,12 @@ namespace AspNetCore5._0.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IRepository _repository;
+        private readonly IRepository<DemoDbContext> _repository;
         private readonly IQueryRepository _queryRepository;
         private readonly DemoDbContext _context;
 
         public EmployeeController(
-            IRepository repository,
+            IRepository<DemoDbContext> repository,
             IQueryRepository queryRepository,
             DemoDbContext context)
         {

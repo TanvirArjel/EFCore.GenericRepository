@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
@@ -13,7 +14,7 @@ namespace TanvirArjel.EFCore.GenericRepository
     /// <summary>
     /// Contains all the repository methods.
     /// </summary>
-    public interface IRepository : IQueryRepository
+    public interface IRepository<TContext> : IQueryRepository where TContext : DbContext
     {
         /// <summary>
         /// Begin a new database transaction.
