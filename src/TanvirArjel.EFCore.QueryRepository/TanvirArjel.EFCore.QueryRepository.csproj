@@ -39,10 +39,10 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>EFCore, RepositoryLayer, GenericRepository, QueryRepository, .NET, .NETCore, ASP.NETCore</PackageTags>
 		<PackageReleaseNotes>
-			1. EF Core 6.0 support has been added.
-			2. ExistsByIdAsync method has been added.
+			1. Delete and Update methods return type updated.
+			2. An overload for GetFromRawSqlAsync method has been added.
 		</PackageReleaseNotes>
-		<Version>1.2.0</Version>
+		<Version>1.2.1</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 		<Authors>TanvirArjel</Authors>
