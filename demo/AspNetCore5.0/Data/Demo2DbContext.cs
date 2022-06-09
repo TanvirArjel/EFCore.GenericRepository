@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCore5._0.Data
 {
-    public class DemoDbContext : DbContext
+    public class Demo2DbContext : DbContext
     {
-        public DemoDbContext(DbContextOptions<DemoDbContext> options) : base(options)
+        public Demo2DbContext(DbContextOptions<Demo2DbContext> options) : base(options)
         {
 
         }

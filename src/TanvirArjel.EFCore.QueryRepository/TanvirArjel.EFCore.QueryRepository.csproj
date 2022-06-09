@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
 		<LangVersion>8.0</LangVersion>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -39,10 +39,9 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>EFCore, RepositoryLayer, GenericRepository, QueryRepository, .NET, .NETCore, ASP.NETCore</PackageTags>
 		<PackageReleaseNotes>
-			1. Delete and Update methods return type updated.
-			2. An overload for GetFromRawSqlAsync method has been added.
+			1. Multiple DbConext support has been added.
 		</PackageReleaseNotes>
-		<Version>1.2.1</Version>
+		<Version>1.3.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 		<Authors>TanvirArjel</Authors>
@@ -74,9 +73,9 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.*" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	<!--<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.*" />

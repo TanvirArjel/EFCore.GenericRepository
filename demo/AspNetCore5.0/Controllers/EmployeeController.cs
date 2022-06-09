@@ -16,16 +16,19 @@ namespace AspNetCore5._0.Controllers
     {
         private readonly IRepository _repository;
         private readonly IQueryRepository _queryRepository;
-        private readonly DemoDbContext _context;
+        private readonly Demo1DbContext _context;
+        private readonly IRepository<Demo1DbContext> _demo1Repository;
 
         public EmployeeController(
             IRepository repository,
             IQueryRepository queryRepository,
-            DemoDbContext context)
+            Demo1DbContext context,
+            IRepository<Demo1DbContext> demo1Repository)
         {
             _repository = repository;
             _context = context;
             _queryRepository = queryRepository;
+            _demo1Repository = demo1Repository;
         }
 
         // GET: Employee
@@ -76,6 +79,8 @@ namespace AspNetCore5._0.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                // Insert to database 1
                 IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
 
                 try
@@ -100,6 +105,34 @@ namespace AspNetCore5._0.Controllers
                 catch (Exception)
                 {
                     await transaction.RollbackAsync();
+                }
+
+                // Insert to database 2
+                IDbContextTransaction transaction2 = await _demo1Repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+
+                try
+                {
+                    employee.EmployeeId = 0;
+                    employee.DepartmentId = 1;
+
+                    object[] primaryKeys = await _demo1Repository.InsertAsync(employee);
+
+
+                    long employeeId = (long)primaryKeys[0];
+                    EmployeeHistory employeeHistory = new EmployeeHistory()
+                    {
+                        EmployeeId = employeeId,
+                        DepartmentId = employee.DepartmentId,
+                        EmployeeName = employee.EmployeeName
+                    };
+
+                    await _demo1Repository.InsertAsync(employeeHistory);
+
+                    await transaction2.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction2.RollbackAsync();
                 }
 
                 return RedirectToAction(nameof(Index));

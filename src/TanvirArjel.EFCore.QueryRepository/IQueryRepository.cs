@@ -9,12 +9,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
-    /// Contains all the query methods.
+    /// Contains all the query methods. If you register the multiple DbContexts, it will use the last one.
+    /// To use specific <see cref="DbContext"/> please use <see cref="IQueryRepository{TDbContext}"/>.
     /// </summary>
     public interface IQueryRepository
     {
@@ -561,5 +563,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sql"/> is <see langword="null"/>.</exception>
         Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
+    }
+
+    /// <summary>
+    /// Contains all the query methods.
+    /// </summary>
+    /// <typeparam name="TDbConext">The type of the <see cref="DbContext"/>.</typeparam>
+    public interface IQueryRepository<TDbConext> : IQueryRepository
+    {
     }
 }

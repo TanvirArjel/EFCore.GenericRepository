@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
     /// <summary>
-    /// Contains all the repository methods.
+    /// Contains all the repository methods. If you register the multiple DbContexts, it will use the last one.
+    /// To use specific <see cref="DbContext"/> please use <see cref="IRepository{TDbContext}"/>.
     /// </summary>
     public interface IRepository : IQueryRepository
     {
@@ -114,5 +116,13 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Reset the DbContext state by removing all the tracked and attached entities.
         /// </summary>
         void ResetContextState();
+    }
+
+    /// <summary>
+    /// Contains all the repository methods.
+    /// </summary>
+    /// <typeparam name="TDbContext">The type of the <see cref="DbContext"/>.</typeparam>
+    public interface IRepository<TDbContext> : IRepository
+    {
     }
 }

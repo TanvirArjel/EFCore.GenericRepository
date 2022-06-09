@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace AspNetCore5._0.Migrations
+namespace AspNetCore5._0.Data.Migrations2
 {
     public partial class InitialCreate : Migration
     {
@@ -17,6 +17,19 @@ namespace AspNetCore5._0.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Department", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeHistories",
+                columns: table => new
+                {
+                    EmployeeId = table.Column<long>(type: "bigint", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeHistories", x => x.EmployeeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,6 +63,9 @@ namespace AspNetCore5._0.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Employee");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeHistories");
 
             migrationBuilder.DropTable(
                 name: "Department");

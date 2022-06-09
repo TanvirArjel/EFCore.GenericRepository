@@ -15,11 +15,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
-    internal class Repository : QueryRepository, IRepository
+    internal class Repository<TDbConext> : QueryRepository<TDbConext>, IRepository, IRepository<TDbConext>
+        where TDbConext : DbContext
     {
-        private readonly DbContext _dbContext;
+        private readonly TDbConext _dbContext;
 
-        public Repository(DbContext dbContext)
+        public Repository(TDbConext dbContext)
             : base(dbContext)
         {
             _dbContext = dbContext;
