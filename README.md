@@ -58,7 +58,9 @@ List<EmployeeDto> items = await _repository.GetFromRawSqlAsync<EmployeeDto>(sqlQ
 
 ## ✈️ How do I get started?
 
-For full version (both query and command support), first install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
+### For full version (both query and command support):
+    
+First install the latest version of `TanvirArjel.EFCore.GenericRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.GenericRepository) package into your project as follows:
 
 **Package Manager Console:**
 
@@ -77,11 +79,18 @@ Then in the `ConfirugeServices` method of the `Startup` class:
 ```C#
 public void ConfigureServices(IServiceCollection services)
 {
+    // For single DbContext
     services.AddGenericRepository<YourDbContext>();
+    
+    // If multiple DbContext
+    services.AddGenericRepository<YourDbContext1>();
+    services.AddGenericRepository<YourDbContext1>();
 }
 ```
 
-For query version only, first install the latest version of `TanvirArjel.EFCore.QueryRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.QueryRepository) package into your project as follows:
+### For query version only:
+    
+First install the latest version of `TanvirArjel.EFCore.QueryRepository` [nuget](https://www.nuget.org/packages/TanvirArjel.EFCore.QueryRepository) package into your project as follows:
 
 **Package Manager Console:**
 
@@ -100,7 +109,12 @@ Then in the `ConfirugeServices` method of the `Startup` class:
 ```C#
 public void ConfigureServices(IServiceCollection services)
 {
+    // For single DbContext
     services.AddQueryRepository<YourDbContext>();
+    
+    // For multiple DbContext
+    services.AddQueryRepository<YourDbContext1>();
+    services.AddQueryRepository<YourDbContext1>();
 }
 ```
     
@@ -110,11 +124,13 @@ public void ConfigureServices(IServiceCollection services)
 public class EmployeeService
 {
     // For query version, please use `IQueryRepository` instead of `IRepository`
-    private readonly IRepository _repository;
+    private readonly IRepository _repository; // If single DbContext
+    private readonly IRepository<YourDbContext1> _dbConext1Repository; // If multiple DbContext
 
-    public EmployeeService(IRepository repository)
+    public EmployeeService(IRepository repository, IRepository<YourDbContext1> dbConext1Repository)
     {
         _repository = repository;
+        _dbConext1Repository = dbConext1Repository;
     }
 
     public async Task<Employee> GetEmployeeAsync(int employeeId)
@@ -129,11 +145,13 @@ public class EmployeeService
 ```C#
 public class EmployeeService
 {
-    private readonly IRepository _repository;
+    private readonly IRepository _repository; // If single DbContext
+    private readonly IRepository<YourDbContext1> _dbConext1Repository; // If multiple DbContext
 
-    public EmployeeService(IRepository repository)
+    public EmployeeService(IRepository repository, IRepository<YourDbContext1> dbConext1Repository)
     {
         _repository = repository;
+        _dbConext1Repository = dbConext1Repository;
     }
 
     // Single database operation.
