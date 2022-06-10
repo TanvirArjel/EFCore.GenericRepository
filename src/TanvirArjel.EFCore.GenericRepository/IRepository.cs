@@ -7,6 +7,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
@@ -116,6 +117,83 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Reset the DbContext state by removing all the tracked and attached entities.
         /// </summary>
         void ResetContextState();
+
+        // Newly added methods
+
+        /// <summary>
+        /// This method takes an <typeparamref name="TEntity"/> object, mark the object as <see cref="EntityState.Added"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
+        /// <para>
+        /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the <paramref name="entity"/> to be added.</typeparam>
+        /// <param name="entity">The <typeparamref name="TEntity"/> object to be inserted to the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
+        void Add<TEntity>(TEntity entity)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> objects, mark the objects as <see cref="EntityState.Added"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
+        /// <para>
+        /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the <paramref name="entities"/> to be added.</typeparam>
+        /// <param name="entities">The <typeparamref name="TEntity"/> objects to be inserted to the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
+        void Add<TEntity>(IEnumerable<TEntity> entities)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes an <typeparamref name="TEntity"/> object, mark the object as <see cref="EntityState.Modified"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
+        /// <para>
+        /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the <paramref name="entity"/> to be marked as modified.</typeparam>
+        /// <param name="entity">The <typeparamref name="TEntity"/> object to be updated to the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
+        void Update<TEntity>(TEntity entity)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> objects, mark the objects as <see cref="EntityState.Modified"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
+        /// <para>
+        /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the <paramref name="entities"/> to be marked as modified.</typeparam>
+        /// <param name="entities">The entity objects to be updated to the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
+        void Update<TEntity>(IEnumerable<TEntity> entities)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes an <typeparamref name="TEntity"/> object, mark the object as <see cref="EntityState.Deleted"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
+        /// <para>
+        /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the <paramref name="entity"/> to be marked as deleted.</typeparam>
+        /// <param name="entity">The <typeparamref name="TEntity"/> object to be deleted from the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
+        void Remove<TEntity>(TEntity entity)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes <see cref="IEnumerable{TEntity}"/> objects, mark the objects as <see cref="EntityState.Deleted"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
+        /// <para>
+        /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the <paramref name="entities"/> to be marked as deleted.</typeparam>
+        /// <param name="entities">The <typeparamref name="TEntity"/> objects to be deleted from the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
+        void Remove<TEntity>(IEnumerable<TEntity> entities)
+            where TEntity : class;
+
+        /// <summary>
+        /// Saves all changes made in this context to the database.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// A <see cref="Task"/> that represents the asynchronous save operation. The task result contains the number of state entries written to the database.
+        /// </returns>
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 
     /// <summary>

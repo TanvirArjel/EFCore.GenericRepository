@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading.Tasks;
 using AspNetCore5._0.Data;
 using AspNetCore5._0.Data.Models;
 using AspNetCore5._0.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using TanvirArjel.EFCore.GenericRepository;
 
 namespace AspNetCore5._0.Controllers
@@ -79,61 +77,36 @@ namespace AspNetCore5._0.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 // Insert to database 1
-                IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+                employee.DepartmentId = 1;
 
-                try
+                _repository.Add(employee);
+
+                EmployeeHistory employeeHistory1 = new EmployeeHistory()
                 {
-                    employee.DepartmentId = 1;
+                    EmployeeId = employee.EmployeeId,
+                    DepartmentId = employee.DepartmentId,
+                    EmployeeName = employee.EmployeeName
+                };
 
-                    object[] primaryKeys = await _repository.InsertAsync(employee);
-
-
-                    long employeeId = (long)primaryKeys[0];
-                    EmployeeHistory employeeHistory = new EmployeeHistory()
-                    {
-                        EmployeeId = employeeId,
-                        DepartmentId = employee.DepartmentId,
-                        EmployeeName = employee.EmployeeName
-                    };
-
-                    await _repository.InsertAsync(employeeHistory);
-
-                    await transaction.CommitAsync();
-                }
-                catch (Exception)
-                {
-                    await transaction.RollbackAsync();
-                }
+                _repository.Add(employeeHistory1);
+                await _repository.SaveChangesAsync();
 
                 // Insert to database 2
-                IDbContextTransaction transaction2 = await _demo1Repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+                employee.EmployeeId = 0;
+                employee.DepartmentId = 1;
 
-                try
+                EmployeeHistory employeeHistory2 = new EmployeeHistory()
                 {
-                    employee.EmployeeId = 0;
-                    employee.DepartmentId = 1;
+                    EmployeeId = employee.EmployeeId,
+                    DepartmentId = employee.DepartmentId,
+                    EmployeeName = employee.EmployeeName
+                };
 
-                    object[] primaryKeys = await _demo1Repository.InsertAsync(employee);
-
-
-                    long employeeId = (long)primaryKeys[0];
-                    EmployeeHistory employeeHistory = new EmployeeHistory()
-                    {
-                        EmployeeId = employeeId,
-                        DepartmentId = employee.DepartmentId,
-                        EmployeeName = employee.EmployeeName
-                    };
-
-                    await _demo1Repository.InsertAsync(employeeHistory);
-
-                    await transaction2.CommitAsync();
-                }
-                catch (Exception)
-                {
-                    await transaction2.RollbackAsync();
-                }
+                _demo1Repository.Add(employee);
+                _demo1Repository.Add(employeeHistory2);
+                _demo1Repository.Remove(employee);
+                await _demo1Repository.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
 
@@ -207,11 +180,9 @@ namespace AspNetCore5._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            List<Employee> employees = await _context.Employee.ToListAsync();
-            ////_context.RemoveRange(employees);
-            int count = await _context.SaveChangesAsync();
-            //Employee employee = await _repository.GetByIdAsync<Employee>(id);
-            //await _repository.DeleteAsync(employee);
+            Employee employee = await _queryRepository.GetByIdAsync<Employee>(id);
+            _repository.Remove(employee);
+            await _repository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
