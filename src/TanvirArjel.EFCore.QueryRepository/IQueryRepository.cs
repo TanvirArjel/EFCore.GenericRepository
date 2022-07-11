@@ -42,7 +42,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
@@ -67,7 +67,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="includes">Navigation properties to be loaded.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/> of <see cref="List{T}"/>.</returns>
@@ -93,7 +93,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
@@ -110,7 +110,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="condition">The condition on which entity list will be returned.</param>
         /// <param name="includes">Navigation properties to be loaded.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
@@ -141,7 +141,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// on which data will be returned.
         /// </param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
@@ -245,7 +245,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
@@ -275,7 +275,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="id">The primary key value of the entity.</param>
         /// <param name="includes">The navigation properties to be loaded.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
@@ -304,6 +304,27 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
+        /// This method takes <paramref name="id"/> which is the primary key value of the entity with additional conditions
+        /// and returns the entity if found otherwise <see langword="null"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="id">The primary key value of the entity.</param>
+        /// <param name="conditions">The additional conditions based on which entity will be returned.</param>
+        /// <param name="includes">Navigation properties to be loaded.</param>
+        /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
+        Task<TEntity> GetByIdAsync<TEntity>(
+            object id,
+            IEnumerable<Expression<Func<TEntity, bool>>> conditions,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
@@ -319,7 +340,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
@@ -350,7 +371,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="condition">The conditon on which entity will be returned.</param>
         /// <param name="includes">Navigation properties to be loaded.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
@@ -381,7 +402,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// on which data will be returned.
         /// </param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Defualt value is false i.e trackig is enabled by default.
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
