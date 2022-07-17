@@ -568,8 +568,8 @@ namespace TanvirArjel.EFCore.GenericRepository
     /// <summary>
     /// Contains all the query methods.
     /// </summary>
-    /// <typeparam name="TDbConext">The type of the <see cref="DbContext"/>.</typeparam>
-    public interface IQueryRepository<TDbConext> : IQueryRepository
+    /// <typeparam name="TDbContext">The type of the <see cref="DbContext"/>.</typeparam>
+    public interface IQueryRepository<TDbContext> : IQueryRepository
     {
     }
 }
