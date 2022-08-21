@@ -151,7 +151,10 @@ public class EmployeeController : Controller
             Employee employeeToBeUpdated = await _repository.GetByIdAsync<Employee>(employee.EmployeeId);
             employeeToBeUpdated.EmployeeName = employee.EmployeeName;
             employeeToBeUpdated.DepartmentName = employee.DepartmentName;
-            await _repository.UpdateAsync(employeeToBeUpdated);
+
+            _repository.Update(employeeToBeUpdated);
+            await _repository.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
         return View(employee);

@@ -304,27 +304,6 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
-        /// This method takes <paramref name="id"/> which is the primary key value of the entity with additional conditions
-        /// and returns the entity if found otherwise <see langword="null"/>.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="id">The primary key value of the entity.</param>
-        /// <param name="conditions">The additional conditions based on which entity will be returned.</param>
-        /// <param name="includes">Navigation properties to be loaded.</param>
-        /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
-        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
-        /// </param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetByIdAsync<TEntity>(
-            object id,
-            IEnumerable<Expression<Func<TEntity, bool>>> conditions,
-            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-            where TEntity : class;
-
-        /// <summary>
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>

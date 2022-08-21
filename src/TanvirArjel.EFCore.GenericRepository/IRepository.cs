@@ -2,6 +2,7 @@
 // Copyright (c) TanvirArjel. All rights reserved.
 // </copyright>
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading;
@@ -35,6 +36,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be inserted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("The method will be removed in the next version. Please use Add()/AddAsync() and SaveChangesAsync() methods.")]
         Task<object[]> InsertAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -45,6 +47,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The entities to be inserted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("The method will be removed in the next version. Please use Add()/AddAsync and SaveChangesAsync() methods.")]
         Task InsertAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -55,6 +58,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be updated.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("The method will be removed in the next version. Please use Update() and SaveChangesAsync() methods.")]
         Task<int> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -65,6 +69,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The entities to be updated.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("The method will be removed in the next version. Please use Update() and SaveChangesAsync() methods.")]
         Task<int> UpdateAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -75,6 +80,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be deleted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("The method will be removed in the next version. Please use Remove() and SaveChangesAsync() methods.")]
         Task<int> DeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -85,6 +91,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The list of entities to be deleted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
+        [Obsolete("The method will be removed in the next version. Please use Remove() and SaveChangesAsync() methods.")]
         Task<int> DeleteAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -132,6 +139,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
+        /// This method takes an object of <typeparamref name="TEntity"/>, adds it to the change tracker and will
+        /// be inserted into the database when <see cref="IRepository.SaveChangesAsync(CancellationToken)" /> is called.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entity">The entity to be inserted.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
         /// This method takes <see cref="IEnumerable{TEntity}"/> objects, mark the objects as <see cref="EntityState.Added"/> to the <see cref="ChangeTracker"/> of the <see cref="DbContext"/>.
         /// <para>
         /// Call <see cref="SaveChangesAsync(CancellationToken)"/> to persist the changes to the database.
@@ -140,6 +158,17 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the <paramref name="entities"/> to be added.</typeparam>
         /// <param name="entities">The <typeparamref name="TEntity"/> objects to be inserted to the database on <see cref="SaveChangesAsync(CancellationToken)"/>.</param>
         void Add<TEntity>(IEnumerable<TEntity> entities)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method takes a collection of <typeparamref name="TEntity"/> object, adds them to the change tracker and will
+        /// be inserted into the database when <see cref="IRepository.SaveChangesAsync(CancellationToken)" /> is called.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entities">The entities to be inserted.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="Task"/>.</returns>
+        Task AddAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>

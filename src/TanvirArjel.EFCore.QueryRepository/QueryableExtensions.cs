@@ -53,9 +53,9 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             long count = await source.LongCountAsync(cancellationToken);
 
-            int skipe = (pageIndex - 1) * pageSize;
+            int skip = (pageIndex - 1) * pageSize;
 
-            List<T> items = await source.Skip(skipe).Take(pageSize).ToListAsync(cancellationToken);
+            List<T> items = await source.Skip(skip).Take(pageSize).ToListAsync(cancellationToken);
 
             PaginatedList<T> paginatedList = new PaginatedList<T>(items, count, pageIndex, pageSize);
             return paginatedList;

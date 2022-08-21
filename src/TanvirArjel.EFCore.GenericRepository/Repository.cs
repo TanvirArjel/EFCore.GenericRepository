@@ -180,6 +180,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             _dbContext.Set<TEntity>().Add(entity);
         }
 
+        public async Task AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+   where TEntity : class
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        }
+
         public void Add<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
@@ -189,6 +200,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
 
             _dbContext.Set<TEntity>().AddRange(entities);
+        }
+
+        public async Task AddAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+   where TEntity : class
+        {
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
+            await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
         }
 
         public void Update<TEntity>(TEntity entity)
