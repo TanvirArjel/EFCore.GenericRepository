@@ -20,7 +20,7 @@ specification.Conditions.Add(e => e.Name.Contains("Ta"));
 specification.PageIndex = 1;
 specification.PageSize = 10;
 
-PaginatedList<EmployeeDto> paginatedList = await _repository.GetPaginatedListAsync(specification, e => new EmployeeDto
+PaginatedList<EmployeeDto> paginatedList = await _repository.GetListAsync(specification, e => new EmployeeDto
 {
     Id = e.Id
     Name = e.Name,
@@ -39,7 +39,7 @@ List<EmployeeDto> items = await _repository.GetFromRawSqlAsync<EmployeeDto>(sqlQ
 
 ## ⚙️ This library includes following notable features:
 
-1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0 support.
+1. This library can be run on any .NET Core or .NET application which has .NET Core 3.1, .NET Standard 2.1 and .NET 5.0+ support.
 
 2. It’s providing the Generic Repository with database transaction support.
 
@@ -89,7 +89,7 @@ public void ConfigureServices(IServiceCollection services)
     
     // If multiple DbContext
     services.AddGenericRepository<YourDbContext1>();
-    services.AddGenericRepository<YourDbContext1>();
+    services.AddGenericRepository<YourDbContext2>();
 }
 ```
 
@@ -119,7 +119,7 @@ public void ConfigureServices(IServiceCollection services)
     
     // For multiple DbContext
     services.AddQueryRepository<YourDbContext1>();
-    services.AddQueryRepository<YourDbContext1>();
+    services.AddQueryRepository<YourDbContext2>();
 }
 ```
     
@@ -159,40 +159,12 @@ public class EmployeeService
         _dbConext1Repository = dbConext1Repository;
     }
 
-    // Single database operation.
     public async Task<int> CreateAsync(Employee employee)
     {
-        object[] primaryKeys = await _repository.InsertAsync(employee);
-        return (int)primaryKeys[0];
-    }
+        await _repository.AddAsync(employee);
+        await _repository.SaveChangesAsync();
 
-    // Multiple database operations.
-    public async Task<int>> CreateAsync(Employee employee)
-    {
-       IDbContextTransaction transaction = await _repository.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-       try
-       {
-           object[] primaryKeys = await _repository.InsertAsync(employee);
-
-           long employeeId = (long)primaryKeys[0];
-           EmployeeHistory employeeHistory = new EmployeeHistory()
-           {
-               EmployeeId = employeeId,
-               DepartmentId = employee.DepartmentId,
-               EmployeeName = employee.EmployeeName
-           };
-
-           await _repository.InsertAsync(employeeHistory);
-
-           await transaction.CommitAsync();
-
-           return employeeId;
-       }
-       catch (Exception)
-       {
-           await transaction.RollbackAsync();
-           throw;
-       }
+        return employee.Id;
     }
 }
 ```
