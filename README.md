@@ -1,5 +1,5 @@
-# Become a Patron
-**If you want to encourage me to contribute to this repository more frequently. Then please become a patron on here: https://www.patreon.com/user?u=80125977**
+# ❤️ Become a Patron
+**If you want to encourage me to contribute to this repository more frequently, then please become a patron on here: https://www.patreon.com/TanvirArjel**
 
 Thanks in advance.
 
