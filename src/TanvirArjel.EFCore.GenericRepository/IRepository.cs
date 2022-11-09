@@ -36,7 +36,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be inserted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        [Obsolete("The method will be removed in the next version. Please use Add()/AddAsync() and SaveChangesAsync() methods.")]
+        [Obsolete("The method will be removed in the next version. Please use Add()/AddAsync() and SaveChangesAsync() methods together.")]
         Task<object[]> InsertAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -47,7 +47,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The entities to be inserted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        [Obsolete("The method will be removed in the next version. Please use Add()/AddAsync and SaveChangesAsync() methods.")]
+        [Obsolete("The method will be removed in the next version. Please use Add()/AddAsync and SaveChangesAsync() methods together.")]
         Task InsertAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -58,7 +58,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be updated.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        [Obsolete("The method will be removed in the next version. Please use Update() and SaveChangesAsync() methods.")]
+        [Obsolete("The method will be removed in the next version. Please use Update() and SaveChangesAsync() methods together.")]
         Task<int> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -69,7 +69,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The entities to be updated.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        [Obsolete("The method will be removed in the next version. Please use Update() and SaveChangesAsync() methods.")]
+        [Obsolete("The method will be removed in the next version. Please use Update() and SaveChangesAsync() methods together.")]
         Task<int> UpdateAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -80,7 +80,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entity">The entity to be deleted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        [Obsolete("The method will be removed in the next version. Please use Remove() and SaveChangesAsync() methods.")]
+        [Obsolete("The method will be removed in the next version. Please use Remove() and SaveChangesAsync() methods together.")]
         Task<int> DeleteAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -91,7 +91,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="entities">The list of entities to be deleted.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task"/>.</returns>
-        [Obsolete("The method will be removed in the next version. Please use Remove() and SaveChangesAsync() methods.")]
+        [Obsolete("The method will be removed in the next version. Please use Remove() and SaveChangesAsync() methods together.")]
         Task<int> DeleteAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -123,7 +123,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <summary>
         /// Reset the DbContext state by removing all the tracked and attached entities.
         /// </summary>
-        void ResetContextState();
+        void ClearChangeTracker();
 
         // Newly added methods
 

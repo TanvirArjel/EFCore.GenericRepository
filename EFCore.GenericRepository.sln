@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{98A19DB3-ED3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{A54E2127-8988-46A4-858A-39A4553504C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore5.0", "demo\AspNetCore5.0\AspNetCore5.0.csproj", "{29247626-37E3-43F0-B1D1-ED0CEC02FE69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreApp", "demo\AspNetCoreApp\AspNetCoreApp.csproj", "{29247626-37E3-43F0-B1D1-ED0CEC02FE69}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "demo\UnitTest\UnitTest.csproj", "{375C3AF5-6957-46D1-92F4-869C7E26DE5F}"
 EndProject

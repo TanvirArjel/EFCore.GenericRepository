@@ -159,14 +159,9 @@ namespace TanvirArjel.EFCore.GenericRepository
             return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
         }
 
-        public void ResetContextState()
+        public void ClearChangeTracker()
         {
-#if NETCOREAPP3_1
-            _dbContext.ChangeTracker.Entries().Where(e => e.Entity != null).ToList()
-                            .ForEach(e => e.State = EntityState.Detached);
-#else
             _dbContext.ChangeTracker.Clear();
-#endif
         }
 
         public void Add<TEntity>(TEntity entity)

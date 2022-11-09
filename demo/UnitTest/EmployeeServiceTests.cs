@@ -1,6 +1,6 @@
-using AspNetCore5._0.Data.Models;
-using AspNetCore5._0.Dtos;
-using AspNetCore5._0.Services;
+using AspNetCoreApp.Data.Models;
+using AspNetCoreApp.Dtos;
+using AspNetCoreApp.Services;
 using Moq;
 using System;
 using System.Collections.Generic;
