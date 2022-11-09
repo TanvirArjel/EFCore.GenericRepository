@@ -1,8 +1,3 @@
-# ❤️ Become a Patron
-**If you want to encourage me to contribute to this repository more frequently, then please become a patron on here: https://www.patreon.com/TanvirArjel**
-
-Thanks in advance.
-
 # EF Core Generic Repository
 
 This library is a Generic Repository implementation for EF Core ORM which will remove developers' pain to write repository layer for each .NET Core and .NET project.
