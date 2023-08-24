@@ -107,7 +107,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Execute raw sql command against the configured database asynchronously.
         /// </summary>
         /// <param name="sql">The sql string.</param>
-        /// <param name="parameters">The paramters in the sql string.</param>
+        /// <param name="parameters">The parameters in the sql string.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
 
@@ -115,7 +115,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Execute raw sql command against the configured database asynchronously.
         /// </summary>
         /// <param name="sql">The sql string.</param>
-        /// <param name="parameters">The paramters in the sql string.</param>
+        /// <param name="parameters">The parameters in the sql string.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);

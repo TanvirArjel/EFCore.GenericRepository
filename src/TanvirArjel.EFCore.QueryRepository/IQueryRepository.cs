@@ -317,7 +317,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="condition">The condition on which entity will be returned.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Default value is false i.e tracking is enabled by default.
         /// </param>
@@ -333,7 +333,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="condition">The condition on which entity will be returned.</param>
         /// <param name="includes">Navigation properties to be loaded.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
@@ -347,7 +347,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="condition">The condition on which entity will be returned.</param>
         /// <param name="includes">Navigation properties to be loaded.</param>
         /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
         /// EF Core context or not. Default value is false i.e tracking is enabled by default.
@@ -415,7 +415,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select  query.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
+        /// <returns>Returns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
             Specification<TEntity> specification,
@@ -489,7 +489,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
+        /// <returns>Returns <see cref="Task"/> of <see cref="long"/>.</returns>
         Task<long> GetLongCountAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -499,7 +499,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="condition">The condition based on which count will be done.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
+        /// <returns>Returns <see cref="Task"/> of <see cref="long"/>.</returns>
         Task<long> GetLongCountAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -509,7 +509,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="conditions">The conditions based on which count will be done.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <see cref="Task"/> of <see cref="long"/>.</returns>
+        /// <returns>Returns <see cref="Task"/> of <see cref="long"/>.</returns>
         Task<long> GetLongCountAsync<TEntity>(IEnumerable<Expression<Func<TEntity, bool>>> conditions, CancellationToken cancellationToken = default)
             where TEntity : class;
 
@@ -531,7 +531,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="T">The <see langword="type"/> to which the result will be mapped.</typeparam>
         /// <param name="sql">The sql query string.</param>
-        /// <param name="parameter">The value of the paramter mention in the sql query.</param>
+        /// <param name="parameter">The value of the parameter mention in the sql query.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sql"/> is <see langword="null"/>.</exception>
@@ -553,7 +553,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes <paramref name="sql"/> string and values of the <paramref name="parameters"/> mentioned in the sql query as parameters
         /// and returns the result of the provided sql.
         /// <para>
-        /// The paramters names mentioned in the query should be like p0, p1,p2 etc.
+        /// The parameters names mentioned in the query should be like p0, p1,p2 etc.
         /// </para>
         /// </summary>
         /// <typeparam name="T">The <see langword="type"/> to which the result will be mapped.</typeparam>

@@ -23,7 +23,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public List<Expression<Func<T, bool>>> Conditions { get; set; } = new List<Expression<Func<T, bool>>>();
 
         /// <summary>
-        /// Gets or sets the navigation entities to be eager loadded with EF Core query.
+        /// Gets or sets the navigation entities to be eager loaded with EF Core query.
         /// </summary>
         public Func<IQueryable<T>, IIncludableQueryable<T, object>> Includes { get; set; }
 

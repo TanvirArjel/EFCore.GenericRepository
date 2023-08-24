@@ -16,12 +16,12 @@ namespace TanvirArjel.EFCore.GenericRepository
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PaginatedList{T}"/> class.
-        /// The constructor takes necessary info for pagiantion.
+        /// The constructor takes necessary info for pagination.
         /// </summary>
         /// <param name="items">The items of current page.</param>
         /// <param name="totalItems">Total item count of the list.</param>
         /// <param name="pageIndex">Current page index.</param>
-        /// <param name="pageSize">Pagiantion page size.</param>
+        /// <param name="pageSize">Pagination page size.</param>
         public PaginatedList(List<T> items, long totalItems, int pageIndex, int pageSize)
         {
             PageIndex = pageIndex;
