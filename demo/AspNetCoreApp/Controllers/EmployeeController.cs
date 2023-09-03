@@ -88,6 +88,7 @@ public class EmployeeController : Controller
                 EmployeeName = employee.EmployeeName
             };
 
+
             _repository.Add(employeeHistory1);
             await _repository.SaveChangesAsync();
 
@@ -130,7 +131,7 @@ public class EmployeeController : Controller
     }
 
     // POST: Employee/Edit/5
-    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+    // To protect from over posting attacks, please enable the specific properties you want to bind to, for 
     // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -186,6 +187,15 @@ public class EmployeeController : Controller
         _repository.Remove(employee);
         await _repository.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> ExecuteDelete()
+    {
+        await _context.Set<Employee>().ExecuteDeleteAsync();
+        await _repository.ExecuteDeleteAsync<Employee>();
+        await _repository.ExecuteDeleteAsync<Employee>(e => e.EmployeeName == "Tanvir");
+        return Ok();
     }
 
 }

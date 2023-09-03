@@ -33,7 +33,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public Func<IQueryable<T>, IOrderedQueryable<T>> OrderBy { get; set; }
 
         /// <summary>
-        /// Gets or sets dynmic order by option in string format.
+        /// Gets or sets dynamic order by option in string format.
         /// </summary>
         public (string ColumnName, string SortDirection) OrderByDynamic { get; set; }
     }

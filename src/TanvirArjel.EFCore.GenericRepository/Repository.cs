@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
+    [DebuggerStepThrough]
     internal sealed class Repository<TDbContext> : QueryRepository<TDbContext>, IRepository, IRepository<TDbContext>
         where TDbContext : DbContext
     {
@@ -288,9 +290,22 @@ namespace TanvirArjel.EFCore.GenericRepository
             return count;
         }
 
-        private string GetDebuggerDisplay()
+#if NET7_0_OR_GREATER
+        public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
+            where TEntity : class
         {
-            return ToString();
+            int count = await _dbContext.Set<TEntity>().ExecuteDeleteAsync(cancellationToken);
+            return count;
         }
+
+        public async Task<int> ExecuteDeleteAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            CancellationToken cancellationToken = default) 
+            where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteDeleteAsync(cancellationToken);
+            return count;
+        }
+#endif
     }
 }

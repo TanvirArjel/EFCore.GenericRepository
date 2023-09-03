@@ -307,7 +307,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method takes <see cref="Expression{Func}"/> as parameter and returns <typeparamref name="TEntity"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="condition">The condition on which entity will be returned.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <typeparamref name="TEntity"/>.</returns>
         Task<TEntity> GetAsync<TEntity>(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
@@ -393,10 +393,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
-        /// <param name="condition">The conditon on which entity will be returned.</param>
+        /// <param name="condition">The condition on which entity will be returned.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Retuns <typeparamref name="TProjectedType"/>.</returns>
+        /// <returns>Returns <typeparamref name="TProjectedType"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="selectExpression"/> is <see langword="null"/>.</exception>
         Task<TProjectedType> GetAsync<TEntity, TProjectedType>(
             Expression<Func<TEntity, bool>> condition,

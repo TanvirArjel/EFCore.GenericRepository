@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -223,6 +224,31 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// A <see cref="Task"/> that represents the asynchronous save operation. The task result contains the number of state entries written to the database.
         /// </returns>
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+#if NET7_0_OR_GREATER
+        /// <summary>
+        /// Asynchronously deletes all the database rows for the specified entity instance.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// A <see cref="Task"/> result contains total number of rows deleted in the database.
+        /// </returns>
+        Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
+        /// Asynchronously deletes database rows for the entity instances which match the
+        /// LINQ query from the database.
+        /// </summary>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// A <see cref="Task"/> result contains total number of rows deleted in the database.
+        /// </returns>
+        Task<int> ExecuteDeleteAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+#endif
     }
 
     /// <summary>

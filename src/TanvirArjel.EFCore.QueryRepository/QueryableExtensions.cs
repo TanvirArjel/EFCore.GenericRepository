@@ -102,9 +102,9 @@ namespace TanvirArjel.EFCore.GenericRepository
             // modify the IQueryable using the specification's expression criteria
             if (specification.Conditions != null && specification.Conditions.Any())
             {
-                foreach (Expression<Func<T, bool>> conditon in specification.Conditions)
+                foreach (Expression<Func<T, bool>> condition in specification.Conditions)
                 {
-                    countSource = source.Where(conditon);
+                    countSource = source.Where(condition);
                 }
             }
 
