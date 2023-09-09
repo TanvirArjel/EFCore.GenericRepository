@@ -5,10 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
@@ -107,7 +109,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Execute raw sql command against the configured database asynchronously.
         /// </summary>
         /// <param name="sql">The sql string.</param>
-        /// <param name="parameters">The paramters in the sql string.</param>
+        /// <param name="parameters">The parameters in the sql string.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters);
 
@@ -115,7 +117,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// Execute raw sql command against the configured database asynchronously.
         /// </summary>
         /// <param name="sql">The sql string.</param>
-        /// <param name="parameters">The paramters in the sql string.</param>
+        /// <param name="parameters">The parameters in the sql string.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
@@ -223,6 +225,68 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// A <see cref="Task"/> that represents the asynchronous save operation. The task result contains the number of state entries written to the database.
         /// </returns>
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+#if NET7_0_OR_GREATER
+        /// <summary>
+        /// Asynchronously updates database rows for the entity instances which match the
+        /// LINQ query from the database.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="setPropertyCalls">A collection of set property statements specifying properties to update.</param>
+        /// <param name="cancellationToken">A System.Threading.CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>The total number of rows updated in the database.</returns>
+        /// <remarks>
+        /// This operation executes immediately against the database, rather than being deferred
+        /// until Microsoft.EntityFrameworkCore.DbContext.SaveChanges is called. It also
+        /// does not interact with the EF change tracker in any way: entity instances which
+        /// happen to be tracked when this operation is invoked aren't taken into account,
+        /// and aren't updated to reflect the changes.
+        /// </remarks>
+        Task<int> ExecuteUpdateAsync<TEntity>(
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
+        /// Asynchronously deletes all the database rows for the specified entity instance.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// A <see cref="Task"/> result contains total number of rows deleted in the database.
+        /// </returns>
+        /// <remarks>
+        /// This operation executes immediately against the database, rather than being deferred
+        /// until Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync is called. It also
+        /// does not interact with the EF change tracker in any way: entity instances which
+        /// happen to be tracked when this operation is invoked aren't taken into account,
+        /// and aren't updated to reflect the changes.
+        /// </remarks>
+        Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
+        /// Asynchronously deletes database rows for the entity instances which match the
+        /// LINQ query from the database.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="condition">The condition on which records will be filtered to be deleted.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>
+        /// A <see cref="Task"/> result contains total number of rows deleted in the database.
+        /// </returns>
+        /// <remarks>
+        /// This operation executes immediately against the database, rather than being deferred
+        /// until Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync is called. It also
+        /// does not interact with the EF change tracker in any way: entity instances which
+        /// happen to be tracked when this operation is invoked aren't taken into account,
+        /// and aren't updated to reflect the changes.
+        /// </remarks>
+        Task<int> ExecuteDeleteAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+#endif
     }
 
     /// <summary>

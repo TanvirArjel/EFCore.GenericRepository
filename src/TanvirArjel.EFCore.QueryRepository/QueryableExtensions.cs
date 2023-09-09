@@ -23,7 +23,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="T">Type of the <see cref="IQueryable"/>.</typeparam>
         /// <param name="source">The type to be extended.</param>
         /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pageSize">Size of the pagiantion.</param>
+        /// <param name="pageSize">Size of the pagination.</param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="source"/> is <see langword="null"/>.</exception>
@@ -102,9 +102,9 @@ namespace TanvirArjel.EFCore.GenericRepository
             // modify the IQueryable using the specification's expression criteria
             if (specification.Conditions != null && specification.Conditions.Any())
             {
-                foreach (Expression<Func<T, bool>> conditon in specification.Conditions)
+                foreach (Expression<Func<T, bool>> condition in specification.Conditions)
                 {
-                    countSource = source.Where(conditon);
+                    countSource = source.Where(condition);
                 }
             }
 

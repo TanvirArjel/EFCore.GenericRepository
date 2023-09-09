@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,6 +21,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
+    [DebuggerStepThrough]
     internal class QueryRepository<TDbContext> : IQueryRepository, IQueryRepository<TDbContext>
         where TDbContext : DbContext
     {
@@ -309,11 +311,11 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
             }
 
-            object primayKeyValue = null;
+            object primaryKeyValue = null;
 
             try
             {
-                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
@@ -322,7 +324,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
             MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
+            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
             BinaryExpression body = Expression.Equal(me, constant);
             Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
 
@@ -338,8 +340,8 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            T enity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken).ConfigureAwait(false);
-            return enity;
+            T entity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken).ConfigureAwait(false);
+            return entity;
         }
 
         public async Task<TProjectedType> GetByIdAsync<T, TProjectedType>(
@@ -368,11 +370,11 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
             }
 
-            object primayKeyValue = null;
+            object primaryKeyValue = null;
 
             try
             {
-                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
@@ -381,7 +383,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
             MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
+            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
             BinaryExpression body = Expression.Equal(me, constant);
             Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
 
@@ -643,7 +645,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        // DbConext level members
+        // DbContext level members
         public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(sql))

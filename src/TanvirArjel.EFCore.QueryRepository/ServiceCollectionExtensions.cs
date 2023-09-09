@@ -19,7 +19,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <typeparam name="TDbContext">Your EF Core <see cref="DbContext"/>.</typeparam>
         /// <param name="services">The type to be extended.</param>
         /// <param name="lifetime">The life time of the service.</param>
-        /// <returns>Retruns <see cref="IServiceCollection"/>.</returns>
+        /// <returns>Returns <see cref="IServiceCollection"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="services"/> is <see langword="null"/>.</exception>
         public static IServiceCollection AddQueryRepository<TDbContext>(
             this IServiceCollection services,

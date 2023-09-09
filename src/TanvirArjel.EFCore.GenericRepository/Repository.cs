@@ -5,17 +5,21 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
-    internal class Repository<TDbContext> : QueryRepository<TDbContext>, IRepository, IRepository<TDbContext>
+    [DebuggerStepThrough]
+    internal sealed class Repository<TDbContext> : QueryRepository<TDbContext>, IRepository, IRepository<TDbContext>
         where TDbContext : DbContext
     {
         private readonly TDbContext _dbContext;
@@ -286,5 +290,32 @@ namespace TanvirArjel.EFCore.GenericRepository
             int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return count;
         }
+
+#if NET7_0_OR_GREATER
+        public async Task<int> ExecuteUpdateAsync<TEntity>(
+                    Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+                    CancellationToken cancellationToken = default)
+                    where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
+            return count;
+        }
+
+        public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
+            where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().ExecuteDeleteAsync(cancellationToken);
+            return count;
+        }
+
+        public async Task<int> ExecuteDeleteAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            CancellationToken cancellationToken = default)
+            where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteDeleteAsync(cancellationToken);
+            return count;
+        }
+#endif
     }
 }

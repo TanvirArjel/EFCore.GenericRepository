@@ -23,7 +23,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public List<Expression<Func<T, bool>>> Conditions { get; set; } = new List<Expression<Func<T, bool>>>();
 
         /// <summary>
-        /// Gets or sets the navigation entities to be eager loadded with EF Core query.
+        /// Gets or sets the navigation entities to be eager loaded with EF Core query.
         /// </summary>
         public Func<IQueryable<T>, IIncludableQueryable<T, object>> Includes { get; set; }
 
@@ -33,7 +33,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public Func<IQueryable<T>, IOrderedQueryable<T>> OrderBy { get; set; }
 
         /// <summary>
-        /// Gets or sets dynmic order by option in string format.
+        /// Gets or sets dynamic order by option in string format.
         /// </summary>
         public (string ColumnName, string SortDirection) OrderByDynamic { get; set; }
     }
