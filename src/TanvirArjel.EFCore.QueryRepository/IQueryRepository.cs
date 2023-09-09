@@ -145,7 +145,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="List{TEntity}"/>.</returns>
-        Task<List<TEntity>> GetListAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking, CancellationToken cancellationToken = default)
+        Task<List<TEntity>> GetListAsync<TEntity>(
+            Specification<TEntity> specification,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -385,7 +388,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// </param>
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
-        Task<TEntity> GetAsync<TEntity>(Specification<TEntity> specification, bool asNoTracking, CancellationToken cancellationToken = default)
+        Task<TEntity> GetAsync<TEntity>(
+            Specification<TEntity> specification,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
             where TEntity : class;
 
         /// <summary>
@@ -547,7 +553,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sql"/> is <see langword="null"/>.</exception>
-        Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<DbParameter> parameters, CancellationToken cancellationToken = default);
+        Task<List<T>> GetFromRawSqlAsync<T>(
+            string sql,
+            IEnumerable<DbParameter> parameters,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// This method takes <paramref name="sql"/> string and values of the <paramref name="parameters"/> mentioned in the sql query as parameters

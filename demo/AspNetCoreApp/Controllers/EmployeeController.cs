@@ -149,6 +149,9 @@ public class EmployeeController : Controller
 
         if (ModelState.IsValid)
         {
+            await _context.Set<Employee>()
+            .ExecuteUpdateAsync(u => u.SetProperty(e => e.EmployeeName, e => "Tanvir"));
+            await _repository.ExecuteUpdateAsync<Employee>(u => u.SetProperty(e => e.EmployeeName, e => "Tanvir"));
             Employee employeeToBeUpdated = await _repository.GetByIdAsync<Employee>(employee.EmployeeId);
             employeeToBeUpdated.EmployeeName = employee.EmployeeName;
             employeeToBeUpdated.DepartmentName = employee.DepartmentName;

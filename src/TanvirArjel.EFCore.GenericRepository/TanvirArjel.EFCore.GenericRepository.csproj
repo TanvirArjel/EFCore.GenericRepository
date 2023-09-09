@@ -44,8 +44,8 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>EFCore, RepositoryLayer, GenericRepository, UnitOfWork, .NET, .NETCore, ASP.NETCore</PackageTags>
 		<PackageReleaseNotes>
-			1. dotNET 7.0 support has been added.
-			2. Few breaking changes in command methods.
+			1. dotNET 8.0 support has been added.
+			2. ExecuteUpdateAsync and ExecuteUpdateAsync have been added.
 		</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>

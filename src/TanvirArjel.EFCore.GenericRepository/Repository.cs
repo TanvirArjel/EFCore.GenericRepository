@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace TanvirArjel.EFCore.GenericRepository
@@ -291,6 +292,15 @@ namespace TanvirArjel.EFCore.GenericRepository
         }
 
 #if NET7_0_OR_GREATER
+        public async Task<int> ExecuteUpdateAsync<TEntity>(
+                    Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+                    CancellationToken cancellationToken = default)
+                    where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
+            return count;
+        }
+
         public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class
         {
@@ -300,7 +310,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
         public async Task<int> ExecuteDeleteAsync<TEntity>(
             Expression<Func<TEntity, bool>> condition,
-            CancellationToken cancellationToken = default) 
+            CancellationToken cancellationToken = default)
             where TEntity : class
         {
             int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteDeleteAsync(cancellationToken);

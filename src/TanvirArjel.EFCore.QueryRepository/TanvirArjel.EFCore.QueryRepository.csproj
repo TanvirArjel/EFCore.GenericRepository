@@ -40,7 +40,7 @@
 		<RepositoryType>Git</RepositoryType>
 		<PackageTags>EFCore, RepositoryLayer, GenericRepository, QueryRepository, .NET, .NETCore, ASP.NETCore</PackageTags>
 		<PackageReleaseNotes>
-			1. dotNET 7.0 support has been added.
+			1. dotNET 8.0 support has been added.
 		</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
