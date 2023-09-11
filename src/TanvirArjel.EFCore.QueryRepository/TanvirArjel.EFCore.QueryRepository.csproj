@@ -5,7 +5,7 @@
 		<Version>1.5.1</Version>
 		<LangVersion>8.0</LangVersion>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<!-- <GeneratePackageOnBuild>true</GeneratePackageOnBuild> -->
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 		<AssemblyName>TanvirArjel.EFCore.QueryRepository</AssemblyName>

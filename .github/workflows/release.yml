@@ -1,0 +1,75 @@
+name: Release to NuGet
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+  pull_request:
+    branches:
+      - '*'
+  release:
+    types: [published]
+
+env:
+  NuGetDirectory: ${{ github.workspace}}/nuget
+    
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+      - name: Install Dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Run Tests
+        run: dotnet test --no-restore --verbosity normal
+
+  create_nuget_package:
+    runs-on: ubuntu-latest
+    needs: [run_tests]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+
+      # Create the NuGet package in the folder from the environment variable NuGetDirectory
+      - name: Create Nuget Package
+        run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
+      
+      # Publish the NuGet package as an artifact, so they can be used in the following jobs
+      - name: Pushlish Nuget Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget
+          if-no-files-found: error
+          retention-days: 7
+          path: ${{ env.NuGetDirectory }}/*.nupkg
+
+  deploy_nuget_package:
+    if: github.event_name == 'Release'
+    runs-on: ubuntu-latest
+    needs: [run_tests, create_nuget_package]
+    steps:
+      # Download the nuget packages that created in the previous job
+      - name: Download Nuget Packages
+        uses: actions/download-artifact@v3
+        with:
+          name: nuget
+          path: ${{ env.NuGetDirectory }}
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+      
+      # Publish all NuGet packages to NuGet.org
+      # Use --skip-duplicate to prevent errors if a package with the same version already exists.
+      # If you retry a failed workflow, already published packages will be skipped without error.
+      - name: Publish NuGet package to nuget.org
+        run: |
+          foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
+              dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
