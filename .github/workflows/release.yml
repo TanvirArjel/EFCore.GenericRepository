@@ -1,12 +1,10 @@
 name: Release to NuGet
 on:
   push:
-    branches:
-      - 'main'
-      - 'dev'
   pull_request:
     branches:
-      - '*'
+      - master
+      - dev
   release:
     types: [published]
 
