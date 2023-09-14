@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 
 [assembly: InternalsVisibleTo("TanvirArjel.EFCore.GenericRepository")]
+[assembly: InternalsVisibleTo("EFCore.QueryRepository.Tests")]
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
