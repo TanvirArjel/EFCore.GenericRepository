@@ -22,7 +22,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace TanvirArjel.EFCore.GenericRepository
 {
-    [DebuggerStepThrough]
+    // [DebuggerStepThrough]
     internal class QueryRepository<TDbContext> : IQueryRepository, IQueryRepository<TDbContext>
         where TDbContext : DbContext
     {
@@ -390,8 +390,10 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             IQueryable<T> query = _dbContext.Set<T>();
 
-            return await query.Where(expressionTree).Select(selectExpression)
-                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            return await query.Where(expressionTree)
+                              .Select(selectExpression)
+                              .FirstOrDefaultAsync(cancellationToken)
+                              .ConfigureAwait(false);
         }
 
         public Task<T> GetAsync<T>(
@@ -551,11 +553,11 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
             }
 
-            object primayKeyValue = null;
+            object primaryKeyValue = null;
 
             try
             {
-                primayKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
             }
             catch (Exception)
             {
@@ -564,7 +566,7 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
             MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primayKeyValue, primaryKeyType);
+            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
             BinaryExpression body = Expression.Equal(me, constant);
             Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
 
