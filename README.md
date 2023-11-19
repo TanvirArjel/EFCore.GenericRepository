@@ -4,7 +4,7 @@ This library is a Generic Repository implementation for EF Core ORM which will r
 
 ## ⭐ Giving a star
 
-**If you find this library useful, please don't forget to encouraging me to do such more stuffs by giving a star to this repository. Thank you.**
+**If you find this library useful, please don't forget to encourage me to do such more stuffs by giving a star to this repository. Thank you.**
 
 ## 🔥 What's new
 
@@ -74,7 +74,7 @@ Install-Package TanvirArjel.EFCore.GenericRepository
 dotnet add package TanvirArjel.EFCore.GenericRepository
 ```
     
-Then in the `ConfirugeServices` method of the `Startup` class:
+Then in the `ConfigureServices` method of the `Startup` class:
 
 ```C#
 public void ConfigureServices(IServiceCollection services)
@@ -104,7 +104,7 @@ Install-Package TanvirArjel.EFCore.QueryRepository
 dotnet add package TanvirArjel.EFCore.QueryRepository
 ```
     
-Then in the `ConfirugeServices` method of the `Startup` class:
+Then in the `ConfigureServices` method of the `Startup` class:
 
 ```C#
 public void ConfigureServices(IServiceCollection services)
@@ -125,17 +125,17 @@ public class EmployeeService
 {
     // For query version, please use `IQueryRepository` instead of `IRepository`
     private readonly IRepository _repository; // If single DbContext
-    private readonly IRepository<YourDbContext1> _dbConext1Repository; // If multiple DbContext
+    private readonly IRepository<YourDbContext1> _dbContext1Repository; // If multiple DbContext
 
-    public EmployeeService(IRepository repository, IRepository<YourDbContext1> dbConext1Repository)
+    public EmployeeService(IRepository repository, IRepository<YourDbContext1> dbContext1Repository)
     {
         _repository = repository;
-        _dbConext1Repository = dbConext1Repository;
+        _dbContext1Repository = dbContext1Repository;
     }
 
     public async Task<Employee> GetEmployeeAsync(int employeeId)
     {
-        Employee employee = await _repository.GetByIdAsync<Employee>(1);
+        Employee employee = await _repository.GetByIdAsync<Employee>(employeeId);
         return employee;
     }
 }
@@ -146,12 +146,12 @@ public class EmployeeService
 public class EmployeeService
 {
     private readonly IRepository _repository; // If single DbContext
-    private readonly IRepository<YourDbContext1> _dbConext1Repository; // If multiple DbContext
+    private readonly IRepository<YourDbContext1> _dbContext1Repository; // If multiple DbContext
 
-    public EmployeeService(IRepository repository, IRepository<YourDbContext1> dbConext1Repository)
+    public EmployeeService(IRepository repository, IRepository<YourDbContext1> dbContext1Repository)
     {
         _repository = repository;
-        _dbConext1Repository = dbConext1Repository;
+        _dbContext1Repository = dbContext1Repository;
     }
 
     public async Task<int> CreateAsync(Employee employee)
@@ -164,4 +164,4 @@ public class EmployeeService
 }
 ```
     
-### For more detail documentaion, please visit [Documentation Wiki](https://github.com/TanvirArjel/EFCore.GenericRepository/wiki)
+### For more detail documentation, please visit [Documentation Wiki](https://github.com/TanvirArjel/EFCore.GenericRepository/wiki)

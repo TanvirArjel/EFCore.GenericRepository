@@ -1,5 +1,8 @@
 ﻿[*.cs]
 
+# CA1510: Use 'ArgumentNullException.ThrowIfNull' instead of explicitly throwing a new exception instance
+dotnet_diagnostic.CA1510.severity = none
+
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
 
