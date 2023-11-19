@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
-		<Version>1.5.1</Version>
+		<Version>1.5.2</Version>
 		<LangVersion>8.0</LangVersion>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<!-- <GeneratePackageOnBuild>true</GeneratePackageOnBuild> -->
@@ -70,7 +70,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0-*" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.*" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">

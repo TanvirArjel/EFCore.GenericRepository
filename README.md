@@ -4,7 +4,7 @@ This library is a Generic Repository implementation for EF Core ORM which will r
 
 ## ⭐ Giving a star
 
-**If you find this library useful, please don't forget to encouraging me to do such more stuffs by giving a star to this repository. Thank you.**
+**If you find this library useful, please don't forget to encourage me to do such more stuffs by giving a star to this repository. Thank you.**
 
 ## 🔥 What's new
 

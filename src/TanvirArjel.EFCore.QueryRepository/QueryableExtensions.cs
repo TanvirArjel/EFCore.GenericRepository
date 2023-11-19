@@ -89,18 +89,18 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             if (specification.PageIndex < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(specification.PageIndex), $"The value of {nameof(specification.PageIndex)} must be greater than 0.");
+                throw new ArgumentOutOfRangeException(nameof(specification), $"The value of {nameof(specification.PageIndex)} must be greater than 0.");
             }
 
             if (specification.PageSize < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(specification.PageSize), $"The value of {nameof(specification.PageSize)} must be greater than 0.");
+                throw new ArgumentOutOfRangeException(nameof(specification), $"The value of {nameof(specification.PageSize)} must be greater than 0.");
             }
 
             IQueryable<T> countSource = source;
 
             // modify the IQueryable using the specification's expression criteria
-            if (specification.Conditions != null && specification.Conditions.Any())
+            if (specification.Conditions != null && specification.Conditions.Count != 0)
             {
                 foreach (Expression<Func<T, bool>> condition in specification.Conditions)
                 {
