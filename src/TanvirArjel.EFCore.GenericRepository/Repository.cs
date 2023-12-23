@@ -301,6 +301,16 @@ namespace TanvirArjel.EFCore.GenericRepository
             return count;
         }
 
+        public async Task<int> ExecuteUpdateAsync<TEntity>(
+                    Expression<Func<TEntity, bool>> condition,
+                    Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+                    CancellationToken cancellationToken = default)
+                    where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
+            return count;
+        }
+
         public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class
         {

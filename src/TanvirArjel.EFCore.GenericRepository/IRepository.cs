@@ -248,6 +248,28 @@ namespace TanvirArjel.EFCore.GenericRepository
             where TEntity : class;
 
         /// <summary>
+        /// Asynchronously updates database rows for the entity instances which match the
+        /// LINQ query from the database.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="condition">The condition on which records will be filtered to be updated.</param>
+        /// <param name="setPropertyCalls">A collection of set property statements specifying properties to update.</param>
+        /// <param name="cancellationToken">A System.Threading.CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>The total number of rows updated in the database.</returns>
+        /// <remarks>
+        /// This operation executes immediately against the database, rather than being deferred
+        /// until Microsoft.EntityFrameworkCore.DbContext.SaveChanges is called. It also
+        /// does not interact with the EF change tracker in any way: entity instances which
+        /// happen to be tracked when this operation is invoked aren't taken into account,
+        /// and aren't updated to reflect the changes.
+        /// </remarks>
+        Task<int> ExecuteUpdateAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
         /// Asynchronously deletes all the database rows for the specified entity instance.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
