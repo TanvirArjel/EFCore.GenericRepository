@@ -104,7 +104,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             {
                 foreach (Expression<Func<T, bool>> condition in specification.Conditions)
                 {
-                    countSource = source.Where(condition);
+                    countSource = countSource.Where(condition);
                 }
             }
 
