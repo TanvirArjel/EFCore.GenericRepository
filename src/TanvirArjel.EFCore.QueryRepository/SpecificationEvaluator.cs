@@ -108,7 +108,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             {
                 query = specification.OrderBy(query);
             }
-            else if (!string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName) && !string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName))
+            else if (!string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName) && !string.IsNullOrWhiteSpace(specification.OrderByDynamic.SortDirection))
             {
                 query = query.OrderBy(specification.OrderByDynamic.ColumnName + " " + specification.OrderByDynamic.SortDirection);
             }
