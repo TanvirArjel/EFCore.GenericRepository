@@ -4,9 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -154,8 +152,17 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        public Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetListAsync(selectExpression, false, cancellationToken);
+        }
+
         public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
             Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -164,8 +171,17 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            List<TProjectedType> entities = await _dbContext.Set<T>()
-                .Select(selectExpression).ToListAsync(cancellationToken).ConfigureAwait(false);
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            List<TProjectedType> entities = await query
+                .Select(selectExpression)
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
             return entities;
         }
@@ -173,6 +189,16 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return await GetListAsync(condition, selectExpression, false, cancellationToken);
+        }
+
+        public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
+            Expression<Func<T, bool>> condition,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -188,15 +214,32 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.Where(condition);
             }
 
-            List<TProjectedType> projectedEntites = await query.Select(selectExpression)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
 
-            return projectedEntites;
+            List<TProjectedType> projectedEntities = await query
+                .Select(selectExpression)
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
+
+            return projectedEntities;
+        }
+
+        public Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
+            Specification<T> specification,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetListAsync(specification, selectExpression, false, cancellationToken);
         }
 
         public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -212,12 +255,28 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.GetSpecifiedQuery(specification);
             }
 
-            return await query.Select(selectExpression)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
+                .Select(selectExpression)
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public Task<PaginatedList<T>> GetListAsync<T>(
+            PaginationSpecification<T> specification,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetListAsync(specification, false, cancellationToken);
         }
 
         public async Task<PaginatedList<T>> GetListAsync<T>(
             PaginationSpecification<T> specification,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -226,13 +285,30 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(specification));
             }
 
-            PaginatedList<T> paginatedList = await _dbContext.Set<T>().ToPaginatedListAsync(specification, cancellationToken);
-            return paginatedList;
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.ToPaginatedListAsync(specification, cancellationToken);;
+        }
+
+        public Task<PaginatedList<TProjectedType>> GetListAsync<T, TProjectedType>(
+            PaginationSpecification<T> specification,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+            where TProjectedType : class
+        {
+            return GetListAsync(specification, selectExpression, false, cancellationToken);
         }
 
         public async Task<PaginatedList<TProjectedType>> GetListAsync<T, TProjectedType>(
             PaginationSpecification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
             where TProjectedType : class
@@ -247,11 +323,17 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery((SpecificationBase<T>)specification);
+            IQueryable<T> query = _dbContext.Set<T>();
 
-            PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression)
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
+                .GetSpecifiedQuery((SpecificationBase<T>)specification)
+                .Select(selectExpression)
                 .ToPaginatedListAsync(specification.PageIndex, specification.PageSize, cancellationToken);
-            return paginatedList;
         }
 
         public Task<T> GetByIdAsync<T>(object id, CancellationToken cancellationToken = default)
@@ -345,9 +427,19 @@ namespace TanvirArjel.EFCore.GenericRepository
             return entity;
         }
 
+        public Task<TProjectedType> GetByIdAsync<T, TProjectedType>(
+            object id,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetByIdAsync(id, selectExpression, false, cancellationToken);
+        }
+
         public async Task<TProjectedType> GetByIdAsync<T, TProjectedType>(
             object id,
             Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -390,10 +482,15 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             IQueryable<T> query = _dbContext.Set<T>();
 
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
             return await query.Where(expressionTree)
-                              .Select(selectExpression)
-                              .FirstOrDefaultAsync(cancellationToken)
-                              .ConfigureAwait(false);
+                .Select(selectExpression)
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public Task<T> GetAsync<T>(
@@ -473,9 +570,19 @@ namespace TanvirArjel.EFCore.GenericRepository
             return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        public Task<TProjectedType> GetAsync<T, TProjectedType>(
+            Expression<Func<T, bool>> condition,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetAsync(condition, selectExpression, false, cancellationToken);
+        }
+
         public async Task<TProjectedType> GetAsync<T, TProjectedType>(
             Expression<Func<T, bool>> condition,
             Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -491,12 +598,30 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.Where(condition);
             }
 
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
+                .Select(selectExpression)
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public Task<TProjectedType> GetAsync<T, TProjectedType>(
+            Specification<T> specification,
+            Expression<Func<T, TProjectedType>> selectExpression,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetAsync(specification, selectExpression, false, cancellationToken);
         }
 
         public async Task<TProjectedType> GetAsync<T, TProjectedType>(
             Specification<T> specification,
             Expression<Func<T, TProjectedType>> selectExpression,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -512,7 +637,15 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.GetSpecifiedQuery(specification);
             }
 
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query
+                .Select(selectExpression)
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public Task<bool> ExistsAsync<T>(CancellationToken cancellationToken = default)
