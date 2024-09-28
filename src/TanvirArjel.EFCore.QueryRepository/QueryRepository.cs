@@ -216,8 +216,17 @@ namespace TanvirArjel.EFCore.GenericRepository
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        public Task<PaginatedList<T>> GetListAsync<T>(
+            PaginationSpecification<T> specification,
+            CancellationToken cancellationToken = default)
+            where T : class
+        {
+            return GetListAsync(specification, false, cancellationToken);
+        }
+
         public async Task<PaginatedList<T>> GetListAsync<T>(
             PaginationSpecification<T> specification,
+            bool asNoTracking,
             CancellationToken cancellationToken = default)
             where T : class
         {
@@ -226,8 +235,14 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(specification));
             }
 
-            PaginatedList<T> paginatedList = await _dbContext.Set<T>().ToPaginatedListAsync(specification, cancellationToken);
-            return paginatedList;
+            IQueryable<T> query = _dbContext.Set<T>();
+
+            if (asNoTracking)
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.ToPaginatedListAsync(specification, cancellationToken);;
         }
 
         public async Task<PaginatedList<TProjectedType>> GetListAsync<T, TProjectedType>(
