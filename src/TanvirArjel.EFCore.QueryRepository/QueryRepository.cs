@@ -302,33 +302,6 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(id));
             }
 
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primaryKeyValue = null;
-
-            try
-            {
-                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
             IQueryable<T> query = _dbContext.Set<T>();
 
             if (includes != null)
@@ -341,8 +314,9 @@ namespace TanvirArjel.EFCore.GenericRepository
                 query = query.AsNoTracking();
             }
 
-            T entity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken).ConfigureAwait(false);
-            return entity;
+            Expression<Func<T, bool>> getByIdExpression = CreateGetByIdExpression<T>(id);
+
+            return await query.FirstOrDefaultAsync(getByIdExpression, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<TProjectedType> GetByIdAsync<T, TProjectedType>(
@@ -361,39 +335,14 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(selectExpression));
             }
 
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primaryKeyValue = null;
-
-            try
-            {
-                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
             IQueryable<T> query = _dbContext.Set<T>();
+            Expression<Func<T, bool>> getByIdExpression = CreateGetByIdExpression<T>(id);
 
-            return await query.Where(expressionTree)
-                              .Select(selectExpression)
-                              .FirstOrDefaultAsync(cancellationToken)
-                              .ConfigureAwait(false);
+            return await query
+                .Where(getByIdExpression)
+                .Select(selectExpression)
+                .FirstOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public Task<T> GetAsync<T>(
@@ -543,37 +492,10 @@ namespace TanvirArjel.EFCore.GenericRepository
                 throw new ArgumentNullException(nameof(id));
             }
 
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primaryKeyValue = null;
-
-            try
-            {
-                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
             IQueryable<T> query = _dbContext.Set<T>();
+            Expression<Func<T, bool>> getByIdExpression = CreateGetByIdExpression<T>(id);
 
-            bool isExistent = await query.AnyAsync(expressionTree, cancellationToken).ConfigureAwait(false);
-            return isExistent;
+            return await query.AnyAsync(getByIdExpression, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<int> GetCountAsync<T>(CancellationToken cancellationToken = default)
@@ -694,6 +616,39 @@ namespace TanvirArjel.EFCore.GenericRepository
 
             List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
             return items;
+        }
+
+        private Expression<Func<T, bool>> CreateGetByIdExpression<T>(object id)
+            where T : class
+        {
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+            IReadOnlyList<IProperty> primaryKeyProperty = entityType?.FindPrimaryKey()?.Properties;
+            string primaryKeyName = primaryKeyProperty?.Select(p => p.Name).FirstOrDefault();
+            Type primaryKeyType = primaryKeyProperty?.Select(p => p.ClrType).FirstOrDefault();
+
+            if (primaryKeyName == null || primaryKeyType == null)
+            {
+                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
+            }
+
+            object primaryKeyValue;
+
+            try
+            {
+                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
+            }
+
+            ParameterExpression parameter = Expression.Parameter(typeof(T), "entity");
+            MemberExpression property = Expression.Property(parameter, primaryKeyName);
+            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
+            BinaryExpression body = Expression.Equal(property, constant);
+            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, parameter);
+
+            return expressionTree;
         }
     }
 }
