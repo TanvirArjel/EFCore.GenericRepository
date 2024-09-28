@@ -216,6 +216,23 @@ namespace TanvirArjel.EFCore.GenericRepository
         /// This method returns a <see cref="PaginatedList{T}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
+        /// <param name="asNoTracking">A <see cref="bool"/> value which determines whether the return entity will be tracked by
+        /// EF Core context or not. Default value is false i.e tracking is enabled by default.
+        /// </param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="specification"/> is smaller than 1.</exception>
+        Task<PaginatedList<TEntity>> GetListAsync<TEntity>(
+            PaginationSpecification<TEntity> specification,
+            bool asNoTracking,
+            CancellationToken cancellationToken = default)
+            where TEntity : class;
+
+        /// <summary>
+        /// This method returns a <see cref="PaginatedList{T}"/>.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <typeparam name="TProjectedType">The projected type.</typeparam>
         /// <param name="specification">An object of <see cref="PaginationSpecification{T}"/>.</param>
         /// <param name="selectExpression">The <see cref="System.Linq"/> select query.</param>
