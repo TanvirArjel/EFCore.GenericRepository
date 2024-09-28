@@ -81,10 +81,17 @@ public void ConfigureServices(IServiceCollection services)
 {
     // For single DbContext
     services.AddGenericRepository<YourDbContext>();
-    
-    // If multiple DbContext
+
+    // For multiple DbContext
     services.AddGenericRepository<YourDbContext1>();
     services.AddGenericRepository<YourDbContext2>();
+
+    // For single DbContext factory (e.g. for Blazor)
+    services.AddGenericRepositoryFactory<YourDbContext>();
+    
+    // For multiple DbContext factory (e.g. for Blazor)
+    services.AddGenericRepositoryFactory<YourDbContext1>();
+    services.AddGenericRepositoryFactory<YourDbContext2>();
 }
 ```
 
@@ -111,10 +118,17 @@ public void ConfigureServices(IServiceCollection services)
 {
     // For single DbContext
     services.AddQueryRepository<YourDbContext>();
-    
+
     // For multiple DbContext
     services.AddQueryRepository<YourDbContext1>();
     services.AddQueryRepository<YourDbContext2>();
+
+    // For single DbContext factory (e.g. for Blazor)
+    services.AddQueryRepositoryFactory<YourDbContext>();
+
+    // For multiple DbContext factory (e.g. for Blazor)
+    services.AddQueryRepositoryFactory<YourDbContext1>();
+    services.AddQueryRepositoryFactory<YourDbContext2>();
 }
 ```
     

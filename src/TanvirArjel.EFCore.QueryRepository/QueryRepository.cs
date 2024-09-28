@@ -695,5 +695,9 @@ namespace TanvirArjel.EFCore.GenericRepository
             List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
             return items;
         }
+
+        public void Dispose() => _dbContext?.Dispose();
+
+        public ValueTask DisposeAsync() => _dbContext.DisposeAsync();
     }
 }
