@@ -93,10 +93,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             Expression<Func<T, bool>> condition,
             bool asNoTracking,
             CancellationToken cancellationToken = default)
-             where T : class
-        {
-            return GetListAsync(condition, null, asNoTracking, cancellationToken);
-        }
+             where T : class => GetListAsync(condition, null, asNoTracking, cancellationToken);
 
         public async Task<List<T>> GetListAsync<T>(
             Expression<Func<T, bool>> condition,
@@ -128,10 +125,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         }
 
         public Task<List<T>> GetListAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
-           where T : class
-        {
-            return GetListAsync(specification, false, cancellationToken);
-        }
+           where T : class => GetListAsync(specification, false, cancellationToken);
 
         public async Task<List<T>> GetListAsync<T>(
             Specification<T> specification,
