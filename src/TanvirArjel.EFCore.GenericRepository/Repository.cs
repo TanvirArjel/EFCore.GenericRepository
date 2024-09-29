@@ -39,7 +39,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task<object[]> InsertAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
            where TEntity : class
         {
-            CheckEntityIsNull<TEntity>(entity);
+            CheckIfEntityIsNull<TEntity>(entity);
 
             EntityEntry<TEntity> entityEntry = await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
             await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -53,7 +53,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task InsertAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
            where TEntity : class
         {
-            CheckEntitiesIsNull<TEntity>(entities);
+            CheckIfEntitiesIsNull<TEntity>(entities);
 
             await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
             await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -62,7 +62,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task<int> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
             where TEntity : class
         {
-            CheckEntityIsNull<TEntity>(entity);
+            CheckIfEntityIsNull<TEntity>(entity);
 
             EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
 
@@ -102,7 +102,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task<int> UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
-            CheckEntitiesIsNull<T>(entities);
+            CheckIfEntitiesIsNull<T>(entities);
 
             _dbContext.Set<T>().UpdateRange(entities);
             int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -113,7 +113,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task<int> DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
             where T : class
         {
-            CheckEntityIsNull<T>(entity);
+            CheckIfEntityIsNull<T>(entity);
 
             _dbContext.Set<T>().Remove(entity);
             int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -124,7 +124,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public async Task<int> DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
             where T : class
         {
-            CheckEntitiesIsNull<T>(entities);
+            CheckIfEntitiesIsNull<T>(entities);
 
             _dbContext.Set<T>().RemoveRange(entities);
             int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -132,13 +132,13 @@ namespace TanvirArjel.EFCore.GenericRepository
             return count;
         }
 
-        public Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default) => 
+        public Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default) =>
             _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
 
         public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters) =>
             _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
 
-        public Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default) => 
+        public Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default) =>
             _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
 
         public void ClearChangeTracker() => _dbContext.ChangeTracker.Clear();
@@ -146,15 +146,15 @@ namespace TanvirArjel.EFCore.GenericRepository
         public void Add<TEntity>(TEntity entity)
             where TEntity : class
         {
-            CheckEntityIsNull<TEntity>(entity);
+            CheckIfEntityIsNull<TEntity>(entity);
 
             _dbContext.Set<TEntity>().Add(entity);
         }
 
         public async Task AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-   where TEntity : class
+            where TEntity : class
         {
-            CheckEntityIsNull<TEntity>(entity);
+            CheckIfEntityIsNull<TEntity>(entity);
 
             await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
         }
@@ -162,15 +162,15 @@ namespace TanvirArjel.EFCore.GenericRepository
         public void Add<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
-            CheckEntitiesIsNull<TEntity>(entities);
+            CheckIfEntitiesIsNull<TEntity>(entities);
 
             _dbContext.Set<TEntity>().AddRange(entities);
         }
 
         public async Task AddAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
-   where TEntity : class
+            where TEntity : class
         {
-            CheckEntitiesIsNull<TEntity>(entities);
+            CheckIfEntitiesIsNull<TEntity>(entities);
 
             await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
         }
@@ -178,7 +178,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public void Update<TEntity>(TEntity entity)
             where TEntity : class
         {
-            CheckEntityIsNull<TEntity>(entity);
+            CheckIfEntityIsNull<TEntity>(entity);
 
             EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker
                 .Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
@@ -215,7 +215,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public void Update<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
-            CheckEntitiesIsNull<TEntity>(entities);
+            CheckIfEntitiesIsNull<TEntity>(entities);
 
             _dbContext.Set<TEntity>().UpdateRange(entities);
         }
@@ -223,7 +223,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public void Remove<TEntity>(TEntity entity)
             where TEntity : class
         {
-            CheckEntityIsNull<TEntity>(entity);
+            CheckIfEntityIsNull<TEntity>(entity);
 
             _dbContext.Set<TEntity>().Remove(entity);
         }
@@ -231,7 +231,7 @@ namespace TanvirArjel.EFCore.GenericRepository
         public void Remove<TEntity>(IEnumerable<TEntity> entities)
             where TEntity : class
         {
-            CheckEntitiesIsNull<TEntity>(entities);
+            CheckIfEntitiesIsNull<TEntity>(entities);
 
             _dbContext.Set<TEntity>().RemoveRange(entities);
         }
@@ -243,7 +243,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             return count;
         }
 
-        private void CheckEntityIsNull<TEntity>(TEntity entity)
+        private void CheckIfEntityIsNull<TEntity>(TEntity entity)
         {
             if (entity is null)
             {
@@ -251,7 +251,7 @@ namespace TanvirArjel.EFCore.GenericRepository
             }
         }
 
-        private void CheckEntitiesIsNull<TEntity>(IEnumerable<TEntity> entities )
+        private void CheckIfEntitiesIsNull<TEntity>(IEnumerable<TEntity> entities)
         {
             if (entities is null)
             {

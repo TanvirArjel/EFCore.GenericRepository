@@ -84,7 +84,10 @@ namespace TanvirArjel.EFCore.GenericRepository
         }
 
         public Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
-             where T : class => GetListAsync(condition, false, cancellationToken);
+             where T : class
+        {
+            return GetListAsync(condition, false, cancellationToken);
+        }
 
         public Task<List<T>> GetListAsync<T>(
             Expression<Func<T, bool>> condition,
