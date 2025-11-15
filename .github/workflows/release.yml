@@ -36,6 +36,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
 
+      # Clean the NuGet directory to ensure no stale packages
+      - name: Clean NuGet Directory
+        run: rm -rf ${{ env.NuGetDirectory }}
+      
       # Create the NuGet package in the folder from the environment variable NuGetDirectory
       - name: Create Nuget Package
         run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
