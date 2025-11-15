@@ -8,6 +8,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -16,335 +17,336 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace TanvirArjel.EFCore.GenericRepository
+[assembly: InternalsVisibleTo("EFCore.GenericRepository.Tests")]
+
+namespace TanvirArjel.EFCore.GenericRepository;
+
+[DebuggerStepThrough]
+internal sealed class Repository<TDbContext> : QueryRepository<TDbContext>, IRepository, IRepository<TDbContext>
+    where TDbContext : DbContext
 {
-    [DebuggerStepThrough]
-    internal sealed class Repository<TDbContext> : QueryRepository<TDbContext>, IRepository, IRepository<TDbContext>
-        where TDbContext : DbContext
+    private readonly TDbContext _dbContext;
+
+    public Repository(TDbContext dbContext)
+        : base(dbContext)
     {
-        private readonly TDbContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public Repository(TDbContext dbContext)
-            : base(dbContext)
+    public async Task<IDbContextTransaction> BeginTransactionAsync(
+        IsolationLevel isolationLevel = IsolationLevel.Unspecified,
+        CancellationToken cancellationToken = default)
+    {
+        IDbContextTransaction dbContextTransaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+        return dbContextTransaction;
+    }
+
+    public async Task<object[]> InsertAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+       where TEntity : class
+    {
+        if (entity == null)
         {
-            _dbContext = dbContext;
+            throw new ArgumentNullException(nameof(entity));
         }
 
-        public async Task<IDbContextTransaction> BeginTransactionAsync(
-            IsolationLevel isolationLevel = IsolationLevel.Unspecified,
-            CancellationToken cancellationToken = default)
+        EntityEntry<TEntity> entityEntry = await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        object[] primaryKeyValue = entityEntry.Metadata.FindPrimaryKey().Properties.
+            Select(p => entityEntry.Property(p.Name).CurrentValue).ToArray();
+
+        return primaryKeyValue;
+    }
+
+    public async Task InsertAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+       where TEntity : class
+    {
+        if (entities == null)
         {
-            IDbContextTransaction dbContextTransaction = await _dbContext.Database.BeginTransactionAsync(isolationLevel, cancellationToken);
-            return dbContextTransaction;
+            throw new ArgumentNullException(nameof(entities));
         }
 
-        public async Task<object[]> InsertAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-           where TEntity : class
+        await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+        await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<int> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        if (entity == null)
         {
-            if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
+
+        if (trackedEntity == null)
+        {
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+
+            if (entityType == null)
             {
-                throw new ArgumentNullException(nameof(entity));
+                throw new InvalidOperationException($"{typeof(TEntity).Name} is not part of EF Core DbContext model");
             }
 
-            EntityEntry<TEntity> entityEntry = await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
 
-            object[] primaryKeyValue = entityEntry.Metadata.FindPrimaryKey().Properties.
-                Select(p => entityEntry.Property(p.Name).CurrentValue).ToArray();
-
-            return primaryKeyValue;
-        }
-
-        public async Task InsertAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
-           where TEntity : class
-        {
-            if (entities == null)
+            if (primaryKeyName != null)
             {
-                throw new ArgumentNullException(nameof(entities));
-            }
+                Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
 
-            await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        }
+                object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
 
-        public async Task<int> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+                object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
 
-            EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker.Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
-
-            if (trackedEntity == null)
-            {
-                IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
-
-                if (entityType == null)
+                if (primaryKeyDefaultValue.Equals(primaryValue))
                 {
-                    throw new InvalidOperationException($"{typeof(TEntity).Name} is not part of EF Core DbContext model");
+                    throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
                 }
+            }
 
-                string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+            _dbContext.Set<TEntity>().Update(entity);
+        }
 
-                if (primaryKeyName != null)
+        int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
+
+    public async Task<int> UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (entities == null)
+        {
+            throw new ArgumentNullException(nameof(entities));
+        }
+
+        _dbContext.Set<T>().UpdateRange(entities);
+        int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
+
+    public async Task<int> DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        _dbContext.Set<T>().Remove(entity);
+        int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
+
+    public async Task<int> DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (entities == null)
+        {
+            throw new ArgumentNullException(nameof(entities));
+        }
+
+        _dbContext.Set<T>().RemoveRange(entities);
+        int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
+
+    public Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
+    }
+
+    public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
+    {
+        return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
+    }
+
+    public Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
+    }
+
+    public void ClearChangeTracker()
+    {
+        _dbContext.ChangeTracker.Clear();
+    }
+
+    public void Add<TEntity>(TEntity entity)
+        where TEntity : class
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        _dbContext.Set<TEntity>().Add(entity);
+    }
+
+    public async Task AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+where TEntity : class
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
+    }
+
+    public void Add<TEntity>(IEnumerable<TEntity> entities)
+        where TEntity : class
+    {
+        if (entities == null)
+        {
+            throw new ArgumentNullException(nameof(entities));
+        }
+
+        _dbContext.Set<TEntity>().AddRange(entities);
+    }
+
+    public async Task AddAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+where TEntity : class
+    {
+        if (entities == null)
+        {
+            throw new ArgumentNullException(nameof(entities));
+        }
+
+        await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
+    }
+
+    public void Update<TEntity>(TEntity entity)
+        where TEntity : class
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker
+            .Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
+
+        if (trackedEntity == null)
+        {
+            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+
+            if (entityType == null)
+            {
+                throw new InvalidOperationException($"{typeof(TEntity).Name} is not part of EF Core DbContext model");
+            }
+
+            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+
+            if (primaryKeyName != null)
+            {
+                Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+                object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
+
+                object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
+
+                if (primaryKeyDefaultValue.Equals(primaryValue))
                 {
-                    Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-                    object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
-
-                    object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
-
-                    if (primaryKeyDefaultValue.Equals(primaryValue))
-                    {
-                        throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
-                    }
+                    throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
                 }
-
-                _dbContext.Set<TEntity>().Update(entity);
             }
 
-            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return count;
+            _dbContext.Set<TEntity>().Update(entity);
         }
+    }
 
-        public async Task<int> UpdateAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
-            where T : class
+    public void Update<TEntity>(IEnumerable<TEntity> entities)
+        where TEntity : class
+    {
+        if (entities == null)
         {
-            if (entities == null)
-            {
-                throw new ArgumentNullException(nameof(entities));
-            }
-
-            _dbContext.Set<T>().UpdateRange(entities);
-            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return count;
+            throw new ArgumentNullException(nameof(entities));
         }
 
-        public async Task<int> DeleteAsync<T>(T entity, CancellationToken cancellationToken = default)
-            where T : class
+        _dbContext.Set<TEntity>().UpdateRange(entities);
+    }
+
+    public void Remove<TEntity>(TEntity entity)
+        where TEntity : class
+    {
+        if (entity == null)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            _dbContext.Set<T>().Remove(entity);
-            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return count;
+            throw new ArgumentNullException(nameof(entity));
         }
 
-        public async Task<int> DeleteAsync<T>(IEnumerable<T> entities, CancellationToken cancellationToken = default)
-            where T : class
+        _dbContext.Set<TEntity>().Remove(entity);
+    }
+
+    public void Remove<TEntity>(IEnumerable<TEntity> entities)
+        where TEntity : class
+    {
+        if (entities == null)
         {
-            if (entities == null)
-            {
-                throw new ArgumentNullException(nameof(entities));
-            }
-
-            _dbContext.Set<T>().RemoveRange(entities);
-            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return count;
+            throw new ArgumentNullException(nameof(entities));
         }
 
-        public Task<int> ExecuteSqlCommandAsync(string sql, CancellationToken cancellationToken = default)
-        {
-            return _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
-        }
+        _dbContext.Set<TEntity>().RemoveRange(entities);
+    }
 
-        public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
-        {
-            return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters);
-        }
-
-        public Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
-        {
-            return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
-        }
-
-        public void ClearChangeTracker()
-        {
-            _dbContext.ChangeTracker.Clear();
-        }
-
-        public void Add<TEntity>(TEntity entity)
-            where TEntity : class
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            _dbContext.Set<TEntity>().Add(entity);
-        }
-
-        public async Task AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-   where TEntity : class
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken).ConfigureAwait(false);
-        }
-
-        public void Add<TEntity>(IEnumerable<TEntity> entities)
-            where TEntity : class
-        {
-            if (entities == null)
-            {
-                throw new ArgumentNullException(nameof(entities));
-            }
-
-            _dbContext.Set<TEntity>().AddRange(entities);
-        }
-
-        public async Task AddAsync<TEntity>(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
-   where TEntity : class
-        {
-            if (entities == null)
-            {
-                throw new ArgumentNullException(nameof(entities));
-            }
-
-            await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
-        }
-
-        public void Update<TEntity>(TEntity entity)
-            where TEntity : class
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            EntityEntry<TEntity> trackedEntity = _dbContext.ChangeTracker
-                .Entries<TEntity>().FirstOrDefault(x => x.Entity == entity);
-
-            if (trackedEntity == null)
-            {
-                IEntityType entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
-
-                if (entityType == null)
-                {
-                    throw new InvalidOperationException($"{typeof(TEntity).Name} is not part of EF Core DbContext model");
-                }
-
-                string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-
-                if (primaryKeyName != null)
-                {
-                    Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-                    object primaryKeyDefaultValue = primaryKeyType.IsValueType ? Activator.CreateInstance(primaryKeyType) : null;
-
-                    object primaryValue = entity.GetType().GetProperty(primaryKeyName).GetValue(entity, null);
-
-                    if (primaryKeyDefaultValue.Equals(primaryValue))
-                    {
-                        throw new InvalidOperationException("The primary key value of the entity to be updated is not valid.");
-                    }
-                }
-
-                _dbContext.Set<TEntity>().Update(entity);
-            }
-        }
-
-        public void Update<TEntity>(IEnumerable<TEntity> entities)
-            where TEntity : class
-        {
-            if (entities == null)
-            {
-                throw new ArgumentNullException(nameof(entities));
-            }
-
-            _dbContext.Set<TEntity>().UpdateRange(entities);
-        }
-
-        public void Remove<TEntity>(TEntity entity)
-            where TEntity : class
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            _dbContext.Set<TEntity>().Remove(entity);
-        }
-
-        public void Remove<TEntity>(IEnumerable<TEntity> entities)
-            where TEntity : class
-        {
-            if (entities == null)
-            {
-                throw new ArgumentNullException(nameof(entities));
-            }
-
-            _dbContext.Set<TEntity>().RemoveRange(entities);
-        }
-
-        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return count;
-        }
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        int count = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
 
 #if NET10_0_OR_GREATER
-        public async Task<int> ExecuteUpdateAsync<TEntity>(
-            Action<UpdateSettersBuilder<TEntity>> setters,
-            CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setters, cancellationToken);
-            return count;
-        }
+    public async Task<int> ExecuteUpdateAsync<TEntity>(
+        Action<UpdateSettersBuilder<TEntity>> setters,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setters, cancellationToken);
+        return count;
+    }
 
-        public async Task<int> ExecuteUpdateAsync<TEntity>(
-            Expression<Func<TEntity, bool>> condition,
-            Action<UpdateSettersBuilder<TEntity>> setters,
-            CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setters, cancellationToken);
-            return count;
-        }
+    public async Task<int> ExecuteUpdateAsync<TEntity>(
+        Expression<Func<TEntity, bool>> condition,
+        Action<UpdateSettersBuilder<TEntity>> setters,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setters, cancellationToken);
+        return count;
+    }
 #elif NET7_0_OR_GREATER || NET8_0_OR_GREATER || NET9_0_OR_GREATER
-        public async Task<int> ExecuteUpdateAsync<TEntity>(
-            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
-            CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
-            return count;
-        }
+    public async Task<int> ExecuteUpdateAsync<TEntity>(
+        Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
+        return count;
+    }
 
-        public async Task<int> ExecuteUpdateAsync<TEntity>(
-            Expression<Func<TEntity, bool>> condition,
-            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
-            CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
-            return count;
-        }
+    public async Task<int> ExecuteUpdateAsync<TEntity>(
+        Expression<Func<TEntity, bool>> condition,
+        Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
+        return count;
+    }
 #endif
 
-        public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            int count = await _dbContext.Set<TEntity>().ExecuteDeleteAsync(cancellationToken);
-            return count;
-        }
+    public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        int count = await _dbContext.Set<TEntity>().ExecuteDeleteAsync(cancellationToken);
+        return count;
+    }
 
-        public async Task<int> ExecuteDeleteAsync<TEntity>(
-            Expression<Func<TEntity, bool>> condition,
-            CancellationToken cancellationToken = default)
-            where TEntity : class
-        {
-            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteDeleteAsync(cancellationToken);
-            return count;
-        }
+    public async Task<int> ExecuteDeleteAsync<TEntity>(
+        Expression<Func<TEntity, bool>> condition,
+        CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteDeleteAsync(cancellationToken);
+        return count;
     }
 }
