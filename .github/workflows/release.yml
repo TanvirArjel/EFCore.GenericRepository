@@ -17,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
       - name: Install Dependencies
         run: dotnet restore
       - name: Build
@@ -32,9 +32,9 @@ jobs:
     needs: [run_tests]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
 
       # Create the NuGet package in the folder from the environment variable NuGetDirectory
       - name: Create Nuget Package
@@ -42,7 +42,7 @@ jobs:
       
       # Publish the NuGet package as an artifact, so they can be used in the following jobs
       - name: Pushlish Nuget Package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nuget
           if-no-files-found: error
@@ -56,13 +56,13 @@ jobs:
     steps:
       # Download the nuget packages that created in the previous job
       - name: Download Nuget Packages
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nuget
           path: ${{ env.NuGetDirectory }}
       
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
       
       # Publish all NuGet packages to NuGet.org
       # Use --skip-duplicate to prevent errors if a package with the same version already exists.
