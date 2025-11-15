@@ -6,10 +6,11 @@ on:
       - master
       - dev
   release:
-    types: [published]
+    types:
+      - published
 
 env:
-  NuGetDirectory: ${{ github.workspace}}/nuget
+  NuGetDirectory: ${{ github.workspace }}/nuget
     
 jobs:
   run_tests:
@@ -49,7 +50,7 @@ jobs:
           path: ${{ env.NuGetDirectory }}/*.nupkg
 
   deploy_nuget_package:
-    if: github.event_name == 'Release'
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     needs: [run_tests, create_nuget_package]
     steps:
@@ -67,6 +68,7 @@ jobs:
       # Use --skip-duplicate to prevent errors if a package with the same version already exists.
       # If you retry a failed workflow, already published packages will be skipped without error.
       - name: Publish NuGet package to nuget.org
+        shell: pwsh
         run: |
           foreach(file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
               dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

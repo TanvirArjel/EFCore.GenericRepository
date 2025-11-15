@@ -291,25 +291,45 @@ namespace TanvirArjel.EFCore.GenericRepository
             return count;
         }
 
-#if NET7_0_OR_GREATER
+#if NET10_0_OR_GREATER
         public async Task<int> ExecuteUpdateAsync<TEntity>(
-                    Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
-                    CancellationToken cancellationToken = default)
-                    where TEntity : class
+            Action<UpdateSettersBuilder<TEntity>> setters,
+            CancellationToken cancellationToken = default)
+            where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setters, cancellationToken);
+            return count;
+        }
+
+        public async Task<int> ExecuteUpdateAsync<TEntity>(
+            Expression<Func<TEntity, bool>> condition,
+            Action<UpdateSettersBuilder<TEntity>> setters,
+            CancellationToken cancellationToken = default)
+            where TEntity : class
+        {
+            int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setters, cancellationToken);
+            return count;
+        }
+#elif NET7_0_OR_GREATER || NET8_0_OR_GREATER || NET9_0_OR_GREATER
+        public async Task<int> ExecuteUpdateAsync<TEntity>(
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+            CancellationToken cancellationToken = default)
+            where TEntity : class
         {
             int count = await _dbContext.Set<TEntity>().ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
             return count;
         }
 
         public async Task<int> ExecuteUpdateAsync<TEntity>(
-                    Expression<Func<TEntity, bool>> condition,
-                    Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
-                    CancellationToken cancellationToken = default)
-                    where TEntity : class
+            Expression<Func<TEntity, bool>> condition,
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
+            CancellationToken cancellationToken = default)
+            where TEntity : class
         {
             int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
             return count;
         }
+#endif
 
         public async Task<int> ExecuteDeleteAsync<TEntity>(CancellationToken cancellationToken = default)
             where TEntity : class
@@ -326,6 +346,5 @@ namespace TanvirArjel.EFCore.GenericRepository
             int count = await _dbContext.Set<TEntity>().Where(condition).ExecuteDeleteAsync(cancellationToken);
             return count;
         }
-#endif
     }
 }
