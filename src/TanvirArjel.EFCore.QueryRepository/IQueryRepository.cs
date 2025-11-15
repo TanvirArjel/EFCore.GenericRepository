@@ -18,7 +18,7 @@ namespace TanvirArjel.EFCore.GenericRepository
     /// Contains all the query methods. If you register the multiple DbContexts, it will use the last one.
     /// To use specific <see cref="DbContext"/> please use <see cref="IQueryRepository{TDbContext}"/>.
     /// </summary>
-    public interface IQueryRepository
+    public interface IQueryRepository : IDisposable, IAsyncDisposable
     {
         /// <summary>
         /// Gets <see cref="IQueryable{T}"/> of the entity.

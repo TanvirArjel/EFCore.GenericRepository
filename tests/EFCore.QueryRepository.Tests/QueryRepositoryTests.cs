@@ -87,4 +87,32 @@ public class QueryRepositoryTests
         Assert.NotEmpty(employees);
         Assert.True(employees.Count == fakeEmployees.Count);
     }
+
+    [Fact]
+    public void Dispose_ShouldDisposeDbContext()
+    {
+        // Arrange
+        var dbContextMock = new Mock<DemoDbContext>();
+        var queryRepository = new QueryRepository<DemoDbContext>(dbContextMock.Object);
+
+        // Act
+        queryRepository.Dispose();
+
+        // Assert
+        dbContextMock.Verify(db => db.Dispose(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DisposeAsync_ShouldDisposeDbContextAsync()
+    {
+        // Arrange
+        var dbContextMock = new Mock<DemoDbContext>();
+        var queryRepository = new QueryRepository<DemoDbContext>(dbContextMock.Object);
+
+        // Act
+        await queryRepository.DisposeAsync();
+
+        // Assert
+        dbContextMock.Verify(db => db.DisposeAsync(), Times.Once);
+    }
 }
