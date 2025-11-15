@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4704B96B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.QueryRepository.Tests", "tests\EFCore.QueryRepository.Tests\EFCore.QueryRepository.Tests.csproj", "{45A7BACF-88A0-43F6-A64D-FD7E16047080}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore.GenericRepository.Tests", "tests\EFCore.GenericRepository.Tests\EFCore.GenericRepository.Tests.csproj", "{56B8CBDG-99B1-54G7-C692-GE27G255F081}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{45A7BACF-88A0-43F6-A64D-FD7E16047080}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45A7BACF-88A0-43F6-A64D-FD7E16047080}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45A7BACF-88A0-43F6-A64D-FD7E16047080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56B8CBDG-99B1-54G7-C692-GE27G255F081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56B8CBDG-99B1-54G7-C692-GE27G255F081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56B8CBDG-99B1-54G7-C692-GE27G255F081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56B8CBDG-99B1-54G7-C692-GE27G255F081}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 		{2D4EDBB7-8A7D-4348-881F-F670773401FA} = {98A19DB3-ED3F-4327-8F46-CE7C7D71EC65}
 		{B27024B0-3436-4E8B-9E6C-0D3C6850EE95} = {98A19DB3-ED3F-4327-8F46-CE7C7D71EC65}
 		{45A7BACF-88A0-43F6-A64D-FD7E16047080} = {4704B96B-B9B8-4278-8581-15A16F254EA0}
+		{56B8CBDG-99B1-54G7-C692-GE27G255F081} = {4704B96B-B9B8-4278-8581-15A16F254EA0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B04FE49F-0045-4944-A589-88C8A33F7594}
