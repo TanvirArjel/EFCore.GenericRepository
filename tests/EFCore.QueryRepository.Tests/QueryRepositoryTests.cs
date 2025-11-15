@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TanvirArjel.EFCore.GenericRepository;
+using Xunit;
 
 namespace EFCore.QueryRepository.Tests;
 

@@ -20,680 +20,679 @@ using Microsoft.EntityFrameworkCore.Query;
 [assembly: InternalsVisibleTo("TanvirArjel.EFCore.GenericRepository")]
 [assembly: InternalsVisibleTo("EFCore.QueryRepository.Tests")]
 
-namespace TanvirArjel.EFCore.GenericRepository
+namespace TanvirArjel.EFCore.GenericRepository;
+
+[DebuggerStepThrough]
+internal class QueryRepository<TDbContext> : IQueryRepository, IQueryRepository<TDbContext>
+    where TDbContext : DbContext
 {
-    // [DebuggerStepThrough]
-    internal class QueryRepository<TDbContext> : IQueryRepository, IQueryRepository<TDbContext>
-        where TDbContext : DbContext
+    private readonly TDbContext _dbContext;
+
+    public QueryRepository(TDbContext dbContext)
     {
-        private readonly TDbContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public QueryRepository(TDbContext dbContext)
+    public IQueryable<T> GetQueryable<T>()
+        where T : class
+    {
+        return _dbContext.Set<T>();
+    }
+
+    public Task<List<T>> GetListAsync<T>(CancellationToken cancellationToken = default)
+        where T : class
+    {
+        return GetListAsync<T>(false, cancellationToken);
+    }
+
+    public Task<List<T>> GetListAsync<T>(bool asNoTracking, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> nullValue = null;
+        return GetListAsync(nullValue, asNoTracking, cancellationToken);
+    }
+
+    public Task<List<T>> GetListAsync<T>(
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        return GetListAsync(includes, false, cancellationToken);
+    }
+
+    public async Task<List<T>> GetListAsync<T>(
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        bool asNoTracking,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (includes != null)
         {
-            _dbContext = dbContext;
+            query = includes(query);
         }
 
-        public IQueryable<T> GetQueryable<T>()
-            where T : class
+        if (asNoTracking)
         {
-            return _dbContext.Set<T>();
+            query = query.AsNoTracking();
         }
 
-        public Task<List<T>> GetListAsync<T>(CancellationToken cancellationToken = default)
-            where T : class
+        List<T> items = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        return items;
+    }
+
+    public Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
+         where T : class
+    {
+        return GetListAsync(condition, false, cancellationToken);
+    }
+
+    public Task<List<T>> GetListAsync<T>(
+        Expression<Func<T, bool>> condition,
+        bool asNoTracking,
+        CancellationToken cancellationToken = default)
+         where T : class
+    {
+        return GetListAsync(condition, null, asNoTracking, cancellationToken);
+    }
+
+    public async Task<List<T>> GetListAsync<T>(
+        Expression<Func<T, bool>> condition,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        bool asNoTracking,
+        CancellationToken cancellationToken = default)
+         where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (condition != null)
         {
-            return GetListAsync<T>(false, cancellationToken);
+            query = query.Where(condition);
         }
 
-        public Task<List<T>> GetListAsync<T>(bool asNoTracking, CancellationToken cancellationToken = default)
-            where T : class
+        if (includes != null)
         {
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> nullValue = null;
-            return GetListAsync(nullValue, asNoTracking, cancellationToken);
+            query = includes(query);
         }
 
-        public Task<List<T>> GetListAsync<T>(
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            CancellationToken cancellationToken = default)
-            where T : class
+        if (asNoTracking)
         {
-            return GetListAsync(includes, false, cancellationToken);
+            query = query.AsNoTracking();
         }
 
-        public async Task<List<T>> GetListAsync<T>(
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-            where T : class
+        List<T> items = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        return items;
+    }
+
+    public Task<List<T>> GetListAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
+       where T : class
+    {
+        return GetListAsync(specification, false, cancellationToken);
+    }
+
+    public async Task<List<T>> GetListAsync<T>(
+        Specification<T> specification,
+        bool asNoTracking,
+        CancellationToken cancellationToken = default)
+       where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (specification != null)
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (includes != null)
-            {
-                query = includes(query);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            List<T> items = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            return items;
+            query = query.GetSpecifiedQuery(specification);
         }
 
-        public Task<List<T>> GetListAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
-             where T : class
+        if (asNoTracking)
         {
-            return GetListAsync(condition, false, cancellationToken);
+            query = query.AsNoTracking();
         }
 
-        public Task<List<T>> GetListAsync<T>(
-            Expression<Func<T, bool>> condition,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-             where T : class
+        return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (selectExpression == null)
         {
-            return GetListAsync(condition, null, asNoTracking, cancellationToken);
+            throw new ArgumentNullException(nameof(selectExpression));
         }
 
-        public async Task<List<T>> GetListAsync<T>(
-            Expression<Func<T, bool>> condition,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-             where T : class
+        List<TProjectedType> entities = await _dbContext.Set<T>()
+            .Select(selectExpression).ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        return entities;
+    }
+
+    public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
+        Expression<Func<T, bool>> condition,
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (selectExpression == null)
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            if (includes != null)
-            {
-                query = includes(query);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            List<T> items = await query.ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            return items;
+            throw new ArgumentNullException(nameof(selectExpression));
         }
 
-        public Task<List<T>> GetListAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
-           where T : class
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (condition != null)
         {
-            return GetListAsync(specification, false, cancellationToken);
+            query = query.Where(condition);
         }
 
-        public async Task<List<T>> GetListAsync<T>(
-            Specification<T> specification,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-           where T : class
+        List<TProjectedType> projectedEntites = await query.Select(selectExpression)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        return projectedEntites;
+    }
+
+    public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
+        Specification<T> specification,
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (selectExpression == null)
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+            throw new ArgumentNullException(nameof(selectExpression));
         }
 
-        public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (specification != null)
         {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            List<TProjectedType> entities = await _dbContext.Set<T>()
-                .Select(selectExpression).ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            return entities;
+            query = query.GetSpecifiedQuery(specification);
         }
 
-        public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
-            Expression<Func<T, bool>> condition,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
+        return await query.Select(selectExpression)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<PaginatedList<T>> GetListAsync<T>(
+        PaginationSpecification<T> specification,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (specification == null)
         {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            List<TProjectedType> projectedEntites = await query.Select(selectExpression)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            return projectedEntites;
+            throw new ArgumentNullException(nameof(specification));
         }
 
-        public async Task<List<TProjectedType>> GetListAsync<T, TProjectedType>(
-            Specification<T> specification,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
+        PaginatedList<T> paginatedList = await _dbContext.Set<T>().ToPaginatedListAsync(specification, cancellationToken);
+        return paginatedList;
+    }
+
+    public async Task<PaginatedList<TProjectedType>> GetListAsync<T, TProjectedType>(
+        PaginationSpecification<T> specification,
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+        where TProjectedType : class
+    {
+        if (specification == null)
         {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            return await query.Select(selectExpression)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            throw new ArgumentNullException(nameof(specification));
         }
 
-        public async Task<PaginatedList<T>> GetListAsync<T>(
-            PaginationSpecification<T> specification,
-            CancellationToken cancellationToken = default)
-            where T : class
+        if (selectExpression == null)
         {
-            if (specification == null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
-
-            PaginatedList<T> paginatedList = await _dbContext.Set<T>().ToPaginatedListAsync(specification, cancellationToken);
-            return paginatedList;
+            throw new ArgumentNullException(nameof(selectExpression));
         }
 
-        public async Task<PaginatedList<TProjectedType>> GetListAsync<T, TProjectedType>(
-            PaginationSpecification<T> specification,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
-            where TProjectedType : class
+        IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery((SpecificationBase<T>)specification);
+
+        PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression)
+            .ToPaginatedListAsync(specification.PageIndex, specification.PageSize, cancellationToken);
+        return paginatedList;
+    }
+
+    public Task<T> GetByIdAsync<T>(object id, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (id == null)
         {
-            if (specification == null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
-
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>().GetSpecifiedQuery((SpecificationBase<T>)specification);
-
-            PaginatedList<TProjectedType> paginatedList = await query.Select(selectExpression)
-                .ToPaginatedListAsync(specification.PageIndex, specification.PageSize, cancellationToken);
-            return paginatedList;
+            throw new ArgumentNullException(nameof(id));
         }
 
-        public Task<T> GetByIdAsync<T>(object id, CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+        return GetByIdAsync<T>(id, false, cancellationToken);
+    }
 
-            return GetByIdAsync<T>(id, false, cancellationToken);
+    public Task<T> GetByIdAsync<T>(object id, bool asNoTracking, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (id == null)
+        {
+            throw new ArgumentNullException(nameof(id));
         }
 
-        public Task<T> GetByIdAsync<T>(object id, bool asNoTracking, CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+        return GetByIdAsync<T>(id, null, asNoTracking, cancellationToken);
+    }
 
-            return GetByIdAsync<T>(id, null, asNoTracking, cancellationToken);
+    public Task<T> GetByIdAsync<T>(
+        object id,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (id == null)
+        {
+            throw new ArgumentNullException(nameof(id));
         }
 
-        public Task<T> GetByIdAsync<T>(
-            object id,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            CancellationToken cancellationToken = default)
-            where T : class
-        {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+        return GetByIdAsync(id, includes, false, cancellationToken);
+    }
 
-            return GetByIdAsync(id, includes, false, cancellationToken);
+    public async Task<T> GetByIdAsync<T>(
+        object id,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        bool asNoTracking = false,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (id == null)
+        {
+            throw new ArgumentNullException(nameof(id));
         }
 
-        public async Task<T> GetByIdAsync<T>(
-            object id,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            bool asNoTracking = false,
-            CancellationToken cancellationToken = default)
-            where T : class
+        IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+
+        string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+        Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+        if (primaryKeyName == null || primaryKeyType == null)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primaryKeyValue = null;
-
-            try
-            {
-                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (includes != null)
-            {
-                query = includes(query);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            T entity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken).ConfigureAwait(false);
-            return entity;
+            throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
         }
 
-        public async Task<TProjectedType> GetByIdAsync<T, TProjectedType>(
-            object id,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
+        object primaryKeyValue = null;
+
+        try
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primaryKeyValue = null;
-
-            try
-            {
-                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            return await query.Where(expressionTree)
-                              .Select(selectExpression)
-                              .FirstOrDefaultAsync(cancellationToken)
-                              .ConfigureAwait(false);
+            primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
         }
 
-        public Task<T> GetAsync<T>(
-            Expression<Func<T, bool>> condition,
-            CancellationToken cancellationToken = default)
-           where T : class
+        ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
+        MemberExpression me = Expression.Property(pe, primaryKeyName);
+        ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
+        BinaryExpression body = Expression.Equal(me, constant);
+        Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
+
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (includes != null)
         {
-            return GetAsync(condition, null, false, cancellationToken);
+            query = includes(query);
         }
 
-        public Task<T> GetAsync<T>(
-            Expression<Func<T, bool>> condition,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-           where T : class
+        if (asNoTracking)
         {
-            return GetAsync(condition, null, asNoTracking, cancellationToken);
+            query = query.AsNoTracking();
         }
 
-        public Task<T> GetAsync<T>(
-            Expression<Func<T, bool>> condition,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            CancellationToken cancellationToken = default)
-           where T : class
+        T entity = await query.FirstOrDefaultAsync(expressionTree, cancellationToken).ConfigureAwait(false);
+        return entity;
+    }
+
+    public async Task<TProjectedType> GetByIdAsync<T, TProjectedType>(
+        object id,
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (id == null)
         {
-            return GetAsync(condition, includes, false, cancellationToken);
+            throw new ArgumentNullException(nameof(id));
         }
 
-        public async Task<T> GetAsync<T>(
-            Expression<Func<T, bool>> condition,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
-            bool asNoTracking,
-            CancellationToken cancellationToken = default)
-           where T : class
+        if (selectExpression == null)
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            if (includes != null)
-            {
-                query = includes(query);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            throw new ArgumentNullException(nameof(selectExpression));
         }
 
-        public Task<T> GetAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
-            where T : class
+        IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+
+        string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+        Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+        if (primaryKeyName == null || primaryKeyType == null)
         {
-            return GetAsync(specification, false, cancellationToken);
+            throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
         }
 
-        public async Task<T> GetAsync<T>(Specification<T> specification, bool asNoTracking, CancellationToken cancellationToken = default)
-            where T : class
+        object primaryKeyValue = null;
+
+        try
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            if (asNoTracking)
-            {
-                query = query.AsNoTracking();
-            }
-
-            return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
         }
 
-        public async Task<TProjectedType> GetAsync<T, TProjectedType>(
-            Expression<Func<T, bool>> condition,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
+        ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
+        MemberExpression me = Expression.Property(pe, primaryKeyName);
+        ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
+        BinaryExpression body = Expression.Equal(me, constant);
+        Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
+
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        return await query.Where(expressionTree)
+                          .Select(selectExpression)
+                          .FirstOrDefaultAsync(cancellationToken)
+                          .ConfigureAwait(false);
+    }
+
+    public Task<T> GetAsync<T>(
+        Expression<Func<T, bool>> condition,
+        CancellationToken cancellationToken = default)
+       where T : class
+    {
+        return GetAsync(condition, null, false, cancellationToken);
+    }
+
+    public Task<T> GetAsync<T>(
+        Expression<Func<T, bool>> condition,
+        bool asNoTracking,
+        CancellationToken cancellationToken = default)
+       where T : class
+    {
+        return GetAsync(condition, null, asNoTracking, cancellationToken);
+    }
+
+    public Task<T> GetAsync<T>(
+        Expression<Func<T, bool>> condition,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        CancellationToken cancellationToken = default)
+       where T : class
+    {
+        return GetAsync(condition, includes, false, cancellationToken);
+    }
+
+    public async Task<T> GetAsync<T>(
+        Expression<Func<T, bool>> condition,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>> includes,
+        bool asNoTracking,
+        CancellationToken cancellationToken = default)
+       where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (condition != null)
         {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            query = query.Where(condition);
         }
 
-        public async Task<TProjectedType> GetAsync<T, TProjectedType>(
-            Specification<T> specification,
-            Expression<Func<T, TProjectedType>> selectExpression,
-            CancellationToken cancellationToken = default)
-            where T : class
+        if (includes != null)
         {
-            if (selectExpression == null)
-            {
-                throw new ArgumentNullException(nameof(selectExpression));
-            }
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (specification != null)
-            {
-                query = query.GetSpecifiedQuery(specification);
-            }
-
-            return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            query = includes(query);
         }
 
-        public Task<bool> ExistsAsync<T>(CancellationToken cancellationToken = default)
-           where T : class
+        if (asNoTracking)
         {
-            return ExistsAsync<T>(null, cancellationToken);
+            query = query.AsNoTracking();
         }
 
-        public async Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
-           where T : class
+        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public Task<T> GetAsync<T>(Specification<T> specification, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        return GetAsync(specification, false, cancellationToken);
+    }
+
+    public async Task<T> GetAsync<T>(Specification<T> specification, bool asNoTracking, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (specification != null)
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition == null)
-            {
-                return await query.AnyAsync(cancellationToken);
-            }
-
-            bool isExists = await query.AnyAsync(condition, cancellationToken).ConfigureAwait(false);
-            return isExists;
+            query = query.GetSpecifiedQuery(specification);
         }
 
-        public async Task<bool> ExistsByIdAsync<T>(object id, CancellationToken cancellationToken = default)
-           where T : class
+        if (asNoTracking)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
-
-            string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
-            Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
-
-            if (primaryKeyName == null || primaryKeyType == null)
-            {
-                throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
-            }
-
-            object primaryKeyValue = null;
-
-            try
-            {
-                primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
-            }
-
-            ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
-            MemberExpression me = Expression.Property(pe, primaryKeyName);
-            ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
-            BinaryExpression body = Expression.Equal(me, constant);
-            Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
-
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            bool isExistent = await query.AnyAsync(expressionTree, cancellationToken).ConfigureAwait(false);
-            return isExistent;
+            query = query.AsNoTracking();
         }
 
-        public async Task<int> GetCountAsync<T>(CancellationToken cancellationToken = default)
-            where T : class
+        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<TProjectedType> GetAsync<T, TProjectedType>(
+        Expression<Func<T, bool>> condition,
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (selectExpression == null)
         {
-            int count = await _dbContext.Set<T>().CountAsync(cancellationToken).ConfigureAwait(false);
-            return count;
+            throw new ArgumentNullException(nameof(selectExpression));
         }
 
-        public async Task<int> GetCountAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
-            where T : class
-        {
-            IQueryable<T> query = _dbContext.Set<T>();
+        IQueryable<T> query = _dbContext.Set<T>();
 
-            if (condition != null)
+        if (condition != null)
+        {
+            query = query.Where(condition);
+        }
+
+        return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<TProjectedType> GetAsync<T, TProjectedType>(
+        Specification<T> specification,
+        Expression<Func<T, TProjectedType>> selectExpression,
+        CancellationToken cancellationToken = default)
+        where T : class
+    {
+        if (selectExpression == null)
+        {
+            throw new ArgumentNullException(nameof(selectExpression));
+        }
+
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (specification != null)
+        {
+            query = query.GetSpecifiedQuery(specification);
+        }
+
+        return await query.Select(selectExpression).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public Task<bool> ExistsAsync<T>(CancellationToken cancellationToken = default)
+       where T : class
+    {
+        return ExistsAsync<T>(null, cancellationToken);
+    }
+
+    public async Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
+       where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (condition == null)
+        {
+            return await query.AnyAsync(cancellationToken);
+        }
+
+        bool isExists = await query.AnyAsync(condition, cancellationToken).ConfigureAwait(false);
+        return isExists;
+    }
+
+    public async Task<bool> ExistsByIdAsync<T>(object id, CancellationToken cancellationToken = default)
+       where T : class
+    {
+        if (id == null)
+        {
+            throw new ArgumentNullException(nameof(id));
+        }
+
+        IEntityType entityType = _dbContext.Model.FindEntityType(typeof(T));
+
+        string primaryKeyName = entityType.FindPrimaryKey().Properties.Select(p => p.Name).FirstOrDefault();
+        Type primaryKeyType = entityType.FindPrimaryKey().Properties.Select(p => p.ClrType).FirstOrDefault();
+
+        if (primaryKeyName == null || primaryKeyType == null)
+        {
+            throw new ArgumentException("Entity does not have any primary key defined", nameof(id));
+        }
+
+        object primaryKeyValue = null;
+
+        try
+        {
+            primaryKeyValue = Convert.ChangeType(id, primaryKeyType, CultureInfo.InvariantCulture);
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"You can not assign a value of type {id.GetType()} to a property of type {primaryKeyType}");
+        }
+
+        ParameterExpression pe = Expression.Parameter(typeof(T), "entity");
+        MemberExpression me = Expression.Property(pe, primaryKeyName);
+        ConstantExpression constant = Expression.Constant(primaryKeyValue, primaryKeyType);
+        BinaryExpression body = Expression.Equal(me, constant);
+        Expression<Func<T, bool>> expressionTree = Expression.Lambda<Func<T, bool>>(body, new[] { pe });
+
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        bool isExistent = await query.AnyAsync(expressionTree, cancellationToken).ConfigureAwait(false);
+        return isExistent;
+    }
+
+    public async Task<int> GetCountAsync<T>(CancellationToken cancellationToken = default)
+        where T : class
+    {
+        int count = await _dbContext.Set<T>().CountAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
+
+    public async Task<int> GetCountAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (condition != null)
+        {
+            query = query.Where(condition);
+        }
+
+        return await query.CountAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<int> GetCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (conditions != null)
+        {
+            foreach (Expression<Func<T, bool>> expression in conditions)
             {
-                query = query.Where(condition);
+                query = query.Where(expression);
             }
-
-            return await query.CountAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<int> GetCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions, CancellationToken cancellationToken = default)
-            where T : class
-        {
-            IQueryable<T> query = _dbContext.Set<T>();
+        return await query.CountAsync(cancellationToken).ConfigureAwait(false);
+    }
 
-            if (conditions != null)
+    public async Task<long> GetLongCountAsync<T>(CancellationToken cancellationToken = default)
+        where T : class
+    {
+        long count = await _dbContext.Set<T>().LongCountAsync(cancellationToken).ConfigureAwait(false);
+        return count;
+    }
+
+    public async Task<long> GetLongCountAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (condition != null)
+        {
+            query = query.Where(condition);
+        }
+
+        return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<long> GetLongCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions, CancellationToken cancellationToken = default)
+        where T : class
+    {
+        IQueryable<T> query = _dbContext.Set<T>();
+
+        if (conditions != null)
+        {
+            foreach (Expression<Func<T, bool>> expression in conditions)
             {
-                foreach (Expression<Func<T, bool>> expression in conditions)
-                {
-                    query = query.Where(expression);
-                }
+                query = query.Where(expression);
             }
-
-            return await query.CountAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<long> GetLongCountAsync<T>(CancellationToken cancellationToken = default)
-            where T : class
+        return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    // DbContext level members
+    public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
         {
-            long count = await _dbContext.Set<T>().LongCountAsync(cancellationToken).ConfigureAwait(false);
-            return count;
+            throw new ArgumentNullException(nameof(sql));
         }
 
-        public async Task<long> GetLongCountAsync<T>(Expression<Func<T, bool>> condition, CancellationToken cancellationToken = default)
-            where T : class
+        IEnumerable<object> parameters = new List<object>();
+
+        List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+        return items;
+    }
+
+    public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, object parameter, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (condition != null)
-            {
-                query = query.Where(condition);
-            }
-
-            return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
+            throw new ArgumentNullException(nameof(sql));
         }
 
-        public async Task<long> GetLongCountAsync<T>(IEnumerable<Expression<Func<T, bool>>> conditions, CancellationToken cancellationToken = default)
-            where T : class
+        List<object> parameters = new List<object>() { parameter };
+        List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+        return items;
+    }
+
+    public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<DbParameter> parameters, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
         {
-            IQueryable<T> query = _dbContext.Set<T>();
-
-            if (conditions != null)
-            {
-                foreach (Expression<Func<T, bool>> expression in conditions)
-                {
-                    query = query.Where(expression);
-                }
-            }
-
-            return await query.LongCountAsync(cancellationToken).ConfigureAwait(false);
+            throw new ArgumentNullException(nameof(sql));
         }
 
-        // DbContext level members
-        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, CancellationToken cancellationToken = default)
+        List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+        return items;
+    }
+
+    public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
         {
-            if (string.IsNullOrWhiteSpace(sql))
-            {
-                throw new ArgumentNullException(nameof(sql));
-            }
-
-            IEnumerable<object> parameters = new List<object>();
-
-            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
-            return items;
+            throw new ArgumentNullException(nameof(sql));
         }
 
-        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, object parameter, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(sql))
-            {
-                throw new ArgumentNullException(nameof(sql));
-            }
-
-            List<object> parameters = new List<object>() { parameter };
-            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
-            return items;
-        }
-
-        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<DbParameter> parameters, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(sql))
-            {
-                throw new ArgumentNullException(nameof(sql));
-            }
-
-            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
-            return items;
-        }
-
-        public async Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(sql))
-            {
-                throw new ArgumentNullException(nameof(sql));
-            }
-
-            List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
-            return items;
-        }
+        List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
+        return items;
     }
 }

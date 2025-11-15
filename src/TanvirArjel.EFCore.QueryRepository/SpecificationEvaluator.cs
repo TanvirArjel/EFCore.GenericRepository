@@ -7,113 +7,112 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
-namespace TanvirArjel.EFCore.GenericRepository
+namespace TanvirArjel.EFCore.GenericRepository;
+
+internal static class SpecificationEvaluator
 {
-    internal static class SpecificationEvaluator
+    public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, Specification<T> specification)
+        where T : class
     {
-        public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, Specification<T> specification)
-            where T : class
+        IQueryable<T> query = GetSpecifiedQuery(inputQuery, (SpecificationBase<T>)specification);
+
+        // Apply paging if enabled
+        if (specification.Skip != null)
         {
-            IQueryable<T> query = GetSpecifiedQuery(inputQuery, (SpecificationBase<T>)specification);
-
-            // Apply paging if enabled
-            if (specification.Skip != null)
+            if (specification.Skip < 0)
             {
-                if (specification.Skip < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(specification), $"The value of {nameof(specification.Skip)} in {nameof(specification)} can not be negative.");
-                }
-
-                query = query.Skip((int)specification.Skip);
+                throw new ArgumentOutOfRangeException(nameof(specification), $"The value of {nameof(specification.Skip)} in {nameof(specification)} can not be negative.");
             }
 
-            if (specification.Take != null)
-            {
-                if (specification.Take < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(specification), $"The value of {nameof(specification.Take)} in {nameof(specification)} can not be negative.");
-                }
-
-                query = query.Take((int)specification.Take);
-            }
-
-            return query;
+            query = query.Skip((int)specification.Skip);
         }
 
-        public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, PaginationSpecification<T> specification)
-            where T : class
+        if (specification.Take != null)
         {
-            if (inputQuery == null)
+            if (specification.Take < 0)
             {
-                throw new ArgumentNullException(nameof(inputQuery));
+                throw new ArgumentOutOfRangeException(nameof(specification), $"The value of {nameof(specification.Take)} in {nameof(specification)} can not be negative.");
             }
 
-            if (specification == null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
-
-            if (specification.PageIndex < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(specification), "The value of specification.PageIndex must be greater than 0.");
-            }
-
-            if (specification.PageSize < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(specification), "The value of specification.PageSize must be greater than 0.");
-            }
-
-            IQueryable<T> query = GetSpecifiedQuery(inputQuery, (SpecificationBase<T>)specification);
-
-            // Apply paging if enabled
-            int skip = (specification.PageIndex - 1) * specification.PageSize;
-
-            query = query.Skip(skip).Take(specification.PageSize);
-
-            return query;
+            query = query.Take((int)specification.Take);
         }
 
-        public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, SpecificationBase<T> specification)
-            where T : class
+        return query;
+    }
+
+    public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, PaginationSpecification<T> specification)
+        where T : class
+    {
+        if (inputQuery == null)
         {
-            if (inputQuery == null)
-            {
-                throw new ArgumentNullException(nameof(inputQuery));
-            }
-
-            if (specification == null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
-
-            IQueryable<T> query = inputQuery;
-
-            // modify the IQueryable using the specification's criteria expression
-            if (specification.Conditions != null && specification.Conditions.Count != 0)
-            {
-                foreach (Expression<Func<T, bool>> specificationCondition in specification.Conditions)
-                {
-                    query = query.Where(specificationCondition);
-                }
-            }
-
-            // Includes all expression-based includes
-            if (specification.Includes != null)
-            {
-                query = specification.Includes(query);
-            }
-
-            // Apply ordering if expressions are set
-            if (specification.OrderBy != null)
-            {
-                query = specification.OrderBy(query);
-            }
-            else if (!string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName) && !string.IsNullOrWhiteSpace(specification.OrderByDynamic.SortDirection))
-            {
-                query = query.OrderBy(specification.OrderByDynamic.ColumnName + " " + specification.OrderByDynamic.SortDirection);
-            }
-
-            return query;
+            throw new ArgumentNullException(nameof(inputQuery));
         }
+
+        if (specification == null)
+        {
+            throw new ArgumentNullException(nameof(specification));
+        }
+
+        if (specification.PageIndex < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(specification), "The value of specification.PageIndex must be greater than 0.");
+        }
+
+        if (specification.PageSize < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(specification), "The value of specification.PageSize must be greater than 0.");
+        }
+
+        IQueryable<T> query = GetSpecifiedQuery(inputQuery, (SpecificationBase<T>)specification);
+
+        // Apply paging if enabled
+        int skip = (specification.PageIndex - 1) * specification.PageSize;
+
+        query = query.Skip(skip).Take(specification.PageSize);
+
+        return query;
+    }
+
+    public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, SpecificationBase<T> specification)
+        where T : class
+    {
+        if (inputQuery == null)
+        {
+            throw new ArgumentNullException(nameof(inputQuery));
+        }
+
+        if (specification == null)
+        {
+            throw new ArgumentNullException(nameof(specification));
+        }
+
+        IQueryable<T> query = inputQuery;
+
+        // modify the IQueryable using the specification's criteria expression
+        if (specification.Conditions != null && specification.Conditions.Count != 0)
+        {
+            foreach (Expression<Func<T, bool>> specificationCondition in specification.Conditions)
+            {
+                query = query.Where(specificationCondition);
+            }
+        }
+
+        // Includes all expression-based includes
+        if (specification.Includes != null)
+        {
+            query = specification.Includes(query);
+        }
+
+        // Apply ordering if expressions are set
+        if (specification.OrderBy != null)
+        {
+            query = specification.OrderBy(query);
+        }
+        else if (!string.IsNullOrWhiteSpace(specification.OrderByDynamic.ColumnName) && !string.IsNullOrWhiteSpace(specification.OrderByDynamic.SortDirection))
+        {
+            query = query.OrderBy(specification.OrderByDynamic.ColumnName + " " + specification.OrderByDynamic.SortDirection);
+        }
+
+        return query;
     }
 }
